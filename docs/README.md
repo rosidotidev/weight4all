@@ -15,13 +15,24 @@ Prerequisites: Node >= 24.15, JDK >= 21 (`java -version`), `npm install` done. T
    ```bash
    npm run emulators
    ```
-   Auth runs on `127.0.0.1:9099`, Firestore on `127.0.0.1:8080`. Data lives in memory and is lost when you stop them.
+   Auth runs on `127.0.0.1:9099`, Firestore on `127.0.0.1:8080`. Data is kept in `.firebase-emulator-data/` (git-ignored): it is imported at start and exported when you stop with Ctrl+C. Killing the process or closing the window skips the export.
 2. Terminal 2, start the app:
    ```bash
    npm start
    ```
    Open http://localhost:4200. The default (development) build uses `src/environments/environment.ts`, which connects to the emulators.
 3. Stop both with Ctrl+C.
+
+### Local test account
+
+The test account is created automatically when the emulators start (`scripts/ensure-test-account.mjs`) and is kept between runs:
+
+| Field | Value |
+|---|---|
+| Email | `prova.locale@weight4all.test` |
+| Password | `prova-locale-2026` |
+
+On Windows, `start-emulators.bat` (emulators) and `start-app.bat` (dev server, opens the browser) in the repository root do all of the above. These values are for the local emulator only. They are not a real account and must never be used on the production Firebase project.
 
 Other commands:
 

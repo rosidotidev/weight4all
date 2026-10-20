@@ -36,3 +36,7 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-1-6-log-in-stay-logged-in-and-log-out.md`
   summary: Make spec files that import the real `core/data/firebase` safe from module-cache order effects in the Angular Vitest runner.
   evidence: `auth.service.spec.ts` once failed all 18 tests in a `npm run check` run because the real module was cached before `firebase/auth` was mocked; 9 later runs passed, and `vi.resetModules()` is the current workaround (unverified severity: medium, a flaky gate).
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-1-6-log-in-stay-logged-in-and-log-out.md`
+  summary: Keep a signed-out page from reappearing with stale content when the browser restores it from its back/forward cache after logout.
+  evidence: Seen in Chrome against the local app: after Log out, browser Back showed the old `/today` screen (a fresh load went to `/login`). Harmless for the placeholder, but it would show Entry data once Today is real (AD-9, Story 1.6 AC: back navigation shows no Entry data). Candidate fixes: `Cache-Control: no-store` on Hosting, or clear the view on `pageshow` when the page was restored from cache and the session is signed out.
