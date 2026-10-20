@@ -1,5 +1,10 @@
-import { Injectable } from '@angular/core';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { Injectable, signal } from '@angular/core';
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+} from 'firebase/auth';
 import { auth } from './firebase';
 
 /** Closed set of auth failures; raw Firebase text never leaves this file (AD-9). */
@@ -11,6 +16,17 @@ export type AuthErrorCode =
   | 'network'
   | 'unknown';
 
+/** Tri-state session (AD-9): `unknown` until Firebase has resolved. */
+export type Session =
+  | { status: 'unknown' }
+  | { status: 'signedOut' }
+  | { status: 'signedIn'; uid: string };
+
+export function sameSession(a: Session, b: Session): boolean {
+  if (a.status !== b.status) return false;
+  return a.status !== 'signedIn' || (b.status === 'signedIn' && a.uid === b.uid);
+}
+
 export type AuthResult = { ok: true } | { ok: false; code: AuthErrorCode };
 
 export function toAuthErrorCode(error: unknown): AuthErrorCode {
@@ -19,6 +35,11 @@ export function toAuthErrorCode(error: unknown): AuthErrorCode {
       ? (error as { code: unknown }).code
       : undefined;
   switch (code) {
+    case 'auth/invalid-credential':
+    case 'auth/wrong-password':
+    case 'auth/user-not-found':
+    case 'auth/invalid-login-credentials':
+      return 'invalid-credentials';
     case 'auth/email-already-in-use':
       return 'email-in-use';
     case 'auth/weak-password':
@@ -34,10 +55,44 @@ export function toAuthErrorCode(error: unknown): AuthErrorCode {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  /** Creates the Account and signs the user in. Story 1.6 adds login and the session signal. */
+  private readonly _session = signal<Session>({ status: 'unknown' }, { equal: sameSession });
+  readonly session = this._session.asReadonly();
+
+  constructor() {
+    onAuthStateChanged(
+      auth,
+      (user) =>
+        this._session.set(user ? { status: 'signedIn', uid: user.uid } : { status: 'signedOut' }),
+      // Never leave the guard waiting on `unknown` if Firebase cannot resolve.
+      () => this._session.set({ status: 'signedOut' }),
+    );
+  }
+
+  /** Creates the Account and signs the user in. */
   async register(email: string, password: string): Promise<AuthResult> {
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const credential = await createUserWithEmailAndPassword(auth, email, password);
+      this._session.set({ status: 'signedIn', uid: credential.user.uid });
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, code: toAuthErrorCode(error) };
+    }
+  }
+
+  async login(email: string, password: string): Promise<AuthResult> {
+    try {
+      const credential = await signInWithEmailAndPassword(auth, email, password);
+      this._session.set({ status: 'signedIn', uid: credential.user.uid });
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, code: toAuthErrorCode(error) };
+    }
+  }
+
+  async logout(): Promise<AuthResult> {
+    try {
+      await signOut(auth);
+      this._session.set({ status: 'signedOut' });
       return { ok: true };
     } catch (error) {
       return { ok: false, code: toAuthErrorCode(error) };

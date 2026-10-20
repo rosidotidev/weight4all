@@ -26,3 +26,13 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-1-5-register-with-email-and-password.md`
   summary: Bring the initial bundle back under the 500 kB budget (lazy-load auth routes or `firebase/auth`).
   evidence: `ng build` warns the initial bundle is 780.58 kB (budget 500 kB, was ~205 kB) because `firebase/auth` enters the initial chunk through eager routes (unverified severity: medium; the performance budget is Story 5.4).
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-1-6-log-in-stay-logged-in-and-log-out.md`
+  summary: Load a store that registers with `SessionScope` after the user is already signed in.
+  evidence: `registerStore` only pushes the store and `last` is seeded from the current session, so a lazily created store is never loaded (unverified severity: medium; matters from the first real store, Stories 2.1/2.2).
+- source_spec: `_bmad-output/implementation-artifacts/spec-1-6-log-in-stay-logged-in-and-log-out.md`
+  summary: Redirect to `/login` when the session becomes `signedOut` without a navigation (token expiry, sign-out in another tab).
+  evidence: The guard runs only on navigation; the stores are reset but the private screen stays visible (unverified severity: medium).
+- source_spec: `_bmad-output/implementation-artifacts/spec-1-6-log-in-stay-logged-in-and-log-out.md`
+  summary: Make spec files that import the real `core/data/firebase` safe from module-cache order effects in the Angular Vitest runner.
+  evidence: `auth.service.spec.ts` once failed all 18 tests in a `npm run check` run because the real module was cached before `firebase/auth` was mocked; 9 later runs passed, and `vi.resetModules()` is the current workaround (unverified severity: medium, a flaky gate).
