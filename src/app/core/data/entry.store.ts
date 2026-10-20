@@ -4,6 +4,7 @@ import {
   deleteDoc,
   doc,
   documentId,
+  getDocFromServer,
   getDocs,
   orderBy,
   query,
@@ -74,6 +75,8 @@ export class EntryStore implements SessionStore {
   private readonly _epoch = signal(0);
   private uid: string | null = null;
   private loadStarted = false;
+  /** Days whose last write timed out and may still commit; re-read before the next write. */
+  private readonly timedOut = new Set<DayKey>();
 
   readonly status = this._status.asReadonly();
   readonly entries = this._entries.asReadonly();
@@ -88,6 +91,7 @@ export class EntryStore implements SessionStore {
   reset(): void {
     this.uid = null;
     this.loadStarted = false;
+    this.timedOut.clear();
     this._entries.set({});
     this._status.set('loading');
     this._epoch.set(this.scope.sessionEpoch());
@@ -113,9 +117,28 @@ export class EntryStore implements SessionStore {
     const uid = this.uid;
     if (!uid) return { ok: false, code: 'unknown' };
     const epoch = this.scope.sessionEpoch();
+    const ref = doc(db, 'users', uid, 'entries', entry.day);
+    if (this.timedOut.has(entry.day)) {
+      // The write that timed out may have committed since: learn the server's state before writing again.
+      try {
+        const snapshot = await withTimeout(getDocFromServer(ref), SAVE_TIMEOUT_MS);
+        if (epoch !== this.scope.sessionEpoch()) return { ok: false, code: 'unknown' };
+        this._entries.update((entries) => {
+          const next = { ...entries };
+          const data = snapshot.data();
+          if (snapshot.exists() && data) next[entry.day] = fromDoc(entry.day, data);
+          else delete next[entry.day];
+          return next;
+        });
+        this.timedOut.delete(entry.day);
+      } catch (error) {
+        return { ok: false, code: toCode(error) };
+      }
+    }
     try {
-      await withTimeout(setDoc(doc(db, 'users', uid, 'entries', entry.day), toDoc(entry)), SAVE_TIMEOUT_MS);
+      await withTimeout(setDoc(ref, toDoc(entry)), SAVE_TIMEOUT_MS);
     } catch (error) {
+      if (error instanceof TimeoutError && epoch === this.scope.sessionEpoch()) this.timedOut.add(entry.day);
       return { ok: false, code: toCode(error) };
     }
     if (epoch === this.scope.sessionEpoch()) {

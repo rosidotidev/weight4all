@@ -73,6 +73,20 @@ describe('strings', () => {
     }
   });
 
+  it('has one save error message per code, plus the snackbar Dismiss', () => {
+    const message = "Couldn't save. Your numbers are still here. Try again.";
+    expect(strings.saveErrorNetwork.en).toBe(message);
+    expect(strings.saveErrorTimeout.en).toBe(message);
+    expect(strings.saveErrorNetwork.it).toBe('Salvataggio non riuscito. I tuoi numeri sono ancora qui. Riprova.');
+    expect(strings.saveErrorTimeout.it).toBe('Salvataggio non riuscito. I tuoi numeri sono ancora qui. Riprova.');
+    expect(strings.saveErrorPermission.en).toContain('log in again');
+    expect(strings.saveErrorPermission.it).toContain('Accedi di nuovo');
+    for (const key of ['saveErrorInvalid', 'saveErrorUnknown', 'snackbarDismiss'] as const) {
+      expect(strings[key].en).toBeTruthy();
+      expect(strings[key].it).toBeTruthy();
+    }
+  });
+
   it('returns strings from parameterised text in both languages', () => {
     const dict = {
       hello: {

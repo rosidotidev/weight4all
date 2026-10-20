@@ -1,13 +1,18 @@
 import { signal } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { TestBed } from '@angular/core/testing';
 import { EntryResult, EntryStore } from '../core/data/entry.store';
 import { PreferencesStore } from '../core/data/preferences.store';
+import { SessionScope } from '../core/data/session-scope';
 import { DraftStore } from '../core/state/draft.store';
 import { Entry } from '../domain/entry';
 import { Language } from '../domain/language';
 import { EntryFormComponent } from './entry-form.component';
 
 const DAY = '2026-10-20';
+const epoch = signal(0);
+let epochNow = () => epoch();
+const FAILED = "Couldn't save. Your numbers are still here. Try again.";
 
 describe('EntryFormComponent', () => {
   let entries: ReturnType<typeof signal<Readonly<Record<string, Entry>>>>;
@@ -17,19 +22,25 @@ describe('EntryFormComponent', () => {
   beforeEach(async () => {
     entries = signal<Readonly<Record<string, Entry>>>({});
     language = signal<Language>('en');
+    epoch.set(0);
+    epochNow = () => epoch();
     save = vi.fn<(entry: Entry) => Promise<EntryResult>>().mockResolvedValue({ ok: true });
     await TestBed.configureTestingModule({
       imports: [EntryFormComponent],
       providers: [
         { provide: EntryStore, useValue: { entries, save } },
         { provide: PreferencesStore, useValue: { language } },
+        { provide: SessionScope, useValue: { sessionEpoch: () => epochNow() } },
       ],
     }).compileComponents();
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     document.body.replaceChildren();
   });
+
+  const snackText = () => document.querySelector('.mat-mdc-snack-bar-container')?.textContent ?? '';
 
   async function setup(day = DAY) {
     const fixture = TestBed.createComponent(EntryFormComponent);
@@ -198,6 +209,138 @@ describe('EntryFormComponent', () => {
     expect(button().disabled).toBe(false);
     expect(message().textContent).not.toContain('Saved!');
     expect(TestBed.inject(DraftStore).get(DAY)).toEqual({ weight: { state: 'value', text: '72,5' } });
+  });
+
+  describe('a failed save', () => {
+    it.each([
+      ['network', FAILED, 'Salvataggio non riuscito. I tuoi numeri sono ancora qui. Riprova.'],
+      ['timeout', FAILED, 'Salvataggio non riuscito. I tuoi numeri sono ancora qui. Riprova.'],
+      ['permission', "Couldn't save. Your numbers are still here. Please log in again.", 'Accedi di nuovo'],
+      ['invalid', "Couldn't save. Your numbers are still here. Check them and try again.", 'Controllali e riprova'],
+      ['unknown', "Couldn't save. Your numbers are still here. Try again in a moment.", 'Riprova tra un momento'],
+    ] as const)('shows the %s message inline and in a snackbar, never saved', async (code, english, italian) => {
+      save.mockResolvedValue({ ok: false, code });
+      const { message, button, input, press, type, fixture } = await setup();
+      await type('72.5');
+      await press();
+      expect(message().textContent?.trim()).toBe(english);
+      expect(message().textContent).not.toContain('Saved!');
+      expect(snackText()).toContain(english);
+      expect(snackText()).toContain('Dismiss');
+      expect(input().value).toBe('72.5');
+      expect(button().disabled).toBe(false);
+      expect(JSON.stringify(TestBed.inject(DraftStore).get(DAY))).toContain('72.5');
+
+      language.set('it');
+      await fixture.whenStable();
+      expect(message().textContent).toContain(italian);
+    });
+
+    it('does not auto-dismiss the snackbar or the inline message', async () => {
+      save.mockResolvedValue({ ok: false, code: 'network' });
+      const open = vi.spyOn(TestBed.inject(MatSnackBar), 'open');
+      const { message, type, press } = await setup();
+      await type('72.5');
+      await press();
+      expect(open).toHaveBeenCalledWith(FAILED, 'Dismiss', { duration: 0 });
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      expect(snackText()).toContain(FAILED);
+      expect(message().textContent).toContain(FAILED);
+    });
+
+    it('closes the snackbar with Dismiss and keeps the inline message', async () => {
+      save.mockResolvedValue({ ok: false, code: 'network' });
+      const { message, type, press, fixture } = await setup();
+      await type('72.5');
+      await press();
+      document.querySelector<HTMLButtonElement>('.mat-mdc-snack-bar-container button')!.click();
+      await fixture.whenStable();
+      await vi.waitFor(() => expect(document.querySelector('.mat-mdc-snack-bar-container')).toBeNull());
+      expect(message().textContent).toContain(FAILED);
+    });
+
+    it('clears the inline message on the next edit', async () => {
+      save.mockResolvedValue({ ok: false, code: 'network' });
+      const { message, type, press } = await setup();
+      await type('72.5');
+      await press();
+      await type('72.6');
+      expect(message().textContent?.trim()).toBe('');
+    });
+
+    it('closes the snackbar when the user edits', async () => {
+      save.mockResolvedValue({ ok: false, code: 'network' });
+      const { type, press, fixture } = await setup();
+      await type('72.5');
+      await press();
+      expect(snackText()).toContain(FAILED);
+      await type('72.6');
+      await fixture.whenStable();
+      await vi.waitFor(() => expect(document.querySelector('.mat-mdc-snack-bar-container')).toBeNull());
+    });
+
+    it('closes the snackbar when the form is destroyed', async () => {
+      save.mockResolvedValue({ ok: false, code: 'network' });
+      const { type, press, fixture } = await setup();
+      await type('72.5');
+      await press();
+      expect(snackText()).toContain(FAILED);
+      fixture.destroy();
+      await vi.waitFor(() => expect(document.querySelector('.mat-mdc-snack-bar-container')).toBeNull());
+    });
+
+    it('does not open the snackbar when the session changes while it loads', async () => {
+      save.mockResolvedValue({ ok: false, code: 'network' });
+      const { type, press } = await setup();
+      await type('72.5');
+      // Reads of the epoch in a save: before it, right after it, and after the snackbar loads.
+      let reads = 0;
+      epochNow = () => (++reads > 2 ? 1 : 0);
+      await press();
+      expect(snackText()).toBe('');
+    });
+
+    it('closes the snackbar and the message on a new attempt, then shows Saved! when it works', async () => {
+      save.mockResolvedValueOnce({ ok: false, code: 'network' });
+      const { message, type, press, fixture } = await setup();
+      await type('72.5');
+      await press();
+      expect(snackText()).toContain(FAILED);
+      await press();
+      await fixture.whenStable();
+      await vi.waitFor(() => expect(document.querySelector('.mat-mdc-snack-bar-container')).toBeNull());
+      expect(message().textContent).toContain('Saved!');
+      expect(message().textContent).not.toContain(FAILED);
+      expect(TestBed.inject(DraftStore).get(DAY)).toEqual({});
+    });
+  });
+
+  describe('a session change during a save', () => {
+    it('discards a success: no Saved!, draft kept', async () => {
+      let finish!: (r: EntryResult) => void;
+      save.mockReturnValueOnce(new Promise<EntryResult>((resolve) => (finish = resolve)));
+      const { message, press, type, fixture } = await setup();
+      await type('72.5');
+      await press();
+      epoch.set(1);
+      finish({ ok: true });
+      await fixture.whenStable();
+      expect(message().textContent).not.toContain('Saved!');
+      expect(TestBed.inject(DraftStore).get(DAY)).toEqual({ weight: { state: 'value', text: '72.5' } });
+    });
+
+    it('discards a failure: no message, no snackbar', async () => {
+      let finish!: (r: EntryResult) => void;
+      save.mockReturnValueOnce(new Promise<EntryResult>((resolve) => (finish = resolve)));
+      const { message, press, type, fixture } = await setup();
+      await type('72.5');
+      await press();
+      epoch.set(1);
+      finish({ ok: false, code: 'network' });
+      await fixture.whenStable();
+      expect(message().textContent?.trim()).toBe('');
+      expect(snackText()).toBe('');
+    });
   });
 
   it('keeps typed text across a destroyed and recreated form (Tab switch)', async () => {

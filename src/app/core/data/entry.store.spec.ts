@@ -10,6 +10,7 @@ const m = vi.hoisted(() => ({
   getDocs: vi.fn(),
   doc: vi.fn((...path: unknown[]) => ({ path: path.slice(1).join('/') })),
   setDoc: vi.fn(),
+  getDocFromServer: vi.fn(),
   deleteDoc: vi.fn(),
   serverTimestamp: vi.fn(() => 'SERVER_TS'),
 }));
@@ -256,6 +257,118 @@ describe('EntryStore', () => {
       const store = await create();
       expect(await store.save(entry)).toEqual({ ok: false, code: 'unknown' });
       expect(m.setDoc).not.toHaveBeenCalled();
+    });
+
+    describe('after a timeout', () => {
+      const other = { day: '2026-10-19', values: { weight: 70 } };
+
+      async function timedOutStore() {
+        vi.useFakeTimers();
+        m.getDocs.mockResolvedValue(docs(['2026-10-20', { weight: 71 }]));
+        const store = await create();
+        await store.load('u1');
+        m.setDoc.mockReturnValueOnce(new Promise(() => undefined));
+        const saving = store.save(entry);
+        await vi.advanceTimersByTimeAsync(SAVE_TIMEOUT_MS);
+        expect(await saving).toEqual({ ok: false, code: 'timeout' });
+        return store;
+      }
+
+      it('re-reads the Day with getDocFromServer before the next write and updates the signal', async () => {
+        const store = await timedOutStore();
+        const order: string[] = [];
+        m.getDocFromServer.mockImplementationOnce(async () => {
+          order.push('read');
+          return { exists: () => true, data: () => ({ weight: 72.9 }) };
+        });
+        m.setDoc.mockImplementationOnce(async () => {
+          order.push('write');
+        });
+        expect(await store.save(entry)).toEqual({ ok: true });
+        expect(order).toEqual(['read', 'write']);
+        expect(m.getDocFromServer).toHaveBeenCalledTimes(1);
+        expect(m.doc).toHaveBeenLastCalledWith(expect.anything(), 'users', 'u1', 'entries', '2026-10-20');
+        expect(store.entries()['2026-10-20']).toEqual(entry);
+      });
+
+      it('puts the server state in the signal when the read succeeds but the write fails', async () => {
+        const store = await timedOutStore();
+        m.getDocFromServer.mockResolvedValueOnce({ exists: () => true, data: () => ({ weight: 72.9 }) });
+        m.setDoc.mockRejectedValueOnce(Object.assign(new Error('x'), { code: 'unavailable' }));
+        expect(await store.save(entry)).toEqual({ ok: false, code: 'network' });
+        expect(store.entries()['2026-10-20']).toEqual({ day: '2026-10-20', values: { weight: 72.9 } });
+      });
+
+      it('removes the Day from the signal when the server has no document', async () => {
+        const store = await timedOutStore();
+        m.getDocFromServer.mockResolvedValueOnce({ exists: () => false, data: () => undefined });
+        m.setDoc.mockRejectedValueOnce(Object.assign(new Error('x'), { code: 'unavailable' }));
+        await store.save(entry);
+        expect(store.entries()['2026-10-20']).toBeUndefined();
+      });
+
+      it('clears the mark once read, so the next save does not re-read', async () => {
+        const store = await timedOutStore();
+        m.getDocFromServer.mockResolvedValueOnce({ exists: () => false, data: () => undefined });
+        await store.save(entry);
+        await store.save(entry);
+        expect(m.getDocFromServer).toHaveBeenCalledTimes(1);
+      });
+
+      it('does not re-read another Day or a Day that never timed out', async () => {
+        const store = await timedOutStore();
+        await store.save(other);
+        expect(m.getDocFromServer).not.toHaveBeenCalled();
+        const fresh = await create();
+        await fresh.load('u1');
+        await fresh.save(entry);
+        expect(m.getDocFromServer).not.toHaveBeenCalled();
+      });
+
+      it('returns the code and does not write when the re-read fails, keeping the mark', async () => {
+        const store = await timedOutStore();
+        m.setDoc.mockClear();
+        m.getDocFromServer.mockRejectedValueOnce(Object.assign(new Error('x'), { code: 'unavailable' }));
+        expect(await store.save(entry)).toEqual({ ok: false, code: 'network' });
+        expect(m.setDoc).not.toHaveBeenCalled();
+        expect(store.entries()['2026-10-20']).toEqual({ day: '2026-10-20', values: { weight: 71 } });
+        m.getDocFromServer.mockResolvedValueOnce({ exists: () => true, data: () => ({ weight: 71 }) });
+        expect(await store.save(entry)).toEqual({ ok: true });
+        expect(m.getDocFromServer).toHaveBeenCalledTimes(2);
+      });
+
+      it('times out the re-read after 10 s', async () => {
+        const store = await timedOutStore();
+        m.setDoc.mockClear();
+        m.getDocFromServer.mockReturnValueOnce(new Promise(() => undefined));
+        const saving = store.save(entry);
+        await vi.advanceTimersByTimeAsync(SAVE_TIMEOUT_MS);
+        expect(await saving).toEqual({ ok: false, code: 'timeout' });
+        expect(m.setDoc).not.toHaveBeenCalled();
+      });
+
+      it('forgets the mark on reset', async () => {
+        const store = await timedOutStore();
+        epoch.set(1);
+        store.reset();
+        await store.load('u1');
+        await store.save(entry);
+        expect(m.getDocFromServer).not.toHaveBeenCalled();
+      });
+
+      it('discards a re-read that arrives after the session changed, without writing', async () => {
+        const store = await timedOutStore();
+        m.setDoc.mockClear();
+        const read = deferred<unknown>();
+        m.getDocFromServer.mockReturnValueOnce(read.promise);
+        const saving = store.save(entry);
+        epoch.set(1);
+        store.reset();
+        read.resolve({ exists: () => true, data: () => ({ weight: 99 }) });
+        await saving;
+        expect(m.setDoc).not.toHaveBeenCalled();
+        expect(store.entries()).toEqual({});
+      });
     });
   });
 

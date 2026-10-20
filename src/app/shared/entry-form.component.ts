@@ -1,11 +1,24 @@
-import { ChangeDetectionStrategy, Component, ElementRef, computed, inject, input, signal } from '@angular/core';
-import { EntryStore } from '../core/data/entry.store';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  ElementRef,
+  Injector,
+  computed,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
+import type { MatSnackBarRef } from '@angular/material/snack-bar';
+import { EntryErrorCode, EntryStore } from '../core/data/entry.store';
+import { SessionScope } from '../core/data/session-scope';
 import { DraftStore } from '../core/state/draft.store';
 import { DIMENSIONS, DimensionKey } from '../domain/dimensions';
 import { DayKey, initialDraft } from '../domain/entry';
 import { formatNumber } from '../domain/number';
 import { ValueError, validateValue } from '../domain/validation';
 import { I18n } from './i18n';
+import { saveErrorKey } from './save-error';
 
 interface Field {
   readonly dimension: (typeof DIMENSIONS)[number];
@@ -137,6 +150,16 @@ export class EntryFormComponent {
   protected readonly t = this.i18n.t;
   protected readonly saving = signal(false);
   private readonly saved = signal(false);
+  private readonly failure = signal<EntryErrorCode | null>(null);
+  private readonly injector = inject(Injector);
+  private attempt = 0;
+  private readonly scope = inject(SessionScope);
+  private snackBarRef: MatSnackBarRef<unknown> | null = null;
+
+  constructor() {
+    // The inline message goes with the form, so the snackbar and any pending open go with it.
+    inject(DestroyRef).onDestroy(() => this.closeSnackBar());
+  }
   private readonly errors = signal<Partial<Record<DimensionKey, ValueError>>>({});
 
   /** Where each field starts from when the user has not typed in it. */
@@ -148,6 +171,7 @@ export class EntryFormComponent {
     const errors = this.errors();
     const locale = this.i18n.locale();
     const t = this.t();
+    const failure = this.failure();
     return DIMENSIONS.map((dimension, index) => {
       const edit = edits[dimension.key];
       const start = initial[dimension.key];
@@ -160,7 +184,8 @@ export class EntryFormComponent {
           min: formatNumber(dimension.min, dimension.decimals, locale),
           max: formatNumber(dimension.max, dimension.decimals, locale),
         });
-      } else if (index === 0 && this.saved()) message = t.saved;
+      } else if (index === 0 && failure) message = t[saveErrorKey(failure)];
+      else if (index === 0 && this.saved()) message = t.saved;
       return { dimension, text, error, message };
     });
   });
@@ -168,6 +193,8 @@ export class EntryFormComponent {
   protected edit(key: DimensionKey, event: Event): void {
     this.drafts.set(this.day(), key, (event.target as HTMLInputElement).value);
     this.saved.set(false);
+    this.failure.set(null);
+    this.closeSnackBar();
     this.errors.update((errors) => (errors[key] ? { ...errors, [key]: undefined } : errors));
   }
 
@@ -192,14 +219,40 @@ export class EntryFormComponent {
     }
     this.errors.set({});
     this.saved.set(false);
+    this.failure.set(null);
+    this.closeSnackBar();
     this.saving.set(true);
     const sent = this.drafts.get(day);
+    const epoch = this.scope.sessionEpoch();
     const result = await this.store.save({ day, values });
     this.saving.set(false);
-    if (result.ok) {
+    // A result from an older session belongs to nobody now: no message, no "Saved!", no draft change.
+    if (epoch !== this.scope.sessionEpoch()) return;
+    if (!result.ok) {
+      this.failure.set(result.code);
+      const opening = this.attempt;
+      const t = this.t();
+      // Loaded on first failure so Material's snack bar stays out of the initial bundle.
+      try {
+        const { MatSnackBar } = await import('@angular/material/snack-bar');
+        if (opening !== this.attempt || epoch !== this.scope.sessionEpoch()) return;
+        this.snackBarRef = this.injector
+          .get(MatSnackBar)
+          .open(t[saveErrorKey(result.code)], t.snackbarDismiss, { duration: 0 });
+      } catch {
+        // The chunk may not load offline; the inline message already says the save failed.
+      }
+    } else {
       // Text typed while the write was in flight is newer than what was saved: keep it.
       if (this.drafts.get(day) === sent) this.drafts.drop(day);
       this.saved.set(true);
     }
+  }
+
+  /** Closes the snackbar and invalidates one that is still being opened. */
+  private closeSnackBar(): void {
+    this.attempt++;
+    this.snackBarRef?.dismiss();
+    this.snackBarRef = null;
   }
 }

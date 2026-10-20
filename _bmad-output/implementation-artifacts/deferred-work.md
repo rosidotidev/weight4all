@@ -76,3 +76,7 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-2-1-load-the-entries-into-the-app.md`
   summary: Put a timeout on the initial `getDocs` so an offline stalled read reaches `error` and Retry.
   evidence: Writes have a 10 s race but the read does not; Today could stay on the skeleton (unverified severity: medium; settle with an offline run).
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-2-3-never-lose-typed-values-when-a-save-fails.md`
+  summary: Track a timed-out delete in `EntryStore.remove` and clear the timeout mark there, as `save` does (Story 2.9).
+  evidence: `remove` ignores the timed-out Day set, so a delete that timed out can still commit and a later write for that Day is not re-read first (unverified severity: medium; Story 2.9 owns delete failure).

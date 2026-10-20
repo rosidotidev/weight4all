@@ -107,6 +107,27 @@ export const strings = {
   },
   entrySave: { en: 'Save', it: 'Salva' },
   entrySaving: { en: 'Saving…', it: 'Salvataggio in corso…' },
+  saveErrorNetwork: {
+    en: "Couldn't save. Your numbers are still here. Try again.",
+    it: 'Salvataggio non riuscito. I tuoi numeri sono ancora qui. Riprova.',
+  },
+  saveErrorTimeout: {
+    en: "Couldn't save. Your numbers are still here. Try again.",
+    it: 'Salvataggio non riuscito. I tuoi numeri sono ancora qui. Riprova.',
+  },
+  saveErrorPermission: {
+    en: "Couldn't save. Your numbers are still here. Please log in again.",
+    it: 'Salvataggio non riuscito. I tuoi numeri sono ancora qui. Accedi di nuovo.',
+  },
+  saveErrorInvalid: {
+    en: "Couldn't save. Your numbers are still here. Check them and try again.",
+    it: 'Salvataggio non riuscito. I tuoi numeri sono ancora qui. Controllali e riprova.',
+  },
+  saveErrorUnknown: {
+    en: "Couldn't save. Your numbers are still here. Try again in a moment.",
+    it: 'Salvataggio non riuscito. I tuoi numeri sono ancora qui. Riprova tra un momento.',
+  },
+  snackbarDismiss: { en: 'Dismiss', it: 'Chiudi' },
   todayLoading: { en: 'Loading your days', it: 'Sto caricando i tuoi giorni' },
   todayLoadError: {
     en: 'We could not load your days. Please check your connection and try again.',
