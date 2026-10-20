@@ -56,6 +56,7 @@ describe('dimension registry', () => {
       max: 24,
       step: 0.5,
       decimals: 1,
+      rowMinDecimals: 0,
       required: false,
       clearable: true,
       input: 'slider',

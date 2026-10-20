@@ -79,4 +79,25 @@ describe('RecentEntriesComponent', () => {
     expect(rows.length).toBe(1);
     expect(rows[0].textContent).toContain('71.0 kg');
   });
+
+  it('shows all three values with the Mood face, and the decimal comma in Italian', async () => {
+    entries.set({ '2025-10-01': { day: '2025-10-01', values: { weight: 72.4, mood: 7, sleep: 7.5 } } });
+    const { fixture, el } = await setup();
+    const values = () => Array.from(el.querySelectorAll('.row .value')).map((v) => v.textContent!.trim());
+    expect(values()).toEqual(['72.4 kg', '7', '7.5 h']);
+    expect(el.querySelector('.row w4a-mood-face svg')).not.toBeNull();
+    language.set('it');
+    await fixture.whenStable();
+    expect(values()).toEqual(['72,4 kg', '7', '7,5 h']);
+  });
+
+  it('shows em dashes for a missing Mood and Sleep', async () => {
+    entries.set({ '2025-10-01': { day: '2025-10-01', values: { weight: 72.9 } } });
+    const { el } = await setup();
+    expect(Array.from(el.querySelectorAll('.row .value')).map((v) => v.textContent!.trim())).toEqual([
+      '72.9 kg',
+      '—',
+      '—',
+    ]);
+  });
 });

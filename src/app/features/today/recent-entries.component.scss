@@ -45,3 +45,8 @@
   font-size: 14px;
   color: var(--w4a-on-surface-variant);
 }
+.value.mood {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--w4a-space-2);
+}

@@ -110,4 +110,27 @@ describe('WeekCardComponent', () => {
     fixture.detectChanges();
     expect(initials()).toEqual(['D', 'L', 'M', 'M', 'G', 'V', 'S']);
   });
+
+  it('averages Mood and Sleep from Real values only, and reads No data when there are none', async () => {
+    entries.set(
+      all([
+        { day: TODAY, values: { weight: 72, mood: 8, sleep: 7 } },
+        { day: addDays(TODAY, -1), values: { weight: 73, mood: 6 } },
+        { day: addDays(TODAY, -2), values: { weight: 74 } },
+      ]),
+    );
+    const { el, fixture } = await setup();
+    const stats = Array.from(el.querySelectorAll('.stat')).map((s) => s.textContent!.replace(/\s+/g, ' ').trim());
+    expect(stats).toEqual(['Avg weight73.0 kg', 'Avg mood7.0', 'Avg sleep7.0 h']);
+    entries.set(all([entry(TODAY, 72)]));
+    await fixture.whenStable();
+    expect(el.textContent!.match(/No data/g)).toHaveLength(2);
+  });
+
+  it('writes the Sleep average with the decimal comma in Italian', async () => {
+    language.set('it');
+    entries.set(all([{ day: TODAY, values: { weight: 72, sleep: 7.5 } }]));
+    const { el } = await setup();
+    expect(el.textContent).toContain('7,5 h');
+  });
 });

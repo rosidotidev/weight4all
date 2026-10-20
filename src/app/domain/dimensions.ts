@@ -8,6 +8,8 @@ export interface Dimension {
   readonly max: number;
   readonly step: number;
   readonly decimals: number;
+  /** Fewest decimals a list row shows (8 h, 7.5 h); the form always shows `decimals`. */
+  readonly rowMinDecimals?: number;
   readonly required: boolean;
   readonly clearable: boolean;
   readonly input: DimensionInput;
@@ -71,6 +73,7 @@ export const DIMENSIONS = [
     max: 24,
     step: 0.5,
     decimals: 1,
+    rowMinDecimals: 0,
     required: false,
     clearable: true,
     input: 'slider',

@@ -1,7 +1,7 @@
 /** Formats a number with a fixed count of decimals for a locale (AD-14). Story 2.1 extends this file. */
-export function formatNumber(value: number, decimals: number, locale: string): string {
+export function formatNumber(value: number, decimals: number, locale: string, minDecimals = decimals): string {
   return new Intl.NumberFormat(locale, {
-    minimumFractionDigits: decimals,
+    minimumFractionDigits: minDecimals,
     maximumFractionDigits: decimals,
   }).format(value);
 }

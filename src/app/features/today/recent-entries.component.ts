@@ -2,21 +2,15 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { EntryStore } from '../../core/data/entry.store';
 import { ClockService } from '../../core/state/clock.service';
 import { formatDay } from '../../domain/day';
-import { DIMENSIONS } from '../../domain/dimensions';
-import { Entry } from '../../domain/entry';
 import { recentEntries } from '../../domain/history';
-import { formatNumber } from '../../domain/number';
+import { entryCells } from '../../shared/entry-cells';
 import { I18n } from '../../shared/i18n';
-
-interface Cell {
-  readonly key: string;
-  /** The formatted value with its unit, or `null` when the Entry has none. */
-  readonly text: string | null;
-}
+import { MoodFaceComponent } from '../../shared/mood-face.component';
 
 /** The last 5 Entries (expanded Today) as compact, non-interactive rows. */
 @Component({
   selector: 'w4a-recent-entries',
+  imports: [MoodFaceComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './recent-entries.component.html',
   styleUrl: './recent-entries.component.scss',
@@ -35,20 +29,7 @@ export class RecentEntriesComponent {
     return recentEntries(upToToday, 5).map((entry) => ({
       day: entry.day,
       date: formatDay(entry.day, locale),
-      cells: this.cells(entry, locale),
+      cells: entryCells(entry, locale),
     }));
   });
-
-  private cells(entry: Entry, locale: string): Cell[] {
-    return DIMENSIONS.map((dimension) => {
-      const value = (entry.values as Record<string, number | undefined>)[dimension.key];
-      return {
-        key: dimension.key,
-        text:
-          value === undefined
-            ? null
-            : `${formatNumber(value, dimension.decimals, locale)}${dimension.unit ? ' ' + dimension.unit : ''}`,
-      };
-    });
-  }
 }

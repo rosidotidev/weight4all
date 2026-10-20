@@ -5,12 +5,12 @@ import { MatMenuModule } from '@angular/material/menu';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { EntryStore } from '../../core/data/entry.store';
 import { ClockService } from '../../core/state/clock.service';
-import { DIMENSIONS } from '../../domain/dimensions';
 import { formatDay } from '../../domain/day';
 import { Entry } from '../../domain/entry';
 import { HistoryRow, buildHistoryRows } from '../../domain/history';
-import { formatNumber } from '../../domain/number';
+import { Cell, entryCells } from '../../shared/entry-cells';
 import { I18n } from '../../shared/i18n';
+import { MoodFaceComponent } from '../../shared/mood-face.component';
 import { DeleteEntryDialogComponent } from './delete-entry-dialog.component';
 
 /** Material "edit" (pencil) and "more vert" icons, 24x24 viewBox. */
@@ -20,16 +20,10 @@ const DOTS = 'M12 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4
 /** How far a touch drag must go to reveal or hide the Edit action. */
 const SWIPE_PX = 48;
 
-interface Cell {
-  readonly key: string;
-  /** The formatted value with its unit, or `null` when the Entry has none. */
-  readonly text: string | null;
-}
-
 /** History: every Entry newest first with dashed rows for the Days in between, in a virtual list. */
 @Component({
   selector: 'w4a-history',
-  imports: [ScrollingModule, RouterLink, RouterOutlet, MatMenuModule, DeleteEntryDialogComponent],
+  imports: [ScrollingModule, RouterLink, RouterOutlet, MatMenuModule, DeleteEntryDialogComponent, MoodFaceComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { tabindex: '-1' },
   templateUrl: './history.component.html',
@@ -62,17 +56,7 @@ export class HistoryComponent {
   }
 
   protected cells(entry: Entry): Cell[] {
-    const locale = this.i18n.locale();
-    return DIMENSIONS.map((dimension) => {
-      const value = (entry.values as Record<string, number | undefined>)[dimension.key];
-      return {
-        key: dimension.key,
-        text:
-          value === undefined
-            ? null
-            : `${formatNumber(value, dimension.decimals, locale)}${dimension.unit ? ' ' + dimension.unit : ''}`,
-      };
-    });
+    return entryCells(entry, this.i18n.locale());
   }
 
   /** The row's values as one phrase for its accessible name. */

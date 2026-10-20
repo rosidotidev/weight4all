@@ -185,3 +185,8 @@ button:focus-visible {
   border-radius: var(--w4a-rounded-full);
   cursor: pointer;
 }
+.value.mood {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--w4a-space-2);
+}

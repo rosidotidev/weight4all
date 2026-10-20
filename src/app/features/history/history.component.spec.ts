@@ -377,4 +377,23 @@ describe('HistoryComponent', () => {
     expect(el.querySelector('.missing')?.textContent).toContain('nessuna registrazione');
     expect(el.querySelector('.add')?.textContent).toContain('+ Aggiungi');
   });
+
+  it('shows all three values, Mood as a face with its number and whole hours without a decimal', async () => {
+    entries.set(byDay({ day: '2026-10-19', values: { weight: 72.4, mood: 7, sleep: 8 } }));
+    const { el } = await setup();
+    const values = Array.from(el.querySelectorAll('a.row .value'));
+    expect(values.map((v) => v.textContent!.trim())).toEqual(['72.4 kg', '7', '8 h']);
+    expect(values[1].querySelector('w4a-mood-face svg')).not.toBeNull();
+    expect(el.querySelector('a.row')!.getAttribute('aria-label')).toContain('72.4 kg, 7, 8 h');
+  });
+
+  it('shows em dashes, never 0, for a Weight-only Entry', async () => {
+    entries.set(byDay(entry('2026-10-19', 72.9)));
+    const { el } = await setup();
+    const values = Array.from(el.querySelectorAll('a.row .value'));
+    expect(values.map((v) => v.textContent!.trim())).toEqual(['72.9 kg', '—', '—']);
+    expect(values[1].classList).toContain('absent');
+    expect(values[2].classList).toContain('absent');
+    expect(el.querySelector('w4a-mood-face')).toBeNull();
+  });
 });

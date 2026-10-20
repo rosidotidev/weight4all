@@ -5,7 +5,9 @@
       <li class="row">
         <span class="date">{{ row.date }}</span>
         @for (cell of row.cells; track cell.key) {
-          @if (cell.text !== null) {
+          @if (cell.face !== null) {
+            <span class="value mood"><w4a-mood-face [level]="cell.face" />{{ cell.text }}</span>
+          } @else if (cell.text !== null) {
             <span class="value">{{ cell.text }}</span>
           } @else {
             <span class="value absent">{{ t().historyDash }}</span>

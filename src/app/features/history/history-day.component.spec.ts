@@ -271,4 +271,63 @@ describe('HistoryDayComponent', () => {
       expect(fixture.el.querySelector('[role="alertdialog"] [role="alert"]')).not.toBeNull();
     });
   });
+
+  describe('all three values', () => {
+    const slider = (el: HTMLElement) => el.querySelector<HTMLInputElement>('input[type="range"]')!;
+    const faces = (el: HTMLElement) => Array.from(el.querySelectorAll<HTMLButtonElement>('[role="radio"]'));
+    const store = (day: string, values: Entry['values']) =>
+      entries.update((all) => ({ ...all, [day]: { day, values } }));
+
+    it('shows the stored Mood and Sleep when editing', () => {
+      store('2026-10-17', { weight: 72, mood: 4, sleep: 8 });
+      const { el } = setup('2026-10-17');
+      expect(faces(el)[3].getAttribute('aria-checked')).toBe('true');
+      expect(slider(el).value).toBe('8');
+    });
+
+    it('opens an Entry without Sleep with the cleared slider, not 6.0', () => {
+      const { el } = setup('2026-10-14');
+      expect(slider(el).getAttribute('aria-valuetext')).toBe('No sleep value');
+      expect(el.querySelector('.side.value')!.textContent).toBe('—');
+    });
+
+    it('adds Mood and Sleep to a Weight-only Entry and saves all three', async () => {
+      const fixture = setup('2026-10-14');
+      faces(fixture.el)[3].click();
+      slider(fixture.el).value = '7';
+      slider(fixture.el).dispatchEvent(new Event('input'));
+      await fixture.whenStable();
+      await submit(fixture);
+      expect(save).toHaveBeenCalledWith({ day: '2026-10-14', values: { weight: 71.5, mood: 4, sleep: 7 } });
+    });
+
+    it('clears Mood and Sleep, but never Weight', async () => {
+      store('2026-10-17', { weight: 72, mood: 4, sleep: 8 });
+      const fixture = setup('2026-10-17');
+      faces(fixture.el)[3].click();
+      fixture.el.querySelector<HTMLButtonElement>('button[aria-label="Clear sleep"]')!.click();
+      await fixture.whenStable();
+      await submit(fixture);
+      expect(save).toHaveBeenCalledWith({ day: '2026-10-17', values: { weight: 72 } });
+    });
+
+    it('changes an existing Mood and Sleep', async () => {
+      store('2026-10-17', { weight: 72, mood: 4, sleep: 8 });
+      const fixture = setup('2026-10-17');
+      faces(fixture.el)[8].click();
+      slider(fixture.el).value = '5.5';
+      slider(fixture.el).dispatchEvent(new Event('input'));
+      await fixture.whenStable();
+      await submit(fixture);
+      expect(save).toHaveBeenCalledWith({ day: '2026-10-17', values: { weight: 72, mood: 9, sleep: 5.5 } });
+    });
+
+    it('does not let Weight be cleared', async () => {
+      store('2026-10-17', { weight: 72, mood: 4, sleep: 8 });
+      const fixture = setup('2026-10-17');
+      await type(fixture, '');
+      await submit(fixture);
+      expect(save).not.toHaveBeenCalled();
+    });
+  });
 });

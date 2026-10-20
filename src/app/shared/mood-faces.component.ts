@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, computed, inject, input
 import { LayoutService } from '../core/state/layout.service';
 import { formatNumber } from '../domain/number';
 import { I18n } from './i18n';
+import { CENTER, mouthPath } from './mood-face.component';
 
 interface Face {
   readonly n: number;
@@ -11,10 +12,6 @@ interface Face {
 }
 
 const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-const CENTER = 25;
-/** Control point offset of the mouth at level 1, and its growth per level (as drawn in the mockups). */
-const MOUTH_FROWN = -13.4;
-const MOUTH_STEP = 4.42;
 
 /** Ten drawn faces as a radio group: tap selects, tapping the selected face clears (FR-15). */
 @Component({
@@ -41,10 +38,8 @@ export class MoodFacesComponent {
     const locale = this.i18n.locale();
     const t = this.i18n.t();
     return LEVELS.map((n) => {
-      const control = Math.round((CENTER + MOUTH_FROWN + (n - 1) * MOUTH_STEP) * 10) / 10;
-      const mouth = `M${CENTER - 7.1} ${CENTER + 6.5} Q${CENTER} ${control} ${CENTER + 7.1} ${CENTER + 6.5}`;
       const text = formatNumber(n, 0, locale);
-      return { n, label: t.moodFace({ n: text }), mouth };
+      return { n, label: t.moodFace({ n: text }), mouth: mouthPath(n) };
     });
   });
 
