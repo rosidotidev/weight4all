@@ -8,6 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "lint": "eslint .",
     "test": "ng test --watch=false && npm run test:lint",
+    "emulators": "firebase emulators:start --only auth,firestore",
     "test:rules": "node scripts/test-rules.mjs",
     "check": "npm run lint && npm run test && npm run test:rules",
     "deploy": "npm run check && firebase deploy",

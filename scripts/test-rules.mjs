@@ -1,5 +1,5 @@
-// Runs the Firestore rules tests in tests/rules/. Passes when there are none yet
-// (Story 1.2 adds them) and exits non-zero when any test fails.
+// Runs the Firestore rules tests in tests/rules/ inside the Firestore emulator.
+// Passes when there are none yet and exits non-zero when any test fails.
 import { existsSync, readdirSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 
@@ -13,5 +13,11 @@ if (!existsSync('tests/rules') || !hasTests('tests/rules')) {
   process.exit(0);
 }
 
-const result = spawnSync('npx', ['vitest', 'run', '--root', 'tests/rules'], { stdio: 'inherit', shell: true });
+// The emulator starts and stops around vitest and sets FIRESTORE_EMULATOR_HOST for the tests.
+const vitest = 'vitest run --config tests/rules/vitest.config.mts';
+const result = spawnSync(
+  'npx',
+  ['firebase', 'emulators:exec', '--only', 'firestore', '--project', 'demo-weight4all', `"${vitest}"`],
+  { stdio: 'inherit', shell: true },
+);
 process.exit(result.status ?? 1);
