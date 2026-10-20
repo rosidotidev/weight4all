@@ -62,6 +62,17 @@ export const strings = {
     en: 'We could not save your language, so we went back to the previous one. Please try again.',
     it: 'Non siamo riusciti a salvare la lingua, quindi abbiamo ripristinato quella di prima. Riprova pure.',
   },
+  settingsAccentLegend: { en: 'Accent color', it: 'Colore di accento' },
+  accentViolet: { en: 'Violet', it: 'Viola' },
+  accentTeal: { en: 'Teal', it: 'Verde acqua' },
+  accentOrange: { en: 'Orange', it: 'Arancione' },
+  accentMagenta: { en: 'Magenta', it: 'Magenta' },
+  accentBlue: { en: 'Blue', it: 'Blu' },
+  accentGreen: { en: 'Green', it: 'Verde' },
+  settingsAccentSaveError: {
+    en: 'We could not save your color, so we went back to the previous one. Please try again.',
+    it: 'Non siamo riusciti a salvare il colore, quindi abbiamo ripristinato quello di prima. Riprova pure.',
+  },
   settingsAccountHeading: { en: 'Account', it: 'Account' },
   settingsSignedInAs: { en: 'Signed in as', it: 'Accesso eseguito come' },
   authErrorInvalidCredentials: {

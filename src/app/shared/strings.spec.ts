@@ -44,6 +44,17 @@ describe('strings', () => {
     expect(strings.settingsLanguageItalian).toEqual({ en: 'Italiano', it: 'Italiano' });
   });
 
+  it('names the six accents in both languages', () => {
+    expect(strings.accentViolet).toEqual({ en: 'Violet', it: 'Viola' });
+    expect(strings.accentTeal).toEqual({ en: 'Teal', it: 'Verde acqua' });
+    expect(strings.accentOrange).toEqual({ en: 'Orange', it: 'Arancione' });
+    expect(strings.accentMagenta).toEqual({ en: 'Magenta', it: 'Magenta' });
+    expect(strings.accentBlue).toEqual({ en: 'Blue', it: 'Blu' });
+    expect(strings.accentGreen).toEqual({ en: 'Green', it: 'Verde' });
+    expect(strings.settingsAccentLegend.en).toBeTruthy();
+    expect(strings.settingsAccentSaveError.it).toBeTruthy();
+  });
+
   it('returns strings from parameterised text in both languages', () => {
     const dict = {
       hello: {

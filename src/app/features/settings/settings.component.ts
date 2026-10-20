@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/data/auth.service';
 import { PreferencesStore } from '../../core/data/preferences.store';
+import { ACCENTS, Accent } from '../../domain/accent';
 import { Language } from '../../domain/language';
 import { I18n } from '../../shared/i18n';
 
@@ -15,7 +16,13 @@ const LANGUAGE_OPTIONS: readonly LanguageOption[] = [
   { language: 'it', label: 'settingsLanguageItalian' },
 ];
 
-/** Settings: Language choice saved to the Account, and the Account section with Log out. */
+type AccentName = `accent${Capitalize<Accent>}`;
+
+const ACCENT_OPTIONS: readonly { readonly accent: Accent; readonly label: AccentName }[] = ACCENTS.map(
+  (accent) => ({ accent, label: `accent${accent[0].toUpperCase()}${accent.slice(1)}` as AccentName }),
+);
+
+/** Settings: accent and Language choices saved to the Account, and the Account section with Log out. */
 @Component({
   selector: 'w4a-settings',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -94,6 +101,50 @@ const LANGUAGE_OPTIONS: readonly LanguageOption[] = [
       outline: 2px solid var(--w4a-primary);
       outline-offset: 2px;
     }
+    .swatches {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--w4a-space-1);
+    }
+    .swatch {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: max(44px, var(--w4a-touch-target));
+      height: max(44px, var(--w4a-touch-target));
+    }
+    .swatch input {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .swatch span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: var(--w4a-rounded-full);
+      color: var(--w4a-on-primary);
+      font-weight: 700;
+    }
+    .swatch input:checked + span {
+      box-shadow:
+        inset 0 0 0 3px var(--w4a-surface),
+        0 0 0 3px var(--w4a-on-surface);
+    }
+    .swatch input:checked + span::before {
+      content: '\\2713';
+    }
+    .swatch input:focus-visible + span {
+      outline: 2px solid var(--w4a-primary);
+      outline-offset: 4px;
+    }
     .account {
       padding: var(--w4a-space-5);
       background: var(--w4a-surface-container);
@@ -135,6 +186,29 @@ const LANGUAGE_OPTIONS: readonly LanguageOption[] = [
   template: `
     <main>
       <h1>{{ t().settingsTitle }}</h1>
+      <fieldset>
+        <legend>{{ t().settingsAccentLegend }}</legend>
+        <div class="swatches">
+          @for (option of accents; track option.accent) {
+            <label class="swatch">
+              <input
+                type="radio"
+                name="accent"
+                [value]="option.accent"
+                [attr.aria-label]="t()[option.label]"
+                [checked]="preferences.accent() === option.accent"
+                (change)="chooseAccent(option.accent)"
+              />
+              <span [style.background]="'var(--w4a-accent-' + option.accent + ')'" aria-hidden="true"></span>
+            </label>
+          }
+        </div>
+        <p class="error accent-error" aria-live="polite">
+          @if (preferences.accentSaveError()) {
+            {{ t().settingsAccentSaveError }}
+          }
+        </p>
+      </fieldset>
       <fieldset>
         <legend>{{ t().settingsLanguageLegend }}</legend>
         <div class="segments">
@@ -181,11 +255,16 @@ export class SettingsComponent {
   private readonly router = inject(Router);
   protected readonly t = inject(I18n).t;
   protected readonly options = LANGUAGE_OPTIONS;
+  protected readonly accents = ACCENT_OPTIONS;
   protected readonly pending = signal(false);
   protected readonly failed = signal(false);
 
   protected choose(language: Language): void {
     void this.preferences.setLanguage(language);
+  }
+
+  protected chooseAccent(accent: Accent): void {
+    void this.preferences.setAccent(accent);
   }
 
   protected async logout(): Promise<void> {

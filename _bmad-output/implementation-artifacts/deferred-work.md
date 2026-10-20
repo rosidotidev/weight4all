@@ -62,3 +62,10 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-1-9-choose-the-language-in-settings-and-keep-it-for-my-account.md`
   summary: Make `formatDay` and `formatNumber` safe for bad input (malformed day key, years below 100, NaN, `-0`) when Story 2.1 extends them.
   evidence: `formatDay('abc', …)` throws a RangeError from Intl and `formatNumber(-0.04, 1, …)` renders `-0.0` (unverified severity: low until callers pass user input).
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-1-10-choose-an-accent-color.md`
+  summary: Stop one preference's save from persisting the other's unconfirmed value (merge-write the changed key, or serialize saves and write confirmed values).
+  evidence: `save()` writes `{accent, language}` from live signals, so a Language save during a pending accent save, or any save before `load` returns, can write an unconfirmed or cached value; a later rollback leaves the document and the screen apart (unverified severity: medium, rare).
+- source_spec: `_bmad-output/implementation-artifacts/spec-1-10-choose-an-accent-color.md`
+  summary: Decide whether an Account without a saved accent should fall back to violet instead of inheriting the previous user's cached accent (and Language).
+  evidence: `reset()` leaves accent and Language untouched by design, so a second user with no saved value keeps the first user's and the next save writes it (unverified severity: medium on shared devices).

@@ -6,6 +6,7 @@ import { db } from './firebase';
 import { SessionScope, SessionStore } from './session-scope';
 
 export const LANGUAGE_CACHE_KEY = 'w4a.language';
+export const ACCENT_CACHE_KEY = 'w4a.accent';
 
 /** A write that gets no answer (offline Firestore keeps writes pending) counts as failed after this long. */
 export const SAVE_TIMEOUT_MS = 10_000;
@@ -19,6 +20,23 @@ function readCachedLanguage(): Language {
   }
 }
 
+function readCachedAccent(): Accent {
+  try {
+    const cached = localStorage.getItem(ACCENT_CACHE_KEY);
+    return isAccent(cached) ? cached : DEFAULT_ACCENT;
+  } catch {
+    return DEFAULT_ACCENT;
+  }
+}
+
+function writeCache(key: string, value: string): void {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // cache is best effort
+  }
+}
+
 function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   let timer: ReturnType<typeof setTimeout> | undefined;
   const timeout = new Promise<never>((_, reject) => {
@@ -28,39 +46,46 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 }
 
 /**
- * Owns the Language signal and its `localStorage` cache, and saves the choice to
- * `users/{uid}/preferences/app` (AD-10). The accent signal arrives with Story 1.10.
+ * Owns the Language and accent signals and their `localStorage` caches, and saves the choices to
+ * `users/{uid}/preferences/app` (AD-10). Each preference keeps its own choice counter, so a late
+ * load or rollback of one never discards the other.
  */
 @Injectable({ providedIn: 'root' })
 export class PreferencesStore implements SessionStore {
   private readonly scope = inject(SessionScope);
   private readonly _language = signal<Language>(readCachedLanguage());
+  private readonly _accent = signal<Accent>(readCachedAccent());
   private readonly _saveError = signal(false);
+  private readonly _accentSaveError = signal(false);
   private uid: string | null = null;
-  private accent: Accent = DEFAULT_ACCENT;
-  /** Counts the choices made; a load or a rollback that started before the latest one gives way. */
-  private choices = 0;
+  /** Count the choices made; a load or a rollback that started before the latest one gives way. */
+  private languageChoices = 0;
+  private accentChoices = 0;
 
   readonly language = this._language.asReadonly();
+  readonly accent = this._accent.asReadonly();
   /** True after a Language save failed and was rolled back; clears when the next choice starts. */
   readonly saveError = this._saveError.asReadonly();
+  /** True after an accent save failed and was rolled back; clears when the next choice starts. */
+  readonly accentSaveError = this._accentSaveError.asReadonly();
 
   constructor() {
     this.scope.registerStore(this);
   }
 
-  /** Session change: forgets the Account but keeps the Language, so Login stays in the last one. */
+  /** Session change: forgets the Account but keeps Language and accent, so Login keeps the last look. */
   reset(): void {
     this.uid = null;
-    this.accent = DEFAULT_ACCENT;
     this._saveError.set(false);
+    this._accentSaveError.set(false);
   }
 
-  /** Reads the saved preferences once; a failed or missing read leaves the cached Language. */
+  /** Reads the saved preferences once; a failed or missing read leaves the cached values. */
   async load(uid: string): Promise<void> {
     this.uid = uid;
     const epoch = this.scope.sessionEpoch();
-    const choices = this.choices;
+    const languageChoices = this.languageChoices;
+    const accentChoices = this.accentChoices;
     let data: Record<string, unknown> | undefined;
     try {
       const snapshot = await getDoc(doc(db, 'users', uid, 'preferences', 'app'));
@@ -69,40 +94,69 @@ export class PreferencesStore implements SessionStore {
       return;
     }
     if (epoch !== this.scope.sessionEpoch() || !data) return;
-    // The accent is remembered even when a later choice wins, so the next save keeps it.
-    if (isAccent(data['accent'])) this.accent = data['accent'];
-    if (choices !== this.choices) return;
-    if (isLanguage(data['language'])) this.apply(data['language']);
+    if (accentChoices === this.accentChoices && isAccent(data['accent'])) this.applyAccent(data['accent']);
+    if (languageChoices === this.languageChoices && isLanguage(data['language'])) {
+      this.applyLanguage(data['language']);
+    }
   }
 
   /** Applies the Language at once, then saves it; a failed save restores the previous one. */
   async setLanguage(language: Language): Promise<void> {
     const previous = this._language();
     if (language === previous) return;
-    const choice = ++this.choices;
-    const epoch = this.scope.sessionEpoch();
+    const choice = ++this.languageChoices;
     this._saveError.set(false);
-    this.apply(language);
-    const uid = this.uid;
-    if (!uid) return;
-    try {
-      await withTimeout(
-        setDoc(doc(db, 'users', uid, 'preferences', 'app'), { accent: this.accent, language }),
-        SAVE_TIMEOUT_MS,
-      );
-    } catch {
-      if (choice !== this.choices || epoch !== this.scope.sessionEpoch()) return;
-      this.apply(previous);
+    this.applyLanguage(language);
+    const saved = await this.save();
+    if (saved === 'failed' && choice === this.languageChoices) {
+      this.applyLanguage(previous);
       this._saveError.set(true);
     }
   }
 
-  private apply(language: Language): void {
-    this._language.set(language);
-    try {
-      localStorage.setItem(LANGUAGE_CACHE_KEY, language);
-    } catch {
-      // cache is best effort
+  /** Applies the accent at once, then saves it; a failed save restores the previous one. */
+  async setAccent(accent: Accent): Promise<void> {
+    const previous = this._accent();
+    if (accent === previous) return;
+    const choice = ++this.accentChoices;
+    this._accentSaveError.set(false);
+    this.applyAccent(accent);
+    const saved = await this.save();
+    if (saved === 'failed' && choice === this.accentChoices) {
+      this.applyAccent(previous);
+      this._accentSaveError.set(true);
     }
+  }
+
+  /**
+   * Writes the full document with the current values. Resolves `failed` only when the write failed
+   * and the session is still the one that started it; otherwise a rollback must not happen.
+   */
+  private async save(): Promise<'saved' | 'failed' | 'skipped'> {
+    const uid = this.uid;
+    if (!uid) return 'skipped';
+    const epoch = this.scope.sessionEpoch();
+    try {
+      await withTimeout(
+        setDoc(doc(db, 'users', uid, 'preferences', 'app'), {
+          accent: this._accent(),
+          language: this._language(),
+        }),
+        SAVE_TIMEOUT_MS,
+      );
+      return 'saved';
+    } catch {
+      return epoch === this.scope.sessionEpoch() ? 'failed' : 'skipped';
+    }
+  }
+
+  private applyLanguage(language: Language): void {
+    this._language.set(language);
+    writeCache(LANGUAGE_CACHE_KEY, language);
+  }
+
+  private applyAccent(accent: Accent): void {
+    this._accent.set(accent);
+    writeCache(ACCENT_CACHE_KEY, accent);
   }
 }

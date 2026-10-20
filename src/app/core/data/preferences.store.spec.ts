@@ -20,6 +20,7 @@ const epoch = signal(0);
 const registerStore = vi.fn();
 
 const LANGUAGE_CACHE_KEY = 'w4a.language';
+const ACCENT_CACHE_KEY = 'w4a.accent';
 const SAVE_TIMEOUT_MS = 10_000;
 
 // Fresh module graph per store, so `firebase/firestore` is always the mock above and never a
@@ -296,17 +297,22 @@ describe('PreferencesStore persistence', () => {
     expect(m.setDoc).toHaveBeenCalledWith(expect.anything(), { accent: 'teal', language: 'it' });
   });
 
-  it('reset clears accent and error, keeps the Language and cache, and drops the user', async () => {
+  it('reset clears both errors, keeps Language, accent and caches, and drops the user', async () => {
     m.getDoc.mockResolvedValue(snapshot({ accent: 'teal', language: 'it' }));
-    m.setDoc.mockRejectedValueOnce(new Error('denied'));
+    m.setDoc.mockRejectedValueOnce(new Error('denied')).mockRejectedValueOnce(new Error('denied'));
     const store = await create();
     await store.load('u1');
     await store.setLanguage('en');
+    await store.setAccent('blue');
     expect(store.saveError()).toBe(true);
+    expect(store.accentSaveError()).toBe(true);
     store.reset();
     expect(store.saveError()).toBe(false);
+    expect(store.accentSaveError()).toBe(false);
     expect(store.language()).toBe('it');
+    expect(store.accent()).toBe('teal');
     expect(localStorage.getItem(LANGUAGE_CACHE_KEY)).toBe('it');
+    expect(localStorage.getItem(ACCENT_CACHE_KEY)).toBe('teal');
     m.setDoc.mockClear();
     await store.setLanguage('en');
     expect(m.setDoc).not.toHaveBeenCalled();
@@ -315,7 +321,220 @@ describe('PreferencesStore persistence', () => {
     await store.setLanguage('it');
     expect(m.setDoc).toHaveBeenCalledWith(
       { path: 'users/u2/preferences/app' },
-      { accent: 'violet', language: 'it' },
+      { accent: 'teal', language: 'it' },
     );
+  });
+});
+
+describe('PreferencesStore accent', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    vi.clearAllMocks();
+    vi.useRealTimers();
+    epoch.set(0);
+    m.setDoc.mockResolvedValue(undefined);
+    m.getDoc.mockResolvedValue(snapshot(undefined));
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
+
+  it('defaults to violet with no cache', async () => {
+    expect((await create()).accent()).toBe('violet');
+  });
+
+  it('reads a cached accent at startup (cold start)', async () => {
+    localStorage.setItem(ACCENT_CACHE_KEY, 'orange');
+    expect((await create()).accent()).toBe('orange');
+  });
+
+  it.each(['pink', ''])('falls back to violet for bad cache %j', async (bad) => {
+    localStorage.setItem(ACCENT_CACHE_KEY, bad);
+    expect((await create()).accent()).toBe('violet');
+  });
+
+  it('falls back to violet when localStorage throws on read', async () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+    expect((await create()).accent()).toBe('violet');
+  });
+
+  it('applies at once, caches, and writes the full document with the current Language', async () => {
+    localStorage.setItem(LANGUAGE_CACHE_KEY, 'it');
+    const store = await create();
+    await store.load('u1');
+    const saving = store.setAccent('teal');
+    expect(store.accent()).toBe('teal');
+    expect(localStorage.getItem(ACCENT_CACHE_KEY)).toBe('teal');
+    await saving;
+    expect(m.setDoc).toHaveBeenCalledWith(
+      { path: 'users/u1/preferences/app' },
+      { accent: 'teal', language: 'it' },
+    );
+    expect(store.accentSaveError()).toBe(false);
+  });
+
+  it('survives a throwing cache write', async () => {
+    const store = await create();
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('full');
+    });
+    await store.setAccent('green');
+    expect(store.accent()).toBe('green');
+  });
+
+  it('restores the previous accent and cache when the save fails', async () => {
+    m.setDoc.mockRejectedValue(new Error('denied'));
+    const store = await create();
+    await store.load('u1');
+    await store.setAccent('teal');
+    expect(store.accent()).toBe('violet');
+    expect(localStorage.getItem(ACCENT_CACHE_KEY)).toBe('violet');
+    expect(store.accentSaveError()).toBe(true);
+    expect(store.saveError()).toBe(false);
+  });
+
+  it('treats no answer in 10 s as a failed save', async () => {
+    vi.useFakeTimers();
+    m.setDoc.mockReturnValue(new Promise(() => undefined));
+    const store = await create();
+    await store.load('u1');
+    const saving = store.setAccent('teal');
+    expect(store.accent()).toBe('teal');
+    await vi.advanceTimersByTimeAsync(SAVE_TIMEOUT_MS - 1);
+    expect(store.accentSaveError()).toBe(false);
+    await vi.advanceTimersByTimeAsync(1);
+    await saving;
+    expect(store.accent()).toBe('violet');
+    expect(store.accentSaveError()).toBe(true);
+  });
+
+  it('clears the error when the next choice starts', async () => {
+    m.setDoc.mockRejectedValueOnce(new Error('denied'));
+    const store = await create();
+    await store.load('u1');
+    await store.setAccent('teal');
+    expect(store.accentSaveError()).toBe(true);
+    const next = store.setAccent('teal');
+    expect(store.accentSaveError()).toBe(false);
+    await next;
+    expect(store.accent()).toBe('teal');
+  });
+
+  it('writes nothing when the accent shown is chosen again', async () => {
+    const store = await create();
+    await store.load('u1');
+    await store.setAccent('violet');
+    expect(m.setDoc).not.toHaveBeenCalled();
+  });
+
+  it('only applies locally without a signed-in user', async () => {
+    const store = await create();
+    await store.setAccent('blue');
+    expect(store.accent()).toBe('blue');
+    expect(m.setDoc).not.toHaveBeenCalled();
+  });
+
+  it('does not roll back a failed save when a later accent choice was made', async () => {
+    const first = deferred<void>();
+    m.setDoc.mockReturnValueOnce(first.promise).mockResolvedValueOnce(undefined);
+    const store = await create();
+    await store.load('u1');
+    const a = store.setAccent('teal');
+    const b = store.setAccent('orange');
+    first.reject(new Error('late failure'));
+    await Promise.all([a, b]);
+    expect(store.accent()).toBe('orange');
+    expect(store.accentSaveError()).toBe(false);
+  });
+
+  it('does not roll back when the session changed during the save', async () => {
+    const pending = deferred<void>();
+    m.setDoc.mockReturnValue(pending.promise);
+    const store = await create();
+    await store.load('u1');
+    const saving = store.setAccent('teal');
+    epoch.set(1);
+    store.reset();
+    pending.reject(new Error('denied'));
+    await saving;
+    expect(store.accent()).toBe('teal');
+    expect(store.accentSaveError()).toBe(false);
+  });
+
+  it('applies and caches the saved accent on load', async () => {
+    localStorage.setItem(ACCENT_CACHE_KEY, 'violet');
+    m.getDoc.mockResolvedValue(snapshot({ accent: 'teal', language: 'en' }));
+    const store = await create();
+    await store.load('u1');
+    expect(store.accent()).toBe('teal');
+    expect(localStorage.getItem(ACCENT_CACHE_KEY)).toBe('teal');
+  });
+
+  it('keeps the cached accent when the document has none that is valid', async () => {
+    localStorage.setItem(ACCENT_CACHE_KEY, 'orange');
+    m.getDoc.mockResolvedValue(snapshot({ accent: 'pink', language: 'en' }));
+    const store = await create();
+    await store.load('u1');
+    expect(store.accent()).toBe('orange');
+  });
+
+  it('keeps the user pick over a late load, while Language still comes from the load', async () => {
+    const read = deferred<ReturnType<typeof snapshot>>();
+    m.getDoc.mockReturnValue(read.promise);
+    const store = await create();
+    const loading = store.load('u1');
+    const saving = store.setAccent('orange');
+    read.resolve(snapshot({ accent: 'teal', language: 'it' }));
+    await Promise.all([loading, saving]);
+    expect(store.accent()).toBe('orange');
+    expect(localStorage.getItem(ACCENT_CACHE_KEY)).toBe('orange');
+    expect(store.language()).toBe('it');
+  });
+
+  it('keeps the Language pick over a late load, while accent still comes from the load', async () => {
+    const read = deferred<ReturnType<typeof snapshot>>();
+    m.getDoc.mockReturnValue(read.promise);
+    const store = await create();
+    const loading = store.load('u1');
+    const saving = store.setLanguage('it');
+    read.resolve(snapshot({ accent: 'teal', language: 'en' }));
+    await Promise.all([loading, saving]);
+    expect(store.language()).toBe('it');
+    expect(store.accent()).toBe('teal');
+  });
+
+  it('a Language save writes the current accent', async () => {
+    const store = await create();
+    await store.load('u1');
+    await store.setAccent('teal');
+    await store.setLanguage('it');
+    expect(m.setDoc).toHaveBeenLastCalledWith(expect.anything(), { accent: 'teal', language: 'it' });
+  });
+
+  it('a failed Language save does not undo the accent', async () => {
+    m.setDoc.mockRejectedValueOnce(new Error('denied'));
+    const store = await create();
+    await store.load('u1');
+    await store.setLanguage('it');
+    await store.setAccent('teal');
+    expect(store.language()).toBe('en');
+    expect(store.saveError()).toBe(true);
+    expect(store.accent()).toBe('teal');
+    expect(store.accentSaveError()).toBe(false);
+  });
+
+  it('discards a load that returns after a session change', async () => {
+    const read = deferred<ReturnType<typeof snapshot>>();
+    m.getDoc.mockReturnValue(read.promise);
+    const store = await create();
+    const loading = store.load('u1');
+    epoch.set(1);
+    store.reset();
+    read.resolve(snapshot({ accent: 'teal', language: 'en' }));
+    await loading;
+    expect(store.accent()).toBe('violet');
   });
 });

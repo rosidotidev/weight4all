@@ -1,4 +1,4 @@
-/** The six accent ids allowed by `firestore.rules`; only `violet` is themed so far (Story 1.10). */
+/** The six accent ids allowed by `firestore.rules`; all six are themed (`src/styles/_theme.scss`). */
 export const ACCENTS = ['violet', 'teal', 'orange', 'magenta', 'blue', 'green'] as const;
 
 export type Accent = (typeof ACCENTS)[number];

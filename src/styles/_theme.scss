@@ -2,9 +2,19 @@
 // adds a generated palette file and one entry in $accents, nothing else.
 @use '@angular/material' as mat;
 @use './violet-palette';
+@use './teal-palette';
+@use './orange-palette';
+@use './magenta-palette';
+@use './blue-palette';
+@use './green-palette';
 
 $accents: (
   "violet": violet-palette.$primary-palette,
+  "teal": teal-palette.$primary-palette,
+  "orange": orange-palette.$primary-palette,
+  "magenta": magenta-palette.$primary-palette,
+  "blue": blue-palette.$primary-palette,
+  "green": green-palette.$primary-palette,
 );
 
 @each $id, $palette in $accents {
@@ -22,6 +32,11 @@ $accents: (
         density: 0,
       )
     );
+    // Role tokens used by components follow the accent
+    --w4a-primary: var(--mat-sys-primary);
+    --w4a-on-primary: var(--mat-sys-on-primary);
+    --w4a-primary-container: var(--mat-sys-primary-container);
+    --w4a-on-primary-container: var(--mat-sys-on-primary-container);
     // Minimum 44px touch targets via the token
     @include mat.button-overrides(
       (

@@ -1,5 +1,5 @@
 // Weight4All design tokens, from DESIGN.md frontmatter. The only place (with _theme.scss and
-// _violet-palette.scss) where color literals may appear.
+// the generated palettes) where color literals may appear.
 
 :root {
   // Color roles (default violet accent)
@@ -13,6 +13,14 @@
   --w4a-on-surface: #1c1b1f;
   --w4a-on-surface-variant: #49454f;
   --w4a-outline: #7a757f;
+
+  // Accent seeds (swatches in Settings)
+  --w4a-accent-violet: #5a46d6;
+  --w4a-accent-teal: #0b8a7b;
+  --w4a-accent-orange: #d9480f;
+  --w4a-accent-magenta: #c2287a;
+  --w4a-accent-blue: #2f5bd8;
+  --w4a-accent-green: #3c7d22;
 
   // Missing-entry banner (warm amber, deliberately not error red)
   --w4a-banner-container: #ffe9c7;

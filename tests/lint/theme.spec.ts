@@ -1,5 +1,6 @@
 import { compile } from 'sass';
 import { join } from 'node:path';
+import { ACCENTS } from '../../src/app/domain/accent';
 
 const ROOT = process.cwd();
 
@@ -34,26 +35,52 @@ function tokensOf(selector: string): Record<string, string> {
   return out;
 }
 
-// Story 1.10 adds accents by listing them here.
-const ACCENTS = ['violet'];
 const root = tokensOf(':root');
 
+/** Pairs of `--mat-sys-*` names resolved inside `.theme-<id>`. */
 const TEXT_PAIRS: [string, string][] = [
   ['on-primary', 'primary'],
   ['on-primary-container', 'primary-container'],
+  ['primary', 'surface'],
+];
+/** Fixed pairs on `:root`, the same for every accent. */
+const ROOT_TEXT_PAIRS: [string, string][] = [
   ['on-surface', 'surface'],
   ['on-surface-variant', 'surface-container'],
   ['on-banner-container', 'banner-container'],
 ];
-const GRAPHIC_PAIRS: [string, string][] = [
+const CHART_PAIRS: [string, string][] = [
   ['chart-weight', 'surface'],
   ['chart-mood', 'surface'],
   ['chart-sleep', 'surface'],
 ];
+const SEEDS: Record<string, string> = {
+  violet: '#5A46D6',
+  teal: '#0B8A7B',
+  orange: '#D9480F',
+  magenta: '#C2287A',
+  blue: '#2F5BD8',
+  green: '#3C7D22',
+};
 
 describe('theme tokens', () => {
-  it('emits a theme class per accent', () => {
+  it('emits exactly one theme class per domain accent id', () => {
+    const emitted = [...new Set([...css.matchAll(/\.theme-([a-z]+)\b/g)].map((m) => m[1]))];
+    expect(emitted.sort()).toEqual([...ACCENTS].sort());
     for (const id of ACCENTS) expect(Object.keys(tokensOf(`.theme-${id}`)).length).toBeGreaterThan(0);
+  });
+
+  it('declares a seed token per accent matching the DESIGN.md seeds', () => {
+    expect(Object.keys(SEEDS).sort()).toEqual([...ACCENTS].sort());
+    for (const id of ACCENTS) expect(root[`--w4a-accent-${id}`].toLowerCase()).toBe(SEEDS[id].toLowerCase());
+  });
+
+  it('maps the role tokens to the Material system tokens in every accent', () => {
+    for (const id of ACCENTS) {
+      const t = tokensOf(`.theme-${id}`);
+      for (const r of ['primary', 'on-primary', 'primary-container', 'on-primary-container'])
+        expect(t[`--w4a-${r}`]).toBe(`var(--mat-sys-${r})`);
+    }
   });
 
   it('defines all chart tokens outside any accent class', () => {
@@ -64,6 +91,11 @@ describe('theme tokens', () => {
 
   it('derives the violet theme from the #5A46D6 seed palette', () => {
     expect(tokensOf('.theme-violet')['--mat-sys-primary']).toBe('#5945d5');
+  });
+
+  it('keeps chart tokens only on :root', () => {
+    for (const m of css.matchAll(/([^{}]+)\{([^{}]*)\}/g))
+      if (/--w4a-chart-/.test(m[2])) expect(m[1].trim()).toBe(':root');
   });
 
   it('defines shape, spacing, banner and touch tokens', () => {
@@ -85,11 +117,25 @@ describe('theme tokens', () => {
     for (const id of ACCENTS) expect(tokensOf(`.theme-${id}`)[prop]).toBe('var(--w4a-touch-target)');
   });
 
-  describe.each(ACCENTS)('contrast for %s', () => {
+  describe.each([...ACCENTS])('contrast for %s', (id) => {
+    const t = tokensOf(`.theme-${id}`);
+    const sys = (n: string) => t[`--mat-sys-${n}`];
     it.each(TEXT_PAIRS)('text %s on %s is at least 4.5:1', (fg, bg) => {
+      expect(contrast(sys(fg), sys(bg))).toBeGreaterThanOrEqual(4.5);
+    });
+    it('graphic primary on surface is at least 3:1', () => {
+      expect(contrast(sys('primary'), sys('surface'))).toBeGreaterThanOrEqual(3);
+    });
+    it('white check on the seed is at least 3:1', () => {
+      expect(contrast('#ffffff', root[`--w4a-accent-${id}`])).toBeGreaterThanOrEqual(3);
+    });
+    it('seed on surface-container is at least 3:1', () => {
+      expect(contrast(root[`--w4a-accent-${id}`], sys('surface-container'))).toBeGreaterThanOrEqual(3);
+    });
+    it.each(ROOT_TEXT_PAIRS)('text %s on %s is at least 4.5:1', (fg, bg) => {
       expect(contrast(root[`--w4a-${fg}`], root[`--w4a-${bg}`])).toBeGreaterThanOrEqual(4.5);
     });
-    it.each(GRAPHIC_PAIRS)('graphic %s on %s is at least 3:1', (fg, bg) => {
+    it.each(CHART_PAIRS)('graphic %s on %s is at least 3:1', (fg, bg) => {
       expect(contrast(root[`--w4a-${fg}`], root[`--w4a-${bg}`])).toBeGreaterThanOrEqual(3);
     });
   });

@@ -54,8 +54,29 @@ describe('App', () => {
 
     const chart = () => getComputedStyle(root).getPropertyValue('--w4a-chart-weight').trim();
     const before = chart();
-    root.classList.replace('theme-violet', 'theme-teal');
+    await TestBed.inject(PreferencesStore).setAccent('teal');
+    await fixture.whenStable();
+    expect(root.classList.contains('theme-teal')).toBe(true);
     expect(chart()).toBe(before);
+  });
+
+  it('keeps exactly one theme class, following the accent', async () => {
+    document.documentElement.className = 'theme-orange other';
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const themes = () => Array.from(document.documentElement.classList).filter((c) => c.startsWith('theme-'));
+    expect(themes()).toEqual(['theme-violet']);
+    await TestBed.inject(PreferencesStore).setAccent('green');
+    await fixture.whenStable();
+    expect(themes()).toEqual(['theme-green']);
+    expect(document.documentElement.classList.contains('other')).toBe(true);
+  });
+
+  it('starts with the cached accent class', async () => {
+    localStorage.setItem('w4a.accent', 'orange');
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    expect(document.documentElement.classList.contains('theme-orange')).toBe(true);
   });
 
   it('switches <html lang> and texts at once, keeping typed input', async () => {
