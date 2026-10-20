@@ -1,0 +1,58 @@
+<section
+  class="card"
+  [class.loss]="view().loss"
+  [class.gain]="!view().loss"
+  aria-labelledby="w4a-effect-title"
+>
+  @if (view().confetti) {
+    <div class="confetti" aria-hidden="true">
+      @for (piece of pieces; track $index) {
+        <span
+          [class]="'piece ' + piece.shape + ' ' + piece.tone"
+          [style.--x]="piece.x"
+          [style.--y]="piece.y"
+          [style.--r]="piece.rotation"
+          [style.--delay]="piece.delay + 'ms'"
+        ></span>
+      }
+    </div>
+  }
+  @if (view().loss) {
+    <svg class="icon" viewBox="0 0 60 60" aria-hidden="true" focusable="false">
+      <path class="star" d="M30 4l8 17 19 3-14 13 4 19-17-10-17 10 4-19-14-13 19-3z" />
+    </svg>
+  } @else {
+    <svg class="icon" viewBox="0 0 60 60" aria-hidden="true" focusable="false">
+      <circle class="disc" cx="30" cy="30" r="30" />
+      <path class="tick" d="M15 32l11 11 20-23" />
+    </svg>
+  }
+  <p class="saved secondary" id="w4a-effect-title">{{ t().saved }}</p>
+  @if (view().delta !== null) {
+    <p class="delta">{{ view().delta }}</p>
+    <p class="vs secondary">{{ view().comparison }}</p>
+  } @else {
+    <p class="welcome">{{ t().effectWelcome }}</p>
+  }
+  @if (view().loss) {
+    <div class="divider" aria-hidden="true"></div>
+  } @else {
+    <svg
+      class="wave"
+      viewBox="0 0 280 14"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M0 14c40-14 60 14 100 0s60-14 100 0 50 8 70 0" />
+    </svg>
+  }
+  @if (view().message !== null) {
+    <p class="message">{{ view().message }}</p>
+  }
+  <p class="logged secondary">{{ view().logged }}</p>
+</section>
+<div class="actions">
+  <button #done type="button" class="done" (click)="closed.emit()">{{ t().effectDone }}</button>
+  <button type="button" class="dismiss" (click)="closed.emit()">{{ t().effectDismiss }}</button>
+</div>

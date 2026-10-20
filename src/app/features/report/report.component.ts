@@ -5,7 +5,7 @@ import { I18n } from '../../shared/i18n';
 @Component({
   selector: 'w4a-report',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<p>{{ t().reportPlaceholder }}</p>`,
+  templateUrl: './report.component.html',
 })
 export class ReportComponent {
   protected readonly t = inject(I18n).t;

@@ -151,11 +151,25 @@ describe('routes', () => {
     expect(activeTabs(harness)).toEqual([tab]);
   });
 
-  it('signed in: the day route shows its dayKey', async () => {
+  it('signed in: the day route shows the Entry edit screen for that Day over History', async () => {
     session.set({ status: 'signedIn', uid: 'u1' });
     const harness = await open('/history/2026-10-19');
-    expect((harness.routeNativeElement as HTMLElement).textContent).toContain('2026-10-19');
+    expect(renders(harness, HistoryComponent)).toBe(true);
+    expect((harness.routeNativeElement as HTMLElement).querySelector('#w4a-day-title')?.textContent).toContain(
+      'Mon 19 Oct',
+    );
   });
+
+  it.each(['/history/abc', '/history/2026-13-40', '/history/2999-01-01'])(
+    'signed in: %s redirects to /history',
+    async (url) => {
+      session.set({ status: 'signedIn', uid: 'u1' });
+      const harness = await open(url);
+      expect(TestBed.inject(Router).url).toBe('/history');
+      expect(renders(harness, HistoryComponent)).toBe(true);
+      expect(renders(harness, HistoryDayComponent)).toBe(false);
+    },
+  );
 
   it('signed in: tapping a Tab opens its destination and moves the active mark', async () => {
     session.set({ status: 'signedIn', uid: 'u1' });

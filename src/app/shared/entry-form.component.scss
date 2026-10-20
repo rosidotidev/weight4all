@@ -1,0 +1,123 @@
+:host {
+  display: block;
+  max-width: var(--w4a-form-column-width);
+  margin-inline: auto;
+  font-family: var(--w4a-font-family);
+  color: var(--w4a-on-surface);
+}
+form {
+  display: grid;
+  gap: var(--w4a-card-gap);
+}
+.card {
+  display: grid;
+  gap: var(--w4a-space-2);
+  padding: var(--w4a-space-5);
+  background: var(--w4a-surface-container);
+  border-radius: var(--w4a-rounded-xl);
+}
+label {
+  font-size: var(--w4a-type-card-label-size);
+  font-weight: var(--w4a-type-card-label-weight);
+  color: var(--w4a-on-surface-variant);
+}
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--w4a-space-2);
+}
+.value {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--w4a-space-1);
+  min-width: 0;
+}
+input {
+  box-sizing: border-box;
+  width: auto;
+  min-width: 3ch;
+  max-width: 180px;
+  field-sizing: content;
+  min-height: var(--w4a-touch-target);
+  padding: 0;
+  font: inherit;
+  font-size: var(--w4a-type-value-display-size);
+  font-weight: var(--w4a-type-value-display-weight);
+  text-align: center;
+  color: var(--w4a-on-surface);
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+}
+input[aria-invalid='true'] {
+  border-bottom-color: var(--w4a-outline);
+}
+.hint {
+  margin: 0;
+  text-align: center;
+  font-size: var(--w4a-type-caption-size);
+  font-weight: var(--w4a-type-caption-weight);
+  color: var(--w4a-on-surface-variant);
+}
+.step {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--w4a-rounded-full);
+  cursor: pointer;
+}
+.step svg {
+  width: 28px;
+  height: 28px;
+  fill: currentColor;
+}
+.step.minus {
+  color: var(--w4a-on-primary-container);
+  background: var(--w4a-primary-container);
+}
+.step.plus {
+  color: var(--w4a-on-primary);
+  background: var(--w4a-primary);
+}
+input:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--w4a-primary);
+  outline-offset: 2px;
+}
+.unit {
+  font-size: var(--w4a-type-body-size);
+  color: var(--w4a-on-surface-variant);
+}
+.message {
+  min-height: 1.5em;
+  margin: 0;
+  text-align: center;
+  font-size: var(--w4a-type-body-size);
+  font-weight: 700;
+}
+.save {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 24px;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--w4a-on-primary);
+  background: var(--w4a-primary);
+  border: 0;
+  border-radius: var(--w4a-rounded-full);
+  cursor: pointer;
+}
+.save:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

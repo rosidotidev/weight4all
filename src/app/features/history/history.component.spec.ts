@@ -1,6 +1,6 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { EntryStatus, EntryStore } from '../../core/data/entry.store';
 import { PreferencesStore } from '../../core/data/preferences.store';
 import { ClockService } from '../../core/state/clock.service';
@@ -146,6 +146,149 @@ describe('HistoryComponent', () => {
     const { el } = await setup();
     expect(el.querySelector('[role="alert"]')).not.toBeNull();
     expect(el.querySelector('.row .date')?.textContent).toBe('Mon 19 Oct');
+  });
+
+  describe('edit entry points', () => {
+    let navigate: ReturnType<typeof vi.spyOn>;
+    const firstItem = (el: HTMLElement) => el.querySelector('.item')!;
+    const slide = (el: HTMLElement) => el.querySelector<HTMLElement>('.slide')!;
+
+    function touch(type: string, x: number, y = 0, target?: Element) {
+      const event = new Event(type, { bubbles: true });
+      Object.assign(event, { pointerType: 'touch', clientX: x, clientY: y });
+      target?.dispatchEvent(event);
+    }
+
+    beforeEach(() => {
+      navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+      vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+      entries.set(byDay(entry('2026-10-18', 72.7), entry('2026-10-19', 72.4)));
+    });
+
+    it('gives each Entry row an overflow button of at least 44 px with an accessible name', async () => {
+      const { el } = await setup();
+      const more = el.querySelector<HTMLButtonElement>('.more')!;
+      expect(more.getAttribute('aria-label')).toBe('More actions for Mon 19 Oct');
+      expect(more.getAttribute('aria-haspopup')).toBe('menu');
+    });
+
+    it('the overflow menu offers Edit, which opens the Day', async () => {
+      const { fixture, el } = await setup();
+      el.querySelector<HTMLButtonElement>('.more')!.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+      const item = document.querySelector<HTMLButtonElement>('[mat-menu-item]')!;
+      expect(item.textContent).toContain('Edit');
+      item.click();
+      expect(navigate).toHaveBeenCalledWith(['/history', '2026-10-19']);
+    });
+
+    it('a touch drag left over 48 px reveals the Edit action, and tapping it opens the Day', async () => {
+      const { fixture, el } = await setup();
+      const row = slide(el);
+      touch('pointerdown', 200, 0, row);
+      touch('pointermove', 170, 2, row);
+      fixture.detectChanges();
+      expect(row.classList).not.toContain('revealed');
+      touch('pointermove', 140, 4, row);
+      fixture.detectChanges();
+      expect(row.classList).toContain('revealed');
+      const action = firstItem(el).querySelector<HTMLButtonElement>('.edit-action')!;
+      expect(action.getAttribute('aria-label')).toBe('Edit entry for Mon 19 Oct');
+      expect(action.textContent).toContain('Edit');
+      action.click();
+      expect(navigate).toHaveBeenCalledWith(['/history', '2026-10-19']);
+    });
+
+    it('a mostly vertical drag does not reveal, and a mouse never does', async () => {
+      const { fixture, el } = await setup();
+      const row = slide(el);
+      touch('pointerdown', 200, 0, row);
+      touch('pointermove', 140, 200, row);
+      fixture.detectChanges();
+      expect(row.classList).not.toContain('revealed');
+      touch('pointerup', 140, 200, row);
+      const mouse = new Event('pointerdown', { bubbles: true });
+      Object.assign(mouse, { pointerType: 'mouse', clientX: 200, clientY: 0 });
+      row.dispatchEvent(mouse);
+      touch('pointermove', 100, 0, row);
+      fixture.detectChanges();
+      expect(row.classList).not.toContain('revealed');
+    });
+
+    it('a drag right hides it, and revealing another row hides the first', async () => {
+      const { fixture, el } = await setup();
+      const [first, second] = Array.from(el.querySelectorAll<HTMLElement>('.slide'));
+      touch('pointerdown', 200, 0, first);
+      touch('pointermove', 100, 0, first);
+      touch('pointerup', 100, 0, first);
+      fixture.detectChanges();
+      expect(first.classList).toContain('revealed');
+      touch('pointerdown', 100, 0, first);
+      touch('pointermove', 200, 0, first);
+      touch('pointerup', 200, 0, first);
+      fixture.detectChanges();
+      expect(first.classList).not.toContain('revealed');
+      touch('pointerdown', 200, 0, first);
+      touch('pointermove', 100, 0, first);
+      touch('pointerup', 100, 0, first);
+      touch('pointerdown', 200, 0, second);
+      fixture.detectChanges();
+      expect(first.classList).not.toContain('revealed');
+      touch('pointermove', 100, 0, second);
+      fixture.detectChanges();
+      expect(second.classList).toContain('revealed');
+      expect(first.classList).not.toContain('revealed');
+    });
+
+    it('tapping a row link or + Add hides a revealed row', async () => {
+      const { fixture, el } = await setup();
+      const row = slide(el);
+      touch('pointerdown', 200, 0, row);
+      touch('pointermove', 100, 0, row);
+      touch('pointerup', 100, 0, row);
+      fixture.detectChanges();
+      expect(row.classList).toContain('revealed');
+      row.querySelector<HTMLAnchorElement>('a.row')!.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      fixture.detectChanges();
+      expect(row.classList).not.toContain('revealed');
+    });
+
+    describe('focus return', () => {
+      let outside: HTMLButtonElement;
+      beforeEach(() => {
+        outside = document.createElement('button');
+        document.body.appendChild(outside);
+      });
+      afterEach(() => outside.remove());
+
+      it('puts focus back on the opener when the edit screen closes', async () => {
+        const { fixture, el } = await setup();
+        document.body.appendChild(el);
+        const link = el.querySelector<HTMLAnchorElement>('a.row')!;
+        link.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        (document.activeElement as HTMLElement | null)?.blur();
+        (fixture.componentInstance as unknown as { restoreFocus(): void }).restoreFocus();
+        expect(document.activeElement).toBe(link);
+        el.remove();
+      });
+
+      it('leaves focus alone when another element already has it', async () => {
+        const { fixture, el } = await setup();
+        document.body.appendChild(el);
+        const link = el.querySelector<HTMLAnchorElement>('a.row')!;
+        link.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        outside.focus();
+        (fixture.componentInstance as unknown as { restoreFocus(): void }).restoreFocus();
+        expect(document.activeElement).toBe(outside);
+        el.remove();
+      });
+    });
+
+    it('has a router outlet for the edit screen', async () => {
+      const { el } = await setup();
+      expect(el.querySelector('router-outlet')).not.toBeNull();
+    });
   });
 
   it('uses Italian copy, comma decimals and Italian dates', async () => {

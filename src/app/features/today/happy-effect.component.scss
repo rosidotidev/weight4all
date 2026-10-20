@@ -1,0 +1,221 @@
+:host {
+  display: block;
+  max-width: var(--w4a-form-column-width);
+  margin-inline: auto;
+  margin-block-end: var(--w4a-card-gap);
+  font-family: var(--w4a-font-family);
+}
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 370px;
+  padding: 32px var(--w4a-space-6) 28px;
+  overflow: hidden;
+  text-align: center;
+  border-radius: var(--w4a-rounded-xxl);
+}
+.card.loss {
+  color: var(--w4a-on-primary);
+  background: linear-gradient(
+    to bottom right,
+    var(--w4a-celebration-start),
+    var(--w4a-celebration-mid) 60%,
+    var(--w4a-celebration-end)
+  );
+}
+.card.gain {
+  color: var(--w4a-on-primary-container);
+  background: var(--w4a-primary-container);
+}
+.icon {
+  display: block;
+  width: 60px;
+  height: 60px;
+}
+.star {
+  --tone: var(--w4a-confetti-gold);
+  fill: var(--tone);
+}
+.disc {
+  fill: var(--w4a-on-primary);
+}
+.tick {
+  fill: none;
+  stroke: var(--w4a-primary);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.saved {
+  margin: 38px 0 0;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 20px;
+}
+.delta {
+  margin: 12px 0 0;
+  font-size: var(--w4a-type-effect-delta-size);
+  font-weight: var(--w4a-type-effect-delta-weight);
+  line-height: 66px;
+}
+.welcome {
+  margin: 36px 0 0;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 32px;
+}
+.vs {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 22px;
+}
+.secondary {
+  color: color-mix(in srgb, currentColor 88%, transparent);
+}
+.gain .secondary {
+  color: var(--w4a-on-surface-variant);
+}
+.divider {
+  align-self: stretch;
+  height: 1px;
+  margin: 24px 6px 0;
+  background: color-mix(in srgb, var(--w4a-on-primary) 35%, transparent);
+}
+.wave {
+  display: block;
+  align-self: stretch;
+  width: auto;
+  height: 24px;
+  margin: 18px 6px 0;
+  overflow: visible;
+}
+.wave path {
+  fill: none;
+  stroke: color-mix(in srgb, var(--w4a-primary) 45%, transparent);
+  stroke-width: 3;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+.message {
+  margin: 22px 0 0;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 24px;
+}
+.gain .message {
+  font-size: 16px;
+}
+.wave + .logged {
+  margin-block-start: 28px;
+}
+.logged {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 18px;
+}
+.confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.piece {
+  position: absolute;
+  left: calc(var(--x) * 1%);
+  top: calc(var(--y) * 1%);
+  background: var(--tone);
+  transform: translate(-50%, -50%) rotate(calc(var(--r) * 1deg));
+  animation: fall 2.8s ease-in var(--delay) both;
+}
+.piece.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--w4a-rounded-full);
+}
+.piece.bar {
+  width: 10px;
+  height: 5px;
+  border-radius: 1px;
+}
+.piece.tri {
+  width: 12px;
+  height: 10px;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.piece.gold {
+  --tone: var(--w4a-confetti-gold);
+}
+.piece.pink {
+  --tone: var(--w4a-confetti-pink);
+}
+.piece.mint {
+  --tone: var(--w4a-confetti-mint);
+}
+.piece.orange {
+  --tone: var(--w4a-confetti-orange);
+}
+.piece.sky {
+  --tone: var(--w4a-confetti-sky);
+}
+.piece.white {
+  --tone: var(--w4a-on-primary);
+}
+@keyframes fall {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% - 36px)) rotate(calc(var(--r) * 1deg));
+  }
+  12% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 28px)) rotate(calc(var(--r) * 1deg + 200deg));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .piece {
+    animation: none;
+  }
+}
+.actions {
+  display: grid;
+  justify-items: center;
+  gap: var(--w4a-space-2);
+  margin-block-start: var(--w4a-space-6);
+}
+button {
+  min-height: var(--w4a-touch-target);
+  font: inherit;
+  cursor: pointer;
+  border: 0;
+}
+button:focus-visible {
+  outline: 2px solid var(--w4a-primary);
+  outline-offset: 2px;
+}
+.done {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 52px;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--w4a-on-primary);
+  background: var(--w4a-primary);
+  border-radius: var(--w4a-rounded-full);
+}
+.dismiss {
+  padding: 0 var(--w4a-space-6);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--w4a-primary);
+  background: transparent;
+  border-radius: var(--w4a-rounded-full);
+}

@@ -1,0 +1,71 @@
+<main>
+  <fieldset>
+    <legend>{{ t().settingsAccentLegend }}</legend>
+    <div class="swatches">
+      @for (option of accents; track option.accent) {
+        <label class="swatch">
+          <input
+            type="radio"
+            name="accent"
+            [value]="option.accent"
+            [attr.aria-label]="t()[option.label]"
+            [checked]="preferences.accent() === option.accent"
+            (change)="chooseAccent(option.accent)"
+          />
+          <span [style.background]="'var(--w4a-accent-' + option.accent + ')'" aria-hidden="true"></span>
+        </label>
+      }
+    </div>
+    <p class="error accent-error" aria-live="polite">
+      @if (preferences.accentSaveError()) {
+        {{ t().settingsAccentSaveError }}
+      }
+    </p>
+  </fieldset>
+  <fieldset>
+    <legend>{{ t().settingsLanguageLegend }}</legend>
+    <div class="segments">
+      @for (option of options; track option.language) {
+        <label class="segment">
+          <input
+            type="radio"
+            name="language"
+            [value]="option.language"
+            [checked]="preferences.language() === option.language"
+            (change)="choose(option.language)"
+          />
+          <span>{{ t()[option.label] }}</span>
+        </label>
+      }
+    </div>
+    <p class="error language-error" aria-live="polite">
+      @if (preferences.saveError()) {
+        {{ t().settingsLanguageSaveError }}
+      }
+    </p>
+  </fieldset>
+  <section aria-labelledby="account-heading">
+    <h2 id="account-heading">{{ t().settingsAccountHeading }}</h2>
+    <div class="account">
+      <div class="who">
+        <span class="avatar" aria-hidden="true">{{ initial() }}</span>
+        <div>
+          <p class="caption">{{ t().settingsSignedInAs }}</p>
+          <p class="email">{{ auth.email() }}</p>
+        </div>
+      </div>
+      <button type="button" [disabled]="pending()" (click)="logout()">
+        {{ t().settingsLogout }}
+      </button>
+      <p class="error logout-error" aria-live="polite">
+        @if (failed()) {
+          {{ t().authErrorUnknown }}
+        }
+      </p>
+    </div>
+  </section>
+  <p class="footer">
+    <strong>{{ t().settingsFooterThanks }}</strong>
+    {{ t().settingsFooterCount }}
+  </p>
+</main>

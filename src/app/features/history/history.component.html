@@ -1,0 +1,90 @@
+@if (store.status() === 'error') {
+  <div class="message load-error">
+    <p role="alert">{{ t().historyLoadError }}</p>
+    <button type="button" (click)="store.retry()">{{ t().historyRetry }}</button>
+  </div>
+}
+@if (rows().length > 0) {
+  <h2 class="heading">{{ t().historyHeading }}</h2>
+  <cdk-virtual-scroll-viewport class="viewport" [itemSize]="70">
+    <ng-container *cdkVirtualFor="let row of rows(); trackBy: trackRow">
+      @if (row.kind === 'entry') {
+        <div class="item">
+          <div
+            class="slide"
+            [class.revealed]="revealed() === row.day"
+            (pointerdown)="swipeStart($event, row.day)"
+            (pointermove)="swipeMove($event)"
+            (pointerup)="swipeEnd()"
+            (pointercancel)="swipeEnd()"
+          >
+            <a
+              class="row entry"
+              [routerLink]="['/history', row.day]"
+              [attr.aria-label]="t().historyOpenEntry({ date: dateOf(row), value: summary(row.entry) })"
+              (click)="remember($event)"
+            >
+              <span class="date">{{ dateOf(row) }}</span>
+              @for (cell of cells(row.entry); track cell.key) {
+                @if (cell.text !== null) {
+                  <span class="value">{{ cell.text }}</span>
+                } @else {
+                  <span class="value absent">{{ t().historyDash }}</span>
+                }
+              }
+            </a>
+            <button
+              type="button"
+              class="more"
+              [attr.aria-label]="t().historyRowMenu({ date: dateOf(row) })"
+              [matMenuTriggerFor]="menu"
+              [matMenuTriggerData]="{ day: row.day }"
+              (click)="remember($event)"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path [attr.d]="dots" />
+              </svg>
+            </button>
+          </div>
+          <button
+            type="button"
+            class="edit-action"
+            [attr.aria-label]="t().historyEditFor({ date: dateOf(row) })"
+            (click)="open(row.day, $event)"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path [attr.d]="pencil" />
+            </svg>
+            <span>{{ t().historyEdit }}</span>
+          </button>
+        </div>
+      } @else {
+        <div class="row missing">
+          <span>{{ t().historyMissing({ date: dateOf(row) }) }}</span>
+          <a
+            class="add"
+            [routerLink]="['/history', row.day]"
+            [attr.aria-label]="t().historyAddFor({ date: dateOf(row) })"
+            (click)="remember($event)"
+            >{{ t().historyAdd }}</a
+          >
+        </div>
+      }
+    </ng-container>
+  </cdk-virtual-scroll-viewport>
+} @else if (store.status() === 'loading') {
+  <div class="skeleton">
+    <div class="row" aria-hidden="true"><div class="bar"></div></div>
+    <div class="row" aria-hidden="true"><div class="bar"></div></div>
+    <div class="row" aria-hidden="true"><div class="bar"></div></div>
+    <p class="visually-hidden" role="status" aria-live="polite">{{ t().historyLoading }}</p>
+  </div>
+} @else if (store.status() === 'ready') {
+  <p class="message empty">{{ t().historyEmpty }}</p>
+}
+<mat-menu #menu="matMenu">
+  <ng-template matMenuContent let-day="day">
+    <button mat-menu-item type="button" (click)="open(day)">{{ t().historyEdit }}</button>
+  </ng-template>
+</mat-menu>
+<router-outlet (deactivate)="restoreFocus()" />

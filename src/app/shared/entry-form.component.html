@@ -1,0 +1,51 @@
+<form novalidate (submit)="submit($event)">
+  @for (field of fields(); track field.dimension.key) {
+    <div class="card">
+      <label [for]="'w4a-field-' + field.dimension.key">{{ t()[field.dimension.labelKey] }}</label>
+      <div class="row">
+        @if (field.dimension.input === 'stepper') {
+          <button
+            type="button"
+            class="step minus"
+            [attr.aria-label]="t()[field.dimension.decreaseKey]"
+            (click)="step(field.dimension, -1)"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path [attr.d]="minus" /></svg>
+          </button>
+        }
+        <div class="value">
+          <input
+            type="text"
+            inputmode="decimal"
+            autocomplete="off"
+            [id]="'w4a-field-' + field.dimension.key"
+            [value]="field.text"
+            [attr.aria-invalid]="field.error ? 'true' : null"
+            [attr.aria-describedby]="'w4a-hint-' + field.dimension.key + ' w4a-message-' + field.dimension.key"
+            (input)="edit(field.dimension.key, $event)"
+            (keydown.arrowup)="key($event, field.dimension, 1)"
+            (keydown.arrowdown)="key($event, field.dimension, -1)"
+          />
+          <span class="unit">{{ field.dimension.unit }}</span>
+        </div>
+        @if (field.dimension.input === 'stepper') {
+          <button
+            type="button"
+            class="step plus"
+            [attr.aria-label]="t()[field.dimension.increaseKey]"
+            (click)="step(field.dimension, 1)"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path [attr.d]="plus" /></svg>
+          </button>
+        }
+      </div>
+      <p class="hint" [id]="'w4a-hint-' + field.dimension.key">{{ field.hint }}</p>
+      <p class="message" aria-live="polite" [id]="'w4a-message-' + field.dimension.key">
+        {{ field.message }}
+      </p>
+    </div>
+  }
+  <button type="submit" class="save" [disabled]="saving()" [attr.aria-busy]="saving()">
+    {{ saving() ? t().entrySaving : t().entrySave }}
+  </button>
+</form>

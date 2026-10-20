@@ -1,0 +1,39 @@
+<div class="scrim" [class.full]="!wide()" aria-hidden="true"></div>
+<div
+  class="panel"
+  [class.dialog]="wide()"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="w4a-day-title"
+  cdkTrapFocus
+  [cdkTrapFocusAutoCapture]="true"
+>
+  <h2 class="title" id="w4a-day-title">{{ title() }}</h2>
+  @switch (store.status()) {
+    @case ('loading') {
+      <div class="skeleton">
+        <div class="card" aria-hidden="true">
+          <div class="bar"></div>
+          <div class="bar wide"></div>
+        </div>
+        <p class="visually-hidden" role="status" aria-live="polite">{{ t().historyLoading }}</p>
+      </div>
+    }
+    @case ('error') {
+      <div class="load-error">
+        <p role="alert">{{ t().historyLoadError }}</p>
+        <button type="button" (click)="store.retry()">{{ t().historyRetry }}</button>
+      </div>
+    }
+    @case ('ready') {
+      @for (shown of shownEffects(); track shown) {
+        <w4a-happy-effect [effect]="shown.effect" [value]="shown.value" (closed)="close()" />
+      } @empty {
+        <w4a-entry-form [day]="day()" (confirmed)="onConfirmed($event)" />
+      }
+    }
+  }
+  <div class="actions">
+    <button type="button" class="cancel" (click)="cancel()">{{ t().entryCancel }}</button>
+  </div>
+</div>

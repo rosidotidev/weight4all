@@ -205,10 +205,28 @@ export const strings = {
   historyRetry: { en: 'Try again', it: 'Riprova' },
   historyDash: { en: '—', it: '—' },
   historyAbsentValue: { en: 'no value', it: 'nessun valore' },
-  historyDayPlaceholder: {
-    en: (p: { dayKey: string }) => `Day ${p.dayKey} will appear here soon.`,
-    it: (p: { dayKey: string }) => `Il giorno ${p.dayKey} apparirà qui a breve.`,
+  historyEdit: { en: 'Edit', it: 'Modifica' },
+  historyEditFor: {
+    en: (p: { date: string }) => `Edit entry for ${p.date}`,
+    it: (p: { date: string }) => `Modifica registrazione per ${p.date}`,
   },
+  historyRowMenu: {
+    en: (p: { date: string }) => `More actions for ${p.date}`,
+    it: (p: { date: string }) => `Altre azioni per ${p.date}`,
+  },
+  entryAddTitle: {
+    en: (p: { date: string }) => `Add entry for ${p.date}`,
+    it: (p: { date: string }) => `Aggiungi registrazione per ${p.date}`,
+  },
+  entryEditTitle: {
+    en: (p: { date: string }) => `Edit entry for ${p.date}`,
+    it: (p: { date: string }) => `Modifica registrazione per ${p.date}`,
+  },
+  entryDayTitle: {
+    en: (p: { date: string }) => `Entry for ${p.date}`,
+    it: (p: { date: string }) => `Registrazione per ${p.date}`,
+  },
+  entryCancel: { en: 'Cancel', it: 'Annulla' },
   reportPlaceholder: {
     en: 'Your report will appear here soon.',
     it: 'Il tuo report apparirà qui a breve.',

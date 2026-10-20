@@ -1,0 +1,191 @@
+:host {
+  display: block;
+  padding: 24px 16px;
+  font-family: var(--w4a-font-family);
+  color: var(--w4a-on-surface);
+}
+h2 {
+  margin: var(--w4a-space-6) 0 var(--w4a-space-2);
+  font-size: var(--w4a-type-section-label-size);
+  font-weight: var(--w4a-type-section-label-weight);
+  color: var(--w4a-primary);
+}
+fieldset {
+  min-width: 0;
+  margin: var(--w4a-space-6) 0 0;
+  padding: 0;
+  border: 0;
+}
+legend {
+  padding: 0;
+  margin-bottom: var(--w4a-space-2);
+  font-size: var(--w4a-type-section-label-size);
+  font-weight: var(--w4a-type-section-label-weight);
+  color: var(--w4a-primary);
+}
+.segments {
+  display: flex;
+  max-width: 360px;
+}
+.segment {
+  position: relative;
+  flex: 1;
+  display: flex;
+}
+.segment input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.segment span {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--w4a-space-2);
+  min-height: max(48px, var(--w4a-touch-target));
+  padding: 0 var(--w4a-space-4);
+  border: 1px solid var(--w4a-outline);
+  color: var(--w4a-on-surface);
+  background: transparent;
+}
+.segment:first-child span {
+  border-radius: var(--w4a-rounded-full) 0 0 var(--w4a-rounded-full);
+}
+.segment:last-child span {
+  margin-left: -1px;
+  border-radius: 0 var(--w4a-rounded-full) var(--w4a-rounded-full) 0;
+}
+.segment input:checked + span {
+  color: var(--w4a-on-primary-container);
+  background: var(--w4a-primary-container);
+  font-weight: 700;
+}
+.segment input:checked + span::before {
+  content: '\2713';
+}
+.segment input:focus-visible + span {
+  outline: 2px solid var(--w4a-primary);
+  outline-offset: 2px;
+}
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--w4a-space-3);
+  padding: var(--w4a-space-4) var(--w4a-space-3);
+  background: var(--w4a-surface-container);
+  border-radius: var(--w4a-rounded-xl);
+}
+.swatch {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: max(44px, var(--w4a-touch-target));
+  height: max(44px, var(--w4a-touch-target));
+}
+.swatch input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.swatch span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--w4a-rounded-full);
+  color: var(--w4a-on-primary);
+  font-weight: 700;
+}
+.swatch input:checked + span {
+  box-shadow:
+    inset 0 0 0 3px var(--w4a-surface),
+    0 0 0 3px var(--w4a-primary);
+}
+.swatch input:checked + span::before {
+  content: '\2713';
+}
+.swatch input:focus-visible + span {
+  outline: 2px solid var(--w4a-primary);
+  outline-offset: 4px;
+}
+.account {
+  padding: var(--w4a-space-5);
+  background: var(--w4a-surface-container);
+  border-radius: var(--w4a-rounded-xl);
+}
+.who {
+  display: flex;
+  align-items: center;
+  gap: var(--w4a-space-4);
+  padding-bottom: var(--w4a-space-4);
+  border-bottom: 1px solid var(--w4a-surface-variant);
+}
+.avatar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--w4a-rounded-full);
+  color: var(--w4a-on-primary-container);
+  background: var(--w4a-primary-container);
+  font-size: 17px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.footer {
+  margin: var(--w4a-space-6) 0 0;
+  text-align: center;
+  color: var(--w4a-on-surface-variant);
+  font-size: var(--w4a-type-body-size);
+}
+.footer strong {
+  display: block;
+  font-weight: 500;
+}
+.caption {
+  margin: 0;
+  font-size: var(--w4a-type-caption-size);
+  color: var(--w4a-on-surface-variant);
+}
+.email {
+  margin: 0;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+button {
+  min-height: 44px;
+  margin-top: var(--w4a-space-2);
+  padding: 0 var(--w4a-space-2);
+  font: inherit;
+  font-weight: 700;
+  color: var(--w4a-primary);
+  background: transparent;
+  border: 0;
+  border-radius: var(--w4a-rounded-full);
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+button:focus-visible {
+  outline: 2px solid var(--w4a-primary);
+  outline-offset: 2px;
+}
+.error {
+  margin: 8px 0 0;
+  font-weight: 700;
+}

@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { sessionGuard } from './core/data/session.guard';
+import { dayGuard } from './features/history/day.guard';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'today' },
@@ -34,11 +35,14 @@ export const routes: Routes = [
         path: 'history',
         loadComponent: () =>
           import('./features/history/history.component').then((m) => m.HistoryComponent),
-      },
-      {
-        path: 'history/:dayKey',
-        loadComponent: () =>
-          import('./features/history/history-day.component').then((m) => m.HistoryDayComponent),
+        children: [
+          {
+            path: ':dayKey',
+            canActivate: [dayGuard],
+            loadComponent: () =>
+              import('./features/history/history-day.component').then((m) => m.HistoryDayComponent),
+          },
+        ],
       },
       {
         path: 'report',
