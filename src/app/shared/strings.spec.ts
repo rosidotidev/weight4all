@@ -87,6 +87,17 @@ describe('strings', () => {
     }
   });
 
+  it('has the History copy of EXPERIENCE.md in both languages', () => {
+    expect(strings.historyHeading).toEqual({
+      en: 'Entries · newest first',
+      it: 'Registrazioni · dalla più recente',
+    });
+    expect(strings.historyEmpty.en).toBe('Nothing here yet. Your first log starts on Today.');
+    expect(strings.historyEmpty.it).toBe('Ancora niente qui. La prima registrazione parte da Oggi.');
+    expect(strings.historyMissing.en({ date: 'Mon 13 Oct' })).toBe('Mon 13 Oct — no entry');
+    expect(strings.historyMissing.it({ date: 'lun 13 ott' })).toBe('lun 13 ott — nessuna registrazione');
+  });
+
   it('has the entry form texts', () => {
     expect(strings.weightMissing.en).toBe('Add your weight to save.');
     expect(strings.weightRange.en({ min: '20.0', max: '400.0' })).toBe(

@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 10-20-2026 19:03
-last_updated: 10-20-2026 22:50
+last_updated: 10-20-2026 23:20
 project: bmad612_home
 project_key: NOKEY
 tracking_system: file-system
@@ -55,7 +55,7 @@ development_status:
   2-4-adjust-the-weight-quickly: review
   2-5-see-that-today-is-not-logged-yet: review
   2-6-get-a-warm-response-after-saving: review
-  2-7-browse-my-history: backlog
+  2-7-browse-my-history: review
   2-8-edit-an-entry-or-add-a-forgotten-day: backlog
   2-9-delete-an-entry-safely: backlog
   2-10-see-this-week-on-wide-screens: backlog

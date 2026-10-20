@@ -179,10 +179,32 @@ export const strings = {
   navHistory: { en: 'History', it: 'Storico' },
   navReport: { en: 'Report', it: 'Report' },
   navSettings: { en: 'Settings', it: 'Impostazioni' },
-  historyPlaceholder: {
-    en: 'Your past days will appear here soon.',
-    it: 'I tuoi giorni passati appariranno qui a breve.',
+  historyHeading: { en: 'Entries · newest first', it: 'Registrazioni · dalla più recente' },
+  historyMissing: {
+    en: (p: { date: string }) => `${p.date} — no entry`,
+    it: (p: { date: string }) => `${p.date} — nessuna registrazione`,
   },
+  historyAdd: { en: '+ Add', it: '+ Aggiungi' },
+  historyAddFor: {
+    en: (p: { date: string }) => `Add entry for ${p.date}`,
+    it: (p: { date: string }) => `Aggiungi registrazione per ${p.date}`,
+  },
+  historyOpenEntry: {
+    en: (p: { date: string; value: string }) => `Open entry for ${p.date}: ${p.value}`,
+    it: (p: { date: string; value: string }) => `Apri registrazione di ${p.date}: ${p.value}`,
+  },
+  historyEmpty: {
+    en: 'Nothing here yet. Your first log starts on Today.',
+    it: 'Ancora niente qui. La prima registrazione parte da Oggi.',
+  },
+  historyLoading: { en: 'Loading your days', it: 'Sto caricando i tuoi giorni' },
+  historyLoadError: {
+    en: 'We could not load your days. Please check your connection and try again.',
+    it: 'Non siamo riusciti a caricare i tuoi giorni. Controlla la connessione e riprova.',
+  },
+  historyRetry: { en: 'Try again', it: 'Riprova' },
+  historyDash: { en: '—', it: '—' },
+  historyAbsentValue: { en: 'no value', it: 'nessun valore' },
   historyDayPlaceholder: {
     en: (p: { dayKey: string }) => `Day ${p.dayKey} will appear here soon.`,
     it: (p: { dayKey: string }) => `Il giorno ${p.dayKey} apparirà qui a breve.`,
