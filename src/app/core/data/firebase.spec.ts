@@ -14,10 +14,15 @@ vi.mock('firebase/firestore', () => ({
 }));
 
 describe('initFirebase', () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // Other specs import the real ./firebase through AuthService; re-evaluate it under the mocks.
+    vi.resetModules();
+  });
 
   it('connects Auth and Firestore to the emulators in local', async () => {
     const { initFirebase } = await import('./firebase');
+    vi.clearAllMocks(); // drop the calls made by the module's own import-time init
     initFirebase(local);
     expect(initializeApp).toHaveBeenCalledWith(local.firebase);
     expect(connectAuthEmulator).toHaveBeenCalledWith({ auth: true }, 'http://127.0.0.1:9099', {
@@ -28,6 +33,7 @@ describe('initFirebase', () => {
 
   it('does not connect to emulators in prod', async () => {
     const { initFirebase } = await import('./firebase');
+    vi.clearAllMocks(); // drop the calls made by the module's own import-time init
     initFirebase(prod);
     expect(initializeApp).toHaveBeenCalledWith(prod.firebase);
     expect(connectAuthEmulator).not.toHaveBeenCalled();
