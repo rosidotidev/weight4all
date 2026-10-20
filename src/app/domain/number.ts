@@ -35,3 +35,12 @@ export function stepValue(
   const next = Math.round(value * unit) + direction * Math.round(step * unit);
   return Math.min(Math.max(next, Math.round(min * unit)), Math.round(max * unit)) / unit;
 }
+
+/**
+ * `a - b` computed in integer units of 10^-decimals, so 72.4 - 72.7 is exactly -0.3 and never
+ * -0.2999999999999972 (AD-14). Never returns negative zero.
+ */
+export function decimalDifference(a: number, b: number, decimals: number): number {
+  const unit = 10 ** decimals;
+  return (Math.round(a * unit) - Math.round(b * unit)) / unit + 0;
+}

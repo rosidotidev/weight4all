@@ -13,6 +13,26 @@ export type Dictionary = Record<
 export const strings = {
   appName: { en: 'Weight4All', it: 'Weight4All' },
   saved: { en: 'Saved!', it: 'Salvato!' },
+  effectYesterday: { en: 'vs yesterday', it: 'rispetto a ieri' },
+  effectSince: {
+    en: (p: { date: string }) => `vs ${p.date}`,
+    it: (p: { date: string }) => `rispetto al ${p.date}`,
+  },
+  effectLoss: { en: 'Nice! Another step, your way.', it: 'Bene! Un altro passo, a modo tuo.' },
+  effectGain: {
+    en: 'Bodies fluctuate. Thanks for logging today.',
+    it: 'Il corpo cambia di giorno in giorno. Grazie per aver registrato oggi.',
+  },
+  effectWelcome: {
+    en: 'Welcome! Your first log is in.',
+    it: 'Benvenuto! La tua prima registrazione è salvata.',
+  },
+  effectLogged: {
+    en: (p: { value: string }) => `${p.value} kg logged for today.`,
+    it: (p: { value: string }) => `${p.value} kg registrati per oggi.`,
+  },
+  effectDone: { en: 'Done', it: 'Fatto' },
+  effectDismiss: { en: 'Dismiss', it: 'Chiudi' },
   datepickerCalendar: { en: 'Calendar', it: 'Calendario' },
   datepickerOpenCalendar: { en: 'Open calendar', it: 'Apri calendario' },
   datepickerCloseCalendar: { en: 'Close calendar', it: 'Chiudi calendario' },

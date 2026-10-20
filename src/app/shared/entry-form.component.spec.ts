@@ -317,6 +317,49 @@ describe('EntryFormComponent', () => {
     });
   });
 
+  describe('confirmed output', () => {
+    it('emits the saved Entry once, only after the store confirms', async () => {
+      let finish!: (r: EntryResult) => void;
+      save.mockReturnValueOnce(new Promise<EntryResult>((resolve) => (finish = resolve)));
+      const { fixture, press, type } = await setup();
+      const seen: Entry[] = [];
+      fixture.componentInstance.confirmed.subscribe((entry) => seen.push(entry));
+      await type('72,4');
+      await press();
+      expect(seen).toEqual([]);
+      finish({ ok: true });
+      await fixture.whenStable();
+      expect(seen).toEqual([{ day: DAY, values: { weight: 72.4 } }]);
+    });
+
+    it('does not emit when the save fails', async () => {
+      save.mockResolvedValue({ ok: false, code: 'network' });
+      const { fixture, press, type } = await setup();
+      const seen: Entry[] = [];
+      fixture.componentInstance.confirmed.subscribe((entry) => seen.push(entry));
+      await type('72.4');
+      await press();
+      expect(seen).toEqual([]);
+    });
+
+    it('does not emit for a rejected value or a save from an older session', async () => {
+      const { fixture, press, type } = await setup();
+      const seen: Entry[] = [];
+      fixture.componentInstance.confirmed.subscribe((entry) => seen.push(entry));
+      await type('5');
+      await press();
+      expect(save).not.toHaveBeenCalled();
+      let finish!: (r: EntryResult) => void;
+      save.mockReturnValueOnce(new Promise<EntryResult>((resolve) => (finish = resolve)));
+      await type('72.5');
+      await press();
+      epoch.set(1);
+      finish({ ok: true });
+      await fixture.whenStable();
+      expect(seen).toEqual([]);
+    });
+  });
+
   describe('a session change during a save', () => {
     it('discards a success: no Saved!, draft kept', async () => {
       let finish!: (r: EntryResult) => void;

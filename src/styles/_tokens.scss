@@ -31,6 +31,17 @@
   --w4a-mood-face-fill: #ffd35c;
   --w4a-mood-face-stroke: #5c4300;
 
+  // Happy effect: confetti pieces (loss only) and the celebration gradient, derived from the accent
+  // so the card follows it; each stop stays dark enough for white text (AA).
+  --w4a-confetti-gold: #ffc83d;
+  --w4a-confetti-pink: #ff6fa5;
+  --w4a-confetti-mint: #3ee0c5;
+  --w4a-confetti-orange: #ff9a62;
+  --w4a-confetti-sky: #8fb0ff;
+  --w4a-celebration-start: color-mix(in srgb, var(--w4a-primary) 80%, black);
+  --w4a-celebration-mid: color-mix(in srgb, var(--w4a-primary) 90%, black);
+  --w4a-celebration-end: color-mix(in srgb, color-mix(in srgb, var(--w4a-primary) 78%, #c2287a) 92%, black);
+
   // Typography
   --w4a-font-family: Roboto, Arial, sans-serif;
   --w4a-type-app-bar-title-size: 22px;

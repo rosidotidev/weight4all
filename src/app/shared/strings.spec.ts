@@ -5,6 +5,8 @@ const LANGS: Language[] = ['en', 'it'];
 // Any parameter name resolves to a sample text, so parameterised entries can be rendered.
 const SAMPLE_PARAMS = new Proxy({}, { get: () => 'sample' }) as never;
 
+const EXCLAIMING = ['saved', 'effectLoss', 'effectWelcome'];
+
 describe('strings', () => {
   it('fails to compile when a key lacks a language', () => {
     // @ts-expect-error the `it` text is missing
@@ -27,9 +29,9 @@ describe('strings', () => {
     }
   });
 
-  it('allows an exclamation mark only in `saved`', () => {
+  it('allows an exclamation mark only in `saved` and the warm effect messages', () => {
     for (const [key, entry] of Object.entries(strings)) {
-      if (key === 'saved') continue;
+      if (EXCLAIMING.includes(key)) continue;
       for (const lang of LANGS) {
         const value = (entry as Record<Language, unknown>)[lang];
         const text =
@@ -39,6 +41,20 @@ describe('strings', () => {
     }
     expect(strings.saved.en).toBe('Saved!');
     expect(strings.saved.it).toBe('Salvato!');
+  });
+
+  it('has the Happy effect copy of EXPERIENCE.md in both languages', () => {
+    expect(strings.effectLoss).toEqual({
+      en: 'Nice! Another step, your way.',
+      it: 'Bene! Un altro passo, a modo tuo.',
+    });
+    expect(strings.effectWelcome.en).toBe('Welcome! Your first log is in.');
+    expect(strings.effectYesterday).toEqual({ en: 'vs yesterday', it: 'rispetto a ieri' });
+    expect(strings.effectSince.en({ date: '14 Oct' })).toBe('vs 14 Oct');
+    expect(strings.effectSince.it({ date: '14 ott' })).toBe('rispetto al 14 ott');
+    expect(strings.effectLogged.en({ value: '72.4' })).toBe('72.4 kg logged for today.');
+    expect(strings.effectLogged.it({ value: '72,4' })).toBe('72,4 kg registrati per oggi.');
+    expect([strings.effectDone.it, strings.effectDismiss.it]).toEqual(['Fatto', 'Chiudi']);
   });
 
   it('writes the two Language options in their own language in both Languages', () => {

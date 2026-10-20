@@ -1,4 +1,4 @@
-import { formatNumber, parseDecimal, stepValue } from './number';
+import { decimalDifference, formatNumber, parseDecimal, stepValue } from './number';
 
 describe('formatNumber', () => {
   it('uses a decimal comma in Italian', () => {
@@ -71,5 +71,21 @@ describe('stepValue', () => {
     for (const text of ['72.7', '72,7']) {
       expect(stepValue(parseDecimal(text, 1)!, 1, 0.1, 1, 20, 400)).toBe(72.8);
     }
+  });
+});
+
+describe('decimalDifference', () => {
+  it.each([
+    [72.4, 72.7, -0.3],
+    [72.8, 72.6, 0.2],
+    [72.3, 72.1, 0.2],
+    [0.3, 0.1, 0.2],
+    [100.1, 100, 0.1],
+  ] as const)('%d minus %d is exactly %d', (a, b, expected) => {
+    expect(decimalDifference(a, b, 1)).toBe(expected);
+  });
+
+  it('is a plain zero, not negative zero, for equal values', () => {
+    expect(Object.is(decimalDifference(72.4, 72.4, 1), 0)).toBe(true);
   });
 });

@@ -1,6 +1,11 @@
 import { addDays, dayKey, enumerateDays, formatDay, parseDayKey, resolveRange } from './day';
 
 describe('formatDay', () => {
+  it('can leave the weekday out', () => {
+    expect(formatDay('2025-10-14', 'en-GB', false)).toBe('14 Oct');
+    expect(formatDay('2025-10-14', 'it-IT', false)).toBe('14 ott');
+  });
+
   it('formats Italian as short weekday, day and month', () => {
     expect(formatDay('2025-10-19', 'it-IT')).toBe('dom 19 ott');
   });

@@ -1,15 +1,18 @@
-/** Short weekday, day and short month of a `YYYY-MM-DD` key, in the locale (AD-4). */
-export function formatDay(dayKey: string, locale: string): string {
+/**
+ * Short weekday, day and short month of a `YYYY-MM-DD` key, in the locale (AD-4); without the
+ * weekday when `weekday` is false ("14 Oct").
+ */
+export function formatDay(dayKey: string, locale: string, weekday = true): string {
   const [year, month, day] = dayKey.split('-').map(Number);
   // Built from parts in local time: `new Date('YYYY-MM-DD')` would parse as UTC.
   const date = new Date(year, month - 1, day);
   const parts = new Intl.DateTimeFormat(locale, {
-    weekday: 'short',
+    ...(weekday ? { weekday: 'short' as const } : {}),
     day: 'numeric',
     month: 'short',
   }).formatToParts(date);
   const pick = (type: string) => parts.find((p) => p.type === type)?.value ?? '';
-  return `${pick('weekday')} ${pick('day')} ${pick('month')}`;
+  return weekday ? `${pick('weekday')} ${pick('day')} ${pick('month')}` : `${pick('day')} ${pick('month')}`;
 }
 
 export type RangeId = '7d' | '30d' | '90d' | '1y' | 'all';

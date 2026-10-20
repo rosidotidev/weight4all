@@ -7,6 +7,7 @@ import {
   computed,
   inject,
   input,
+  output,
   signal,
 } from '@angular/core';
 import type { MatSnackBarRef } from '@angular/material/snack-bar';
@@ -14,7 +15,7 @@ import { EntryErrorCode, EntryStore } from '../core/data/entry.store';
 import { SessionScope } from '../core/data/session-scope';
 import { DraftStore } from '../core/state/draft.store';
 import { DIMENSIONS, DimensionKey } from '../domain/dimensions';
-import { DayKey, initialDraft } from '../domain/entry';
+import { DayKey, Entry, initialDraft } from '../domain/entry';
 import { previousEntry } from '../domain/history';
 import { formatNumber, parseDecimal, stepValue } from '../domain/number';
 import { ValueError, validateValue } from '../domain/validation';
@@ -217,6 +218,8 @@ const MINUS = 'M19 13H5v-2h14z';
 })
 export class EntryFormComponent {
   readonly day = input.required<DayKey>();
+  /** The Entry the store confirmed, once; never emitted for a failed or stale save. */
+  readonly confirmed = output<Entry>();
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly store = inject(EntryStore);
@@ -335,7 +338,8 @@ export class EntryFormComponent {
     this.saving.set(true);
     const sent = this.drafts.get(day);
     const epoch = this.scope.sessionEpoch();
-    const result = await this.store.save({ day, values });
+    const saving: Entry = { day, values };
+    const result = await this.store.save(saving);
     this.saving.set(false);
     // A result from an older session belongs to nobody now: no message, no "Saved!", no draft change.
     if (epoch !== this.scope.sessionEpoch()) return;
@@ -357,6 +361,7 @@ export class EntryFormComponent {
       // Text typed while the write was in flight is newer than what was saved: keep it.
       if (this.drafts.get(day) === sent) this.drafts.drop(day);
       this.saved.set(true);
+      this.confirmed.emit(saving);
     }
   }
 
