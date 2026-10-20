@@ -1,0 +1,20 @@
+<nav class="nav" [class]="windowClass()" [attr.aria-label]="t().navLabel">
+  @for (tab of tabs; track tab.path) {
+    <a
+      class="tab"
+      [routerLink]="tab.path"
+      routerLinkActive="active"
+      ariaCurrentWhenActive="page"
+    >
+      <span class="indicator">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path [attr.d]="tab.icon" />
+        </svg>
+      </span>
+      <span class="label">{{ t()[tab.label] }}</span>
+    </a>
+  }
+</nav>
+<div class="content">
+  <router-outlet />
+</div>

@@ -20,15 +20,37 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/reset.component').then((m) => m.ResetComponent),
   },
   {
-    path: 'today',
+    path: '',
     canActivate: [sessionGuard],
-    loadComponent: () => import('./features/today/today.component').then((m) => m.TodayComponent),
-  },
-  {
-    path: 'settings',
-    canActivate: [sessionGuard],
-    loadComponent: () =>
-      import('./features/settings/settings.component').then((m) => m.SettingsComponent),
+    canActivateChild: [sessionGuard],
+    loadComponent: () => import('./shell/shell.component').then((m) => m.ShellComponent),
+    children: [
+      {
+        path: 'today',
+        loadComponent: () =>
+          import('./features/today/today.component').then((m) => m.TodayComponent),
+      },
+      {
+        path: 'history',
+        loadComponent: () =>
+          import('./features/history/history.component').then((m) => m.HistoryComponent),
+      },
+      {
+        path: 'history/:dayKey',
+        loadComponent: () =>
+          import('./features/history/history-day.component').then((m) => m.HistoryDayComponent),
+      },
+      {
+        path: 'report',
+        loadComponent: () =>
+          import('./features/report/report.component').then((m) => m.ReportComponent),
+      },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./features/settings/settings.component').then((m) => m.SettingsComponent),
+      },
+    ],
   },
   // Unknown addresses go through `today`, whose guard sends a signed-out user to /login.
   { path: '**', redirectTo: 'today' },

@@ -48,3 +48,7 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-1-7-reset-a-forgotten-password.md`
   summary: Send the password-reset email in the app Language and give the Firebase page a way back to the app.
   evidence: Nothing sets the Firebase `languageCode` from the Language and `sendPasswordResetEmail` gets no `ActionCodeSettings`, so an Italian user receives an English email with no continue link (unverified severity: low, nice-to-have; fits Story 1.9).
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-1-8-move-between-four-tabs-on-any-screen-size.md`
+  summary: Reset the scroll position of the shell's `.content` scroller when the Tab changes.
+  evidence: `.content` scrolls internally and router scroll restoration targets the window, so a new Tab can open at the previous Tab's offset; invisible with the current placeholders (unverified severity: medium, Epic 2+).

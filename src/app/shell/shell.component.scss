@@ -1,0 +1,125 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  font-family: var(--w4a-font-family);
+  color: var(--w4a-on-surface);
+  background: var(--w4a-surface);
+}
+
+:host:has(.nav.medium),
+:host:has(.nav.expanded) {
+  flex-direction: row;
+}
+
+.content {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+}
+
+.nav {
+  display: flex;
+  flex: none;
+  box-sizing: border-box;
+  background: var(--w4a-surface-container);
+  color: var(--w4a-on-surface-variant);
+
+  &.compact {
+    order: 2;
+    flex-direction: row;
+    justify-content: space-around;
+    height: var(--w4a-nav-bar-height);
+    padding: var(--w4a-space-3) var(--w4a-space-2) var(--w4a-space-4);
+  }
+
+  &.medium {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--w4a-space-3);
+    width: var(--w4a-nav-rail-width);
+    padding: var(--w4a-space-4) 0;
+  }
+
+  &.expanded {
+    flex-direction: column;
+    gap: var(--w4a-space-1);
+    width: var(--w4a-nav-drawer-width);
+    padding: var(--w4a-space-4) var(--w4a-space-3);
+  }
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  min-width: var(--w4a-touch-target);
+  min-height: var(--w4a-touch-target);
+  color: inherit;
+  text-decoration: none;
+  font-size: var(--w4a-type-caption-size);
+  font-weight: var(--w4a-type-card-label-weight);
+
+  &:focus-visible {
+    outline: 2px solid var(--w4a-primary);
+    outline-offset: 2px;
+  }
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+.indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.label {
+  min-width: 0;
+}
+
+.compact .tab,
+.medium .tab {
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--w4a-space-1);
+  flex: 1 1 0;
+}
+
+.medium .tab {
+  flex: none;
+  width: 100%;
+}
+
+.compact .indicator,
+.medium .indicator {
+  width: 64px;
+  height: 32px;
+  border-radius: var(--w4a-rounded-full);
+}
+
+.expanded .tab {
+  flex-direction: row;
+  gap: var(--w4a-space-3);
+  height: 56px;
+  padding: 0 var(--w4a-space-4);
+  border-radius: var(--w4a-rounded-full);
+  font-size: var(--w4a-type-body-size);
+}
+
+.active {
+  color: var(--w4a-on-primary-container);
+  font-weight: 700;
+}
+
+.compact .active .indicator,
+.medium .active .indicator,
+.expanded .active {
+  background: var(--w4a-primary-container);
+}

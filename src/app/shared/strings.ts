@@ -82,6 +82,23 @@ export const strings = {
     en: 'Your day will appear here soon.',
     it: 'Il tuo giorno apparirà qui a breve.',
   },
+  navLabel: { en: 'Main navigation', it: 'Navigazione principale' },
+  navToday: { en: 'Today', it: 'Oggi' },
+  navHistory: { en: 'History', it: 'Storico' },
+  navReport: { en: 'Report', it: 'Report' },
+  navSettings: { en: 'Settings', it: 'Impostazioni' },
+  historyPlaceholder: {
+    en: 'Your past days will appear here soon.',
+    it: 'I tuoi giorni passati appariranno qui a breve.',
+  },
+  historyDayPlaceholder: {
+    en: (p: { dayKey: string }) => `Day ${p.dayKey} will appear here soon.`,
+    it: (p: { dayKey: string }) => `Il giorno ${p.dayKey} apparirà qui a breve.`,
+  },
+  reportPlaceholder: {
+    en: 'Your report will appear here soon.',
+    it: 'Il tuo report apparirà qui a breve.',
+  },
 } satisfies Dictionary;
 
 export type StringKey = keyof typeof strings;

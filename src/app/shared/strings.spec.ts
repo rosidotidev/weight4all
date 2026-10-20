@@ -2,6 +2,9 @@ import { Dictionary, Language, strings } from './strings';
 
 const LANGS: Language[] = ['en', 'it'];
 
+// Any parameter name resolves to a sample text, so parameterised entries can be rendered.
+const SAMPLE_PARAMS = new Proxy({}, { get: () => 'sample' }) as never;
+
 describe('strings', () => {
   it('fails to compile when a key lacks a language', () => {
     // @ts-expect-error the `it` text is missing
@@ -16,7 +19,7 @@ describe('strings', () => {
     for (const [key, entry] of Object.entries(strings)) {
       for (const lang of LANGS) {
         const value = (entry as Record<Language, unknown>)[lang];
-        const text = typeof value === 'function' ? (value as (p: never) => string)(undefined as never) : value;
+        const text = typeof value === 'function' ? (value as (p: never) => string)(SAMPLE_PARAMS) : value;
         expect(typeof text, `${key}.${lang}`).toBe('string');
         expect((text as string).trim().length, `${key}.${lang}`).toBeGreaterThan(0);
       }
@@ -28,7 +31,7 @@ describe('strings', () => {
       if (key === 'saved') continue;
       for (const lang of LANGS) {
         const value = (entry as Record<Language, unknown>)[lang];
-        const text = typeof value === 'function' ? (value as (p: never) => string)(undefined as never) : value;
+        const text = typeof value === 'function' ? (value as (p: never) => string)(SAMPLE_PARAMS) : value;
         expect(String(text), `${key}.${lang}`).not.toContain('!');
       }
     }

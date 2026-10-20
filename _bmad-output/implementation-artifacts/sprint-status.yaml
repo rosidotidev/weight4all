@@ -43,7 +43,7 @@ development_status:
   1-5-register-with-email-and-password: review
   1-6-log-in-stay-logged-in-and-log-out: review
   1-7-reset-a-forgotten-password: review
-  1-8-move-between-four-tabs-on-any-screen-size: backlog
+  1-8-move-between-four-tabs-on-any-screen-size: review
   1-9-choose-the-language-in-settings-and-keep-it-for-my-account: backlog
   1-10-choose-an-accent-color: backlog
   epic-1-retrospective: optional
