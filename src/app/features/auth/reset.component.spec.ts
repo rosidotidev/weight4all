@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { SessionScope } from '../../core/data/session-scope';
 import { AuthResult, AuthService } from '../../core/data/auth.service';
 import { ResetComponent } from './reset.component';
 
@@ -11,7 +12,8 @@ describe('ResetComponent', () => {
     sendPasswordReset = vi.fn<(e: string) => Promise<AuthResult>>().mockResolvedValue({ ok: true });
     await TestBed.configureTestingModule({
       imports: [ResetComponent],
-      providers: [provideRouter([]), { provide: AuthService, useValue: { sendPasswordReset } }],
+      providers: [provideRouter([]), { provide: AuthService, useValue: { sendPasswordReset } },
+        { provide: SessionScope, useValue: { registerStore: () => undefined, sessionEpoch: () => 0 } }],
     }).compileComponents();
   });
 

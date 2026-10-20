@@ -54,6 +54,16 @@ export const strings = {
   resetBackToLogin: { en: 'Back to log in', it: 'Torna al login' },
   settingsTitle: { en: 'Settings', it: 'Impostazioni' },
   settingsLogout: { en: 'Log out', it: 'Esci' },
+  settingsLanguageLegend: { en: 'Language', it: 'Lingua' },
+  // Fixed text: each option is always written in its own language.
+  settingsLanguageEnglish: { en: 'English', it: 'English' },
+  settingsLanguageItalian: { en: 'Italiano', it: 'Italiano' },
+  settingsLanguageSaveError: {
+    en: 'We could not save your language, so we went back to the previous one. Please try again.',
+    it: 'Non siamo riusciti a salvare la lingua, quindi abbiamo ripristinato quella di prima. Riprova pure.',
+  },
+  settingsAccountHeading: { en: 'Account', it: 'Account' },
+  settingsSignedInAs: { en: 'Signed in as', it: 'Accesso eseguito come' },
   authErrorInvalidCredentials: {
     en: 'That email and password do not match. Please try again.',
     it: 'Email e password non corrispondono. Riprova pure.',

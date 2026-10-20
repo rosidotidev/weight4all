@@ -21,7 +21,7 @@ vi.mock('firebase/firestore', () => ({
   connectFirestoreEmulator: vi.fn(),
 }));
 
-type AuthListener = (user: { uid: string } | null) => void;
+type AuthListener = (user: { uid: string; email?: string | null } | null) => void;
 
 async function create() {
   const { AuthService } = await import('./auth.service');
@@ -191,5 +191,43 @@ describe('AuthService.sendPasswordReset', () => {
     sendPasswordResetEmail.mockRejectedValue(new Error('boom'));
     const { service } = await create();
     expect(await service.sendPasswordReset('a@b.it')).toEqual({ ok: false, code: 'unknown' });
+  });
+});
+
+describe('AuthService.email', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.resetModules();
+  });
+
+  it('is null at start and follows the Firebase user, then null when signed out', async () => {
+    const { service, emit } = await create();
+    expect(service.email()).toBeNull();
+    emit({ uid: 'u1', email: 'a@b.it' });
+    expect(service.email()).toBe('a@b.it');
+    emit(null);
+    expect(service.email()).toBeNull();
+  });
+
+  it('is set by login and register', async () => {
+    signInWithEmailAndPassword.mockResolvedValue({ user: { uid: 'u1', email: 'l@b.it' } });
+    createUserWithEmailAndPassword.mockResolvedValue({ user: { uid: 'u2', email: 'r@b.it' } });
+    const { service } = await create();
+    await service.login('l@b.it', 'x');
+    expect(service.email()).toBe('l@b.it');
+    await service.register('r@b.it', 'secret1');
+    expect(service.email()).toBe('r@b.it');
+  });
+
+  it('is cleared by logout and by a listener error', async () => {
+    signOut.mockResolvedValue(undefined);
+    const { service, emit } = await create();
+    emit({ uid: 'u1', email: 'a@b.it' });
+    await service.logout();
+    expect(service.email()).toBeNull();
+    emit({ uid: 'u1', email: 'a@b.it' });
+    const onError = onAuthStateChanged.mock.calls.at(-1)![2] as (e: Error) => void;
+    onError(new Error('boom'));
+    expect(service.email()).toBeNull();
   });
 });

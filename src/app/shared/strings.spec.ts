@@ -39,6 +39,11 @@ describe('strings', () => {
     expect(strings.saved.it).toBe('Salvato!');
   });
 
+  it('writes the two Language options in their own language in both Languages', () => {
+    expect(strings.settingsLanguageEnglish).toEqual({ en: 'English', it: 'English' });
+    expect(strings.settingsLanguageItalian).toEqual({ en: 'Italiano', it: 'Italiano' });
+  });
+
   it('returns strings from parameterised text in both languages', () => {
     const dict = {
       hello: {

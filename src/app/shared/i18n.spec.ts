@@ -1,12 +1,18 @@
 import { TestBed } from '@angular/core/testing';
 import { MatDatepickerIntl } from '@angular/material/datepicker';
 import { PreferencesStore } from '../core/data/preferences.store';
+import { SessionScope } from '../core/data/session-scope';
 import { I18n, provideMaterialIntl } from './i18n';
 
 describe('I18n', () => {
   beforeEach(() => {
     localStorage.clear();
-    TestBed.configureTestingModule({ providers: [provideMaterialIntl()] });
+    TestBed.configureTestingModule({
+      providers: [
+        provideMaterialIntl(),
+        { provide: SessionScope, useValue: { registerStore: () => undefined, sessionEpoch: () => 0 } },
+      ],
+    });
   });
 
   it('is English by default, with English Material labels', () => {

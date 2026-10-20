@@ -58,14 +58,22 @@ export function toAuthErrorCode(error: unknown): AuthErrorCode {
 export class AuthService {
   private readonly _session = signal<Session>({ status: 'unknown' }, { equal: sameSession });
   readonly session = this._session.asReadonly();
+  private readonly _email = signal<string | null>(null);
+  /** Email of the signed-in user; `null` when signed out. */
+  readonly email = this._email.asReadonly();
 
   constructor() {
     onAuthStateChanged(
       auth,
-      (user) =>
-        this._session.set(user ? { status: 'signedIn', uid: user.uid } : { status: 'signedOut' }),
+      (user) => {
+        this._email.set(user?.email ?? null);
+        this._session.set(user ? { status: 'signedIn', uid: user.uid } : { status: 'signedOut' });
+      },
       // Never leave the guard waiting on `unknown` if Firebase cannot resolve.
-      () => this._session.set({ status: 'signedOut' }),
+      () => {
+        this._email.set(null);
+        this._session.set({ status: 'signedOut' });
+      },
     );
   }
 
@@ -73,6 +81,7 @@ export class AuthService {
   async register(email: string, password: string): Promise<AuthResult> {
     try {
       const credential = await createUserWithEmailAndPassword(auth, email, password);
+      this._email.set(credential.user.email ?? null);
       this._session.set({ status: 'signedIn', uid: credential.user.uid });
       return { ok: true };
     } catch (error) {
@@ -83,6 +92,7 @@ export class AuthService {
   async login(email: string, password: string): Promise<AuthResult> {
     try {
       const credential = await signInWithEmailAndPassword(auth, email, password);
+      this._email.set(credential.user.email ?? null);
       this._session.set({ status: 'signedIn', uid: credential.user.uid });
       return { ok: true };
     } catch (error) {
@@ -111,6 +121,7 @@ export class AuthService {
   async logout(): Promise<AuthResult> {
     try {
       await signOut(auth);
+      this._email.set(null);
       this._session.set({ status: 'signedOut' });
       return { ok: true };
     } catch (error) {

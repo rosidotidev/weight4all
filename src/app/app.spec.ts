@@ -83,7 +83,7 @@ describe('App', () => {
     TestBed.overrideProvider(SessionScope, {
       useFactory: () => {
         created++;
-        return {};
+        return { registerStore: () => undefined, sessionEpoch: () => 0 };
       },
       deps: [],
     });

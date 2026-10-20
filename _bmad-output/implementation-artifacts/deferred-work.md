@@ -52,3 +52,13 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-1-8-move-between-four-tabs-on-any-screen-size.md`
   summary: Reset the scroll position of the shell's `.content` scroller when the Tab changes.
   evidence: `.content` scrolls internally and router scroll restoration targets the window, so a new Tab can open at the previous Tab's offset; invisible with the current placeholders (unverified severity: medium, Epic 2+).
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-1-9-choose-the-language-in-settings-and-keep-it-for-my-account.md`
+  summary: Keep a stored accent when the preferences read failed before the first save.
+  evidence: `setLanguage` writes the full document with the remembered accent, which stays `violet` after a failed read, so a stored `teal` is overwritten (unverified severity: medium once Story 1.10 makes the accent visible; fix needs a retry of the read or a re-read before the write).
+- source_spec: `_bmad-output/implementation-artifacts/spec-1-9-choose-the-language-in-settings-and-keep-it-for-my-account.md`
+  summary: Reconcile a Language save that timed out and may commit later.
+  evidence: The 10 s race rolls the UI back, but the Firestore write stays queued and can commit afterward, so the next load flips the Language (unverified severity: low-medium; EntryStore will need the same re-read pattern, Story 2.2).
+- source_spec: `_bmad-output/implementation-artifacts/spec-1-9-choose-the-language-in-settings-and-keep-it-for-my-account.md`
+  summary: Make `formatDay` and `formatNumber` safe for bad input (malformed day key, years below 100, NaN, `-0`) when Story 2.1 extends them.
+  evidence: `formatDay('abc', …)` throws a RangeError from Intl and `formatNumber(-0.04, 1, …)` renders `-0.0` (unverified severity: low until callers pass user input).

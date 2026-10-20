@@ -26,7 +26,7 @@ describe('routes', () => {
         provideRouter(routes),
         {
           provide: AuthService,
-          useValue: { session, register: vi.fn(), login: vi.fn(), logout: vi.fn(), sendPasswordReset: vi.fn() },
+          useValue: { session, email: signal<string | null>(null), register: vi.fn(), login: vi.fn(), logout: vi.fn(), sendPasswordReset: vi.fn() },
         },
       ],
     });

@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
+import { SessionScope } from '../../core/data/session-scope';
 import { AuthResult, AuthService } from '../../core/data/auth.service';
 import { LoginComponent } from './login.component';
 
@@ -11,7 +12,8 @@ describe('LoginComponent', () => {
     login = vi.fn<(e: string, p: string) => Promise<AuthResult>>().mockResolvedValue({ ok: true });
     await TestBed.configureTestingModule({
       imports: [LoginComponent],
-      providers: [provideRouter([]), { provide: AuthService, useValue: { login } }],
+      providers: [provideRouter([]), { provide: AuthService, useValue: { login } },
+        { provide: SessionScope, useValue: { registerStore: () => undefined, sessionEpoch: () => 0 } }],
     }).compileComponents();
   });
 
@@ -70,7 +72,8 @@ describe('LoginComponent', () => {
         .mockResolvedValue({ ok: false, code: 'invalid-credentials' });
       await TestBed.configureTestingModule({
         imports: [LoginComponent],
-        providers: [provideRouter([]), { provide: AuthService, useValue: { login } }],
+        providers: [provideRouter([]), { provide: AuthService, useValue: { login } },
+        { provide: SessionScope, useValue: { registerStore: () => undefined, sessionEpoch: () => 0 } }],
       }).compileComponents();
       const { el, fill, submit } = await setup();
       fill(email, 'pw');
