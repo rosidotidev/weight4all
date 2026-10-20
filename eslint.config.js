@@ -59,6 +59,12 @@ const NUMBER_SELECTORS = [
   },
 ];
 
+// Lazy routes use import(); keep the firebase boundary (AD-1) closed for it too.
+const FIREBASE_DYNAMIC_SELECTOR = {
+  selector: 'ImportExpression[source.value=/^@?firebase/]',
+  message: 'Only src/app/core/data may import firebase/* or @firebase/* (AD-1).',
+};
+
 const DOM_GLOBALS = [
   'window',
   'document',
@@ -101,7 +107,12 @@ module.exports = defineConfig([
       ],
       '@angular-eslint/prefer-on-push-component-change-detection': 'error',
       'no-restricted-imports': importRule([], true),
-      'no-restricted-syntax': ['error', ...DATE_SELECTORS, ...NUMBER_SELECTORS],
+      'no-restricted-syntax': [
+        'error',
+        ...DATE_SELECTORS,
+        ...NUMBER_SELECTORS,
+        FIREBASE_DYNAMIC_SELECTOR,
+      ],
     },
   },
   {
@@ -137,7 +148,10 @@ module.exports = defineConfig([
   },
   {
     files: [`${LAYER}/core/data/**/*.ts`],
-    rules: { 'no-restricted-imports': importRule(['shared', 'features', 'shell'], false) },
+    rules: {
+      'no-restricted-imports': importRule(['shared', 'features', 'shell'], false),
+      'no-restricted-syntax': ['error', ...DATE_SELECTORS, ...NUMBER_SELECTORS],
+    },
   },
   {
     files: [`${LAYER}/shared/**/*.ts`],
@@ -152,11 +166,11 @@ module.exports = defineConfig([
   // --- Exemptions for Date / Intl.DateTimeFormat (AD-13b) -----------------
   {
     files: [`${LAYER}/domain/day.ts`, `${LAYER}/core/state/clock.service.ts`, '**/*.spec.ts'],
-    rules: { 'no-restricted-syntax': ['error', ...NUMBER_SELECTORS] },
+    rules: { 'no-restricted-syntax': ['error', ...NUMBER_SELECTORS, FIREBASE_DYNAMIC_SELECTOR] },
   },
   // --- Exemption for number formatting (AD-13e) ---------------------------
   {
     files: [`${LAYER}/domain/number.ts`],
-    rules: { 'no-restricted-syntax': ['error', ...DATE_SELECTORS] },
+    rules: { 'no-restricted-syntax': ['error', ...DATE_SELECTORS, FIREBASE_DYNAMIC_SELECTOR] },
   },
 ]);

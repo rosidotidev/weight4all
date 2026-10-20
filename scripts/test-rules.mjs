@@ -1,6 +1,6 @@
 // Runs the Firestore rules tests in tests/rules/. Passes when there are none yet
 // (Story 1.2 adds them) and exits non-zero when any test fails.
-import { readdirSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 
 const hasTests = (dir) =>
@@ -8,7 +8,7 @@ const hasTests = (dir) =>
     e.isDirectory() ? hasTests(`${dir}/${e.name}`) : /\.(spec|test)\.[cm]?[jt]s$/.test(e.name),
   );
 
-if (!hasTests('tests/rules')) {
+if (!existsSync('tests/rules') || !hasTests('tests/rules')) {
   console.log('test:rules: no rules tests yet, nothing to run.');
   process.exit(0);
 }

@@ -2,7 +2,8 @@
 title: '1-1 Create the Angular project with the quality gate'
 type: 'feature'
 created: '2026-10-20'
-status: 'ready-for-dev'
+status: 'done'
+baseline_commit: '64b91eb2db5fce5fb8e4994df7662486198d3803'
 route: 'dispatch'
 review_loop_iteration: 0
 context:
@@ -48,14 +49,14 @@ context:
 ## Tasks & Acceptance
 
 **Execution:**
-- [ ] `./` -- run `git init`; scaffold Angular 22.2.3 (standalone, signals, OnPush schematics default, strict) into the repo root -- AC1, AD-11
-- [ ] `package.json` -- pin stack (Angular/Material/CDK 22.2.3, TS ~6.0.3, rxjs ~7.8.2, zone.js ~0.16.0, firebase 12.19.0, chart.js 4.5.1, ng2-charts 11.0.0, vitest 5.0.5, jsdom 30.1.3, @firebase/rules-unit-testing 5.0.2, firebase-tools 15.34.0, @playwright/test 1.64.1); `engines.node >=24.15.0`; scripts `lint`, `test`, `test:rules`, `check`, `deploy` -- AC4
-- [ ] `angular.json` / `src/app/app.config.ts` -- OnPush default and `w4a` prefix, zoneless-compatible config -- conventions
-- [ ] `eslint.config.js` -- rules: (a) layer import table and `firebase/*`/`@firebase/*` only in `core/data`; (b) `new Date`, `Date.now`, `Date.parse`, `Intl.DateTimeFormat` banned except `domain/day.ts` and `ClockService` (spec files exempt for fake clocks); (d) Angular/DOM imports banned in `domain`; (e) `toFixed`, `toLocaleString`, `Intl.NumberFormat` banned except `domain/number.ts` -- AC2
-- [ ] `tests/lint/rules.spec.ts` + `tests/lint/fixtures/*` -- one violation fixture per rule plus allowed-path cases -- AC2
-- [ ] `src/app/**`, `src/environments`, `tests/rules`, `e2e` -- folder layout with minimal placeholders -- AC3
-- [ ] `package.json` scripts -- `check` = lint && test && test:rules (rules script passes with no tests yet, non-zero on failure); `deploy` = `npm run check && firebase deploy` placeholder chain stopping on failure -- AC4
-- [ ] `.gitignore`, initial commit -- AC1
+- [x] `./` -- run `git init`; scaffold Angular 22.2.3 (standalone, signals, OnPush schematics default, strict) into the repo root -- AC1, AD-11
+- [x] `package.json` -- pin stack (Angular/Material/CDK 22.2.3, TS ~6.0.3, rxjs ~7.8.2, zone.js ~0.16.0, firebase 12.19.0, chart.js 4.5.1, ng2-charts 11.0.0, vitest 5.0.5, jsdom 30.1.3, @firebase/rules-unit-testing 5.0.2, firebase-tools 15.34.0, @playwright/test 1.64.1); `engines.node >=24.15.0`; scripts `lint`, `test`, `test:rules`, `check`, `deploy` -- AC4
+- [x] `angular.json` / `src/app/app.config.ts` -- OnPush default and `w4a` prefix, zoneless-compatible config -- conventions
+- [x] `eslint.config.js` -- rules: (a) layer import table and `firebase/*`/`@firebase/*` only in `core/data`; (b) `new Date`, `Date.now`, `Date.parse`, `Intl.DateTimeFormat` banned except `domain/day.ts` and `ClockService` (spec files exempt for fake clocks); (d) Angular/DOM imports banned in `domain`; (e) `toFixed`, `toLocaleString`, `Intl.NumberFormat` banned except `domain/number.ts` -- AC2
+- [x] `tests/lint/rules.spec.ts` + `tests/lint/fixtures/*` -- one violation fixture per rule plus allowed-path cases -- AC2
+- [x] `src/app/**`, `src/environments`, `tests/rules`, `e2e` -- folder layout with minimal placeholders -- AC3
+- [x] `package.json` scripts -- `check` = lint && test && test:rules (rules script passes with no tests yet, non-zero on failure); `deploy` = `npm run check && firebase deploy` placeholder chain stopping on failure -- AC4
+- [x] `.gitignore`, initial commit -- AC1
 
 **Acceptance Criteria:**
 - Given an empty-of-app root and Node 24.15, when scaffolded and pinned, then `ng build` and `ng test` pass and `git status` works with a `.gitignore`.
@@ -68,6 +69,24 @@ context:
 ## Spec Change Log
 
 ## Review Triage Log
+
+| Finding | Verdict | Route | Evidence |
+|---|---|---|---|
+| Layer ban lists only partly pinned by tests (VG) | medium | patch | Removing a layer from a ban list left every test green; 9 violation cases added. |
+| Dynamic `import()` / lazy routes bypass firebase boundary (EC, BH) | medium | patch | `no-restricted-imports` ignores `ImportExpression`; selector + fixtures added, core/data exempt. |
+| `@types/node` undeclared (BH, EC) | low | patch | Only transitive; declared in devDependencies. |
+| `test-rules.mjs` throws if `tests/rules` missing (VG, BH, EC) | low | patch | Added `existsSync` guard. |
+| Domain purity rxjs/zone.js/other DOM globals unpinned (VG) | low | defer | Secondary list coverage; see deferred-work. |
+| Rules tests need emulator once rules tests exist (BH, EC, VG) | medium (unverified) | defer | Belongs to Story 1.2 when first rules test lands. |
+| `deploy` lacks build / firebase.json (BH, EC) | low | defer | Story 1.2 adds firebase.json; spec calls deploy a placeholder chain. |
+| features/shared importing core/data unrestricted (BH, EC) | false | rejected | Spine table allows `core/*` for features and shared. |
+| Firebase scaffolding, environments missing (BH) | false | rejected | Story 1.2 scope; spec Never-list. |
+| zone.js pinned but unused (BH, EC) | false | rejected | Pinning mandated by spec/spine; zoneless-compatible. |
+| Date rule gaps (toLocaleDateString, Date.UTC, globalThis.Date), aliasing (BH, EC) | low | rejected | Beyond spec list; fix adds complexity. |
+| `**/data`, `**/core` patterns may match packages (BH, EC, VG) | low | rejected | No such packages; harmless today. |
+| DOM globals list incomplete (EC) | low | rejected | Spec names no list; extension adds complexity. |
+| strictTemplates, .nvmrc, prettier script, README, .gitignore extras, vscode config, index.html meta, budgets, Playwright config (BH) | low | rejected | Cosmetic or out of story scope. |
+| Mixed ^/~ ranges (EC claim) | false | rejected | Spec pins stack packages; tooling versions are spec-flagged as chosen at scaffold. |
 
 ## Design Notes
 
