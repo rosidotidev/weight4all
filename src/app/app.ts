@@ -3,6 +3,9 @@ import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/cor
 import { RouterOutlet } from '@angular/router';
 import { I18n } from './shared/i18n';
 
+/** Accent theme class applied at startup; Story 1.10 makes it follow the saved accent. */
+export const DEFAULT_THEME_CLASS = 'theme-violet';
+
 @Component({
   imports: [RouterOutlet],
   selector: 'w4a-root',
@@ -14,6 +17,7 @@ export class App {
   constructor() {
     const root = inject(DOCUMENT).documentElement;
     const i18n = inject(I18n);
+    root.classList.add(DEFAULT_THEME_CLASS);
     effect(() => {
       root.lang = i18n.language();
     });

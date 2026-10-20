@@ -1,0 +1,77 @@
+// Weight4All design tokens, from DESIGN.md frontmatter. The only place (with _theme.scss and
+// _violet-palette.scss) where color literals may appear.
+
+:root {
+  // Color roles (default violet accent)
+  --w4a-primary: #5a46d6;
+  --w4a-on-primary: #ffffff;
+  --w4a-primary-container: #e4deff;
+  --w4a-on-primary-container: #1b0a68;
+  --w4a-surface: #fffbff;
+  --w4a-surface-container: #f3edf7;
+  --w4a-surface-variant: #e7e0ec;
+  --w4a-on-surface: #1c1b1f;
+  --w4a-on-surface-variant: #49454f;
+  --w4a-outline: #7a757f;
+
+  // Missing-entry banner (warm amber, deliberately not error red)
+  --w4a-banner-container: #ffe9c7;
+  --w4a-on-banner-container: #4a3000;
+  --w4a-banner-dot: #e08a00;
+
+  // Mood faces
+  --w4a-mood-face-fill: #ffd35c;
+  --w4a-mood-face-stroke: #5c4300;
+
+  // Typography
+  --w4a-font-family: Roboto, Arial, sans-serif;
+  --w4a-type-app-bar-title-size: 22px;
+  --w4a-type-app-bar-title-weight: 500;
+  --w4a-type-value-display-size: 56px;
+  --w4a-type-value-display-weight: 500;
+  --w4a-type-effect-delta-size: 58px;
+  --w4a-type-effect-delta-weight: 700;
+  --w4a-type-section-label-size: 14px;
+  --w4a-type-section-label-weight: 700;
+  --w4a-type-card-label-size: 14px;
+  --w4a-type-card-label-weight: 500;
+  --w4a-type-row-value-size: 16px;
+  --w4a-type-row-value-weight: 700;
+  --w4a-type-stat-value-size: 18px;
+  --w4a-type-stat-value-weight: 700;
+  --w4a-type-body-size: 14px;
+  --w4a-type-body-weight: 400;
+  --w4a-type-caption-size: 12px;
+  --w4a-type-caption-weight: 400;
+
+  // Shapes
+  --w4a-rounded-sm: 8px;
+  --w4a-rounded-md: 16px;
+  --w4a-rounded-lg: 20px;
+  --w4a-rounded-xl: 24px;
+  --w4a-rounded-xxl: 28px;
+  --w4a-rounded-full: 9999px;
+
+  // Spacing
+  --w4a-space-1: 4px;
+  --w4a-space-2: 8px;
+  --w4a-space-3: 12px;
+  --w4a-space-4: 16px;
+  --w4a-space-5: 20px;
+  --w4a-space-6: 24px;
+  --w4a-margin-compact: 16px;
+  --w4a-card-gap: 10px;
+  --w4a-nav-bar-height: 80px;
+  --w4a-nav-rail-width: 80px;
+  --w4a-nav-drawer-width: 280px;
+  --w4a-form-column-width: 600px;
+  --w4a-sleep-clear-size: 40px;
+  --w4a-touch-target: 44px;
+}
+
+// Dimension chart colors: a separate set, never derived from the accent (FR-6).
+:root {
+  --w4a-chart-weight: #2f5bd8; // circle marker
+  --w4a-chart-mood: #d9480f; // square marker
+  --w4a-chart-sleep: #0b8a7b; // triangle marker
+}

@@ -15,3 +15,10 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-1-2-connect-to-firebase-and-protect-each-account-s-data.md`
   summary: Fail `npm run deploy` while `environment.prod.ts` still holds `PLACEHOLDER_*` values.
   evidence: `check` passes with placeholders, so a deploy could ship an invalid Firebase config; belongs with the Story 5.6 release checklist.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-1-4-set-up-the-material-3-theme-and-design-tokens.md`
+  summary: Make the `--w4a-*` role colors follow the active `.theme-<id>` and run the contrast test per accent against the resolved tokens.
+  evidence: Role tokens are fixed on `:root` (primary `#5a46d6` vs Material `#5945d5`) and `describe.each(ACCENTS)` ignores its argument, so adding an accent in Story 1.10 would change Material colors only and skip contrast checks (unverified severity: medium).
+- source_spec: `_bmad-output/implementation-artifacts/spec-1-4-set-up-the-material-3-theme-and-design-tokens.md`
+  summary: Tighten the chart-token isolation test to every selector mentioning `theme-` and drop the synthetic half in `app.spec.ts`.
+  evidence: `tokensOf` matches exact selectors, so `:root.theme-violet { --w4a-chart-weight: ... }` would pass; the `app.spec` check only asserts its own injected CSS.

@@ -22,6 +22,12 @@ describe('App', () => {
     }).compileComponents();
   });
 
+  afterEach(() => {
+    document.head.querySelectorAll('style[data-test-theme]').forEach((s) => s.remove());
+    document.documentElement.style.removeProperty('--test-chart');
+    document.documentElement.className = '';
+  });
+
   it('should create the app', () => {
     const fixture = TestBed.createComponent(App);
     expect(fixture.componentInstance).toBeTruthy();
@@ -31,6 +37,24 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     expect(document.documentElement.lang).toBe('en');
+  });
+
+  it('applies the default theme class to <html> and keeps chart tokens when it changes', async () => {
+    document.documentElement.className = '';
+    const style = document.createElement('style');
+    style.dataset['testTheme'] = '';
+    style.textContent = ':root { --w4a-chart-weight: var(--test-chart); } .theme-teal { --w4a-primary: var(--test-chart); }';
+    document.head.appendChild(style);
+    document.documentElement.style.setProperty('--test-chart', 'chart-value');
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const root = document.documentElement;
+    expect(root.classList.contains('theme-violet')).toBe(true);
+
+    const chart = () => getComputedStyle(root).getPropertyValue('--w4a-chart-weight').trim();
+    const before = chart();
+    root.classList.replace('theme-violet', 'theme-teal');
+    expect(chart()).toBe(before);
   });
 
   it('switches <html lang> and texts at once, keeping typed input', async () => {
