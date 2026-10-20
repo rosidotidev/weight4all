@@ -76,9 +76,10 @@ const MINUS = 'M19 13H5v-2h14z';
     }
     input {
       box-sizing: border-box;
-      width: 100%;
-      min-width: 0;
+      width: auto;
+      min-width: 3ch;
       max-width: 180px;
+      field-sizing: content;
       min-height: var(--w4a-touch-target);
       padding: 0;
       font: inherit;
