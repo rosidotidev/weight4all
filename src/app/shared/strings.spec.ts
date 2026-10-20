@@ -97,4 +97,13 @@ describe('strings', () => {
     expect(dict.hello.en({ name: 'Ada' })).toBe('Hi Ada');
     expect(dict.hello.it({ name: 'Ada' })).toBe('Ciao Ada');
   });
+
+  it('names the weight stepper and its hint in both languages', () => {
+    expect(strings.weightIncrease).toEqual({ en: 'Increase weight by 0.1 kg', it: 'Aumenta il peso di 0,1 kg' });
+    expect(strings.weightDecrease).toEqual({ en: 'Decrease weight by 0.1 kg', it: 'Diminuisci il peso di 0,1 kg' });
+    expect(strings.weightHint.en({ value: '72.7', step: '0.1' })).toBe('Last time: 72.7 kg · step 0.1 kg');
+    expect(strings.weightHint.it({ value: '72,7', step: '0,1' })).toBe('Ultima volta: 72,7 kg · passo 0,1 kg');
+    expect(strings.weightHintNoLast.en({ step: '0.1' })).toBe('Step 0.1 kg');
+    expect(strings.weightHintNoLast.it({ step: '0,1' })).toBe('Passo 0,1 kg');
+  });
 });

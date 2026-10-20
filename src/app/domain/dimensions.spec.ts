@@ -22,6 +22,10 @@ describe('dimension registry', () => {
       labelKey: 'dimensionWeight',
       missingKey: 'weightMissing',
       rangeKey: 'weightRange',
+      increaseKey: 'weightIncrease',
+      decreaseKey: 'weightDecrease',
+      hintKey: 'weightHint',
+      hintNoLastKey: 'weightHintNoLast',
     });
   });
 

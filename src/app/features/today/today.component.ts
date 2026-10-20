@@ -19,7 +19,8 @@ import { I18n } from '../../shared/i18n';
     .skeleton {
       display: grid;
       gap: var(--w4a-space-4);
-      max-width: 480px;
+      max-width: var(--w4a-form-column-width);
+      margin-inline: auto;
     }
     .card {
       display: grid;
@@ -48,6 +49,10 @@ import { I18n } from '../../shared/i18n';
       clip-path: inset(50%);
       white-space: nowrap;
       border: 0;
+    }
+    .load-error {
+      max-width: var(--w4a-form-column-width);
+      margin-inline: auto;
     }
     button {
       min-height: 44px;

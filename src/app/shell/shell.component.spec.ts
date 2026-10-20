@@ -3,7 +3,9 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { PreferencesStore } from '../core/data/preferences.store';
+import { ClockService } from '../core/state/clock.service';
 import { LayoutService } from '../core/state/layout.service';
+import { formatDay } from '../domain/day';
 import { WindowClass } from '../domain/window-class';
 import { TodayComponent } from '../features/today/today.component';
 import { ShellComponent } from './shell.component';
@@ -103,5 +105,40 @@ describe('ShellComponent', () => {
     language.set('it');
     await harness.navigateByUrl('/history/2026-10-19');
     expect(title()).toBe('Storico');
+  });
+
+  describe('expanded window class', () => {
+    it('starts the drawer with the logo and the app name, and drops the app bar logo', async () => {
+      windowClass.set('expanded');
+      const { el, nav } = await setup();
+      const brand = nav().querySelector('.brand')!;
+      expect(brand.textContent).toContain('Weight4All');
+      expect(brand.querySelector('.logo')).not.toBeNull();
+      expect(el.querySelector('header .logo')).toBeNull();
+    });
+
+    it("shows the Tab name and today's date in the app bar", async () => {
+      windowClass.set('expanded');
+      const { harness, el } = await setup();
+      const bar = () => el.querySelector('header')!;
+      const today = TestBed.inject(ClockService).today();
+      expect(bar().querySelector('h1')!.textContent?.trim()).toBe('Today');
+      expect(bar().querySelector('.app-bar-date')!.textContent?.trim()).toBe(formatDay(today, 'en-GB'));
+      await harness.navigateByUrl('/settings');
+      expect(bar().querySelector('h1')!.textContent?.trim()).toBe('Settings');
+      language.set('it');
+      harness.detectChanges();
+      expect(bar().querySelector('h1')!.textContent?.trim()).toBe('Impostazioni');
+      expect(bar().querySelector('.app-bar-date')!.textContent?.trim()).toBe(formatDay(today, 'it-IT'));
+    });
+
+    it.each(['compact', 'medium'] as const)('keeps the current app bar on %s', async (cls) => {
+      windowClass.set(cls);
+      const { el, nav } = await setup();
+      expect(el.querySelector('header .logo')).not.toBeNull();
+      expect(el.querySelector('header h1')!.textContent?.trim()).toBe('Weight4All');
+      expect(el.querySelector('.app-bar-date')).toBeNull();
+      expect(nav().querySelector('.brand')).toBeNull();
+    });
   });
 });

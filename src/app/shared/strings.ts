@@ -110,6 +110,16 @@ export const strings = {
     en: (p: { min: string; max: string }) => `Enter a weight between ${p.min} and ${p.max} kg.`,
     it: (p: { min: string; max: string }) => `Inserisci un peso tra ${p.min} e ${p.max} kg.`,
   },
+  weightIncrease: { en: 'Increase weight by 0.1 kg', it: 'Aumenta il peso di 0,1 kg' },
+  weightDecrease: { en: 'Decrease weight by 0.1 kg', it: 'Diminuisci il peso di 0,1 kg' },
+  weightHint: {
+    en: (p: { value: string; step: string }) => `Last time: ${p.value} kg · step ${p.step} kg`,
+    it: (p: { value: string; step: string }) => `Ultima volta: ${p.value} kg · passo ${p.step} kg`,
+  },
+  weightHintNoLast: {
+    en: (p: { step: string }) => `Step ${p.step} kg`,
+    it: (p: { step: string }) => `Passo ${p.step} kg`,
+  },
   entrySave: { en: 'Save', it: 'Salva' },
   entrySaving: { en: 'Saving…', it: 'Salvataggio in corso…' },
   saveErrorNetwork: {

@@ -1,4 +1,10 @@
 <nav class="nav" [class]="windowClass()" [attr.aria-label]="t().navLabel">
+  @if (windowClass() === 'expanded') {
+    <div class="brand">
+      <span class="logo" aria-hidden="true"></span>
+      <span class="brand-name">{{ t().appName }}</span>
+    </div>
+  }
   @for (tab of tabs; track tab.path) {
     <a
       class="tab"
@@ -17,8 +23,13 @@
 </nav>
 <div class="main">
   <header class="app-bar">
-    <span class="logo" aria-hidden="true"></span>
-    <h1 class="app-bar-title">{{ title() }}</h1>
+    @if (windowClass() === 'expanded') {
+      <h1 class="app-bar-title">{{ tabTitle() }}</h1>
+      <span class="app-bar-date">{{ date() }}</span>
+    } @else {
+      <span class="logo" aria-hidden="true"></span>
+      <h1 class="app-bar-title">{{ title() }}</h1>
+    }
   </header>
   <div class="content">
     <router-outlet />

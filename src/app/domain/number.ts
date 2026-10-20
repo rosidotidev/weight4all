@@ -18,3 +18,20 @@ export function parseDecimal(text: string, decimals: number): number | null {
   const value = Number(fraction ? `${match[1]}.${fraction}` : match[1]);
   return Number.isFinite(value) ? value : null;
 }
+
+/**
+ * One step up (`direction` 1) or down (-1) from `value`, in integer units of 10^-decimals so that
+ * 72.7 + 0.1 is exactly 72.8, clamped to `min` and `max` (AD-14).
+ */
+export function stepValue(
+  value: number,
+  direction: 1 | -1,
+  step: number,
+  decimals: number,
+  min: number,
+  max: number,
+): number {
+  const unit = 10 ** decimals;
+  const next = Math.round(value * unit) + direction * Math.round(step * unit);
+  return Math.min(Math.max(next, Math.round(min * unit)), Math.round(max * unit)) / unit;
+}

@@ -1,4 +1,4 @@
-import { formatNumber, parseDecimal } from './number';
+import { formatNumber, parseDecimal, stepValue } from './number';
 
 describe('formatNumber', () => {
   it('uses a decimal comma in Italian', () => {
@@ -40,5 +40,36 @@ describe('parseDecimal', () => {
     expect(parseDecimal('6.5', 0)).toBeNull();
     expect(parseDecimal('6', 0)).toBe(6);
     expect(parseDecimal('6.25', 2)).toBe(6.25);
+  });
+});
+
+describe('stepValue', () => {
+  it.each([
+    [72.7, 1, 72.8],
+    [72.7, -1, 72.6],
+    [72.3, 1, 72.4],
+    [72.1 + 0.2, 1, 72.4],
+    [72.3, -1, 72.2],
+    [72.9, 1, 73],
+    [73, -1, 72.9],
+    [400, 1, 400],
+    [20, -1, 20],
+    [20, 1, 20.1],
+    [399.9, 1, 400],
+    [500, 1, 400],
+    [5, -1, 20],
+  ] as const)('steps %d by %d to %d', (value, direction, expected) => {
+    expect(stepValue(value, direction, 0.1, 1, 20, 400)).toBe(expected);
+  });
+
+  it('follows the decimals and step given', () => {
+    expect(stepValue(6, 1, 0.5, 1, 0, 24)).toBe(6.5);
+    expect(stepValue(6, -1, 1, 0, 0, 24)).toBe(5);
+  });
+
+  it('reads a step typed in either Language as the same value', () => {
+    for (const text of ['72.7', '72,7']) {
+      expect(stepValue(parseDecimal(text, 1)!, 1, 0.1, 1, 20, 400)).toBe(72.8);
+    }
   });
 });

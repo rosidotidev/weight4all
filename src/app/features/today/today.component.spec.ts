@@ -91,4 +91,12 @@ describe('TodayComponent', () => {
     expect(el.textContent).toContain('Non siamo riusciti a caricare i tuoi giorni');
     expect(el.querySelector('button')!.textContent).toContain('Riprova');
   });
+
+  it('renders the skeleton while loading and the form when ready', async () => {
+    const { fixture, el } = await setup();
+    expect(el.querySelector('.skeleton')).not.toBeNull();
+    status.set('ready');
+    await fixture.whenStable();
+    expect(el.querySelector('w4a-entry-form')).not.toBeNull();
+  });
 });

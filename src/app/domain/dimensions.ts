@@ -19,6 +19,11 @@ export interface Dimension {
   /** Keys in `strings.ts` for the blank and out-of-range messages. */
   readonly missingKey: 'weightMissing';
   readonly rangeKey: 'weightRange';
+  /** Keys in `strings.ts` for the stepper buttons and the hint under the field. */
+  readonly increaseKey: 'weightIncrease';
+  readonly decreaseKey: 'weightDecrease';
+  readonly hintKey: 'weightHint';
+  readonly hintNoLastKey: 'weightHintNoLast';
 }
 
 /** The ordered list of Dimensions; the only place that names them (AD-3). */
@@ -38,6 +43,10 @@ export const DIMENSIONS = [
     labelKey: 'dimensionWeight',
     missingKey: 'weightMissing',
     rangeKey: 'weightRange',
+    increaseKey: 'weightIncrease',
+    decreaseKey: 'weightDecrease',
+    hintKey: 'weightHint',
+    hintNoLastKey: 'weightHintNoLast',
   },
 ] as const satisfies readonly Dimension[];
 

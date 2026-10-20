@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TestBed } from '@angular/core/testing';
-import { EntryResult, EntryStore } from '../core/data/entry.store';
+import { EntryResult, EntryStatus, EntryStore } from '../core/data/entry.store';
 import { PreferencesStore } from '../core/data/preferences.store';
 import { SessionScope } from '../core/data/session-scope';
 import { DraftStore } from '../core/state/draft.store';
@@ -17,18 +17,20 @@ const FAILED = "Couldn't save. Your numbers are still here. Try again.";
 describe('EntryFormComponent', () => {
   let entries: ReturnType<typeof signal<Readonly<Record<string, Entry>>>>;
   let language: ReturnType<typeof signal<Language>>;
+  let status: ReturnType<typeof signal<EntryStatus>>;
   let save: ReturnType<typeof vi.fn<(entry: Entry) => Promise<EntryResult>>>;
 
   beforeEach(async () => {
     entries = signal<Readonly<Record<string, Entry>>>({});
     language = signal<Language>('en');
+    status = signal<EntryStatus>('ready');
     epoch.set(0);
     epochNow = () => epoch();
     save = vi.fn<(entry: Entry) => Promise<EntryResult>>().mockResolvedValue({ ok: true });
     await TestBed.configureTestingModule({
       imports: [EntryFormComponent],
       providers: [
-        { provide: EntryStore, useValue: { entries, save } },
+        { provide: EntryStore, useValue: { entries, status, save } },
         { provide: PreferencesStore, useValue: { language } },
         { provide: SessionScope, useValue: { sessionEpoch: () => epochNow() } },
       ],
@@ -52,7 +54,7 @@ describe('EntryFormComponent', () => {
       fixture,
       el,
       input: () => el.querySelector<HTMLInputElement>('input')!,
-      button: () => el.querySelector<HTMLButtonElement>('button')!,
+      button: () => el.querySelector<HTMLButtonElement>('button[type="submit"]')!,
       message: () => el.querySelector<HTMLElement>('.message')!,
       type: async (text: string) => {
         const input = el.querySelector<HTMLInputElement>('input')!;
@@ -61,7 +63,7 @@ describe('EntryFormComponent', () => {
         await fixture.whenStable();
       },
       press: async () => {
-        el.querySelector<HTMLButtonElement>('button')!.click();
+        el.querySelector<HTMLButtonElement>('button[type="submit"]')!.click();
         await fixture.whenStable();
       },
     };
@@ -83,7 +85,7 @@ describe('EntryFormComponent', () => {
     expect(input().getAttribute('autocomplete')).toBe('off');
     expect(el.querySelector('.unit')!.textContent).toBe('kg');
     expect(message().getAttribute('aria-live')).toBe('polite');
-    expect(input().getAttribute('aria-describedby')).toBe(message().id);
+    expect(input().getAttribute('aria-describedby')).toBe(`${el.querySelector('.hint')!.id} ${message().id}`);
     expect(input().getAttribute('aria-invalid')).toBeNull();
   });
 
@@ -340,6 +342,177 @@ describe('EntryFormComponent', () => {
       await fixture.whenStable();
       expect(message().textContent?.trim()).toBe('');
       expect(snackText()).toBe('');
+    });
+  });
+
+  describe('quick weight', () => {
+    const previous = (weight: number, day = '2026-10-18'): Record<string, Entry> => ({
+      [day]: { day, values: { weight } },
+    });
+    const plus = (el: HTMLElement) => el.querySelector<HTMLButtonElement>('.step.plus')!;
+    const minus = (el: HTMLElement) => el.querySelector<HTMLButtonElement>('.step.minus')!;
+    const hint = (el: HTMLElement) => el.querySelector('.hint')!.textContent?.trim();
+    const arrow = (input: HTMLInputElement, key: 'ArrowUp' | 'ArrowDown') => {
+      const event = new KeyboardEvent('keydown', { key, cancelable: true, bubbles: true });
+      input.dispatchEvent(event);
+      return event;
+    };
+
+    it('starts from the most recent earlier Entry with a hint, in both Languages', async () => {
+      entries.set({ ...previous(71, '2026-10-10'), ...previous(72.7) });
+      const { input, el, fixture } = await setup();
+      expect(input().value).toBe('72.7');
+      expect(hint(el)).toBe('Last time: 72.7 kg · step 0.1 kg');
+      language.set('it');
+      await fixture.whenStable();
+      expect(input().value).toBe('72,7');
+      expect(hint(el)).toBe('Ultima volta: 72,7 kg · passo 0,1 kg');
+    });
+
+    it('starts empty with only the step in the hint when there is no earlier Entry', async () => {
+      const { input, el, fixture } = await setup();
+      expect(input().value).toBe('');
+      expect(hint(el)).toBe('Step 0.1 kg');
+      language.set('it');
+      await fixture.whenStable();
+      expect(hint(el)).toBe('Passo 0,1 kg');
+    });
+
+    it('builds no suggestion while the store is not ready', async () => {
+      entries.set(previous(72.7));
+      status.set('loading');
+      const { input, el, fixture } = await setup();
+      expect(input().value).toBe('');
+      expect(hint(el)).toBe('Step 0.1 kg');
+      status.set('ready');
+      await fixture.whenStable();
+      expect(input().value).toBe('72.7');
+    });
+
+    it("prefers today's stored Entry and still hints the earlier one", async () => {
+      entries.set({ ...previous(72.7), [DAY]: { day: DAY, values: { weight: 72.4 } } });
+      const { input, el } = await setup();
+      expect(input().value).toBe('72.4');
+      expect(hint(el)).toBe('Last time: 72.7 kg · step 0.1 kg');
+    });
+
+    it('never replaces typed text with the suggestion', async () => {
+      entries.set(previous(72.7));
+      const { input, type, fixture } = await setup();
+      await type('80.0');
+      entries.set({ ...previous(72.7), '2026-10-19': { day: '2026-10-19', values: { weight: 75 } } });
+      await fixture.whenStable();
+      expect(input().value).toBe('80.0');
+    });
+
+    it('names the buttons', async () => {
+      const { el } = await setup();
+      expect(plus(el).getAttribute('aria-label')).toBe('Increase weight by 0.1 kg');
+      expect(minus(el).getAttribute('aria-label')).toBe('Decrease weight by 0.1 kg');
+      expect(plus(el).type).toBe('button');
+      expect(el.querySelectorAll('button')).toHaveLength(3);
+    });
+
+    it('names the buttons in Italian', async () => {
+      language.set('it');
+      const { el } = await setup();
+      expect(plus(el).getAttribute('aria-label')).toBe('Aumenta il peso di 0,1 kg');
+      expect(minus(el).getAttribute('aria-label')).toBe('Diminuisci il peso di 0,1 kg');
+    });
+
+    it('steps by exactly 0.1 with the buttons and saves the stepped value', async () => {
+      entries.set(previous(72.7));
+      const { input, el, fixture, press } = await setup();
+      plus(el).click();
+      await fixture.whenStable();
+      expect(input().value).toBe('72.8');
+      minus(el).click();
+      minus(el).click();
+      await fixture.whenStable();
+      expect(input().value).toBe('72.6');
+      await press();
+      expect(save).toHaveBeenCalledWith({ day: DAY, values: { weight: 72.6 } });
+    });
+
+    it('steps with Up and Down once per key and prevents the default', async () => {
+      entries.set(previous(72.7));
+      const { input, fixture } = await setup();
+      expect(arrow(input(), 'ArrowUp').defaultPrevented).toBe(true);
+      await fixture.whenStable();
+      expect(input().value).toBe('72.8');
+      expect(arrow(input(), 'ArrowDown').defaultPrevented).toBe(true);
+      arrow(input(), 'ArrowDown');
+      await fixture.whenStable();
+      expect(input().value).toBe('72.6');
+    });
+
+    it('steps from a typed comma in Italian and writes a comma back', async () => {
+      language.set('it');
+      const { input, el, type, fixture } = await setup();
+      await type('72,7');
+      plus(el).click();
+      await fixture.whenStable();
+      expect(input().value).toBe('72,8');
+    });
+
+    it('stays at the edges of the range', async () => {
+      const { input, el, type, fixture } = await setup();
+      await type('400.0');
+      plus(el).click();
+      await fixture.whenStable();
+      expect(input().value).toBe('400.0');
+      await type('20.0');
+      minus(el).click();
+      await fixture.whenStable();
+      expect(input().value).toBe('20.0');
+    });
+
+    it('steps from the suggestion when there is nothing to step from', async () => {
+      entries.set(previous(72.7));
+      const { input, el, type, fixture } = await setup();
+      for (const text of ['', 'abc']) {
+        await type(text);
+        plus(el).click();
+        await fixture.whenStable();
+        expect(input().value).toBe('72.8');
+        await type(text);
+        minus(el).click();
+        await fixture.whenStable();
+        expect(input().value).toBe('72.6');
+      }
+    });
+
+    it('steps from the minimum with no number and no suggestion', async () => {
+      const first = await setup();
+      plus(first.el).click();
+      await first.fixture.whenStable();
+      expect(first.input().value).toBe('20.1');
+      document.body.replaceChildren();
+      TestBed.inject(DraftStore).reset();
+      const second = await setup();
+      minus(second.el).click();
+      await second.fixture.whenStable();
+      expect(second.input().value).toBe('20.0');
+    });
+
+    it('reads a typed comma and point as the same value', async () => {
+      const { type, press } = await setup();
+      await type('72,7');
+      await press();
+      await type('72.7');
+      await press();
+      expect(save.mock.calls[0][0]).toEqual(save.mock.calls[1][0]);
+      expect(save.mock.calls[0][0].values).toEqual({ weight: 72.7 });
+    });
+
+    it('clears the saved message when a button changes the value', async () => {
+      entries.set(previous(72.7));
+      const { el, press, message, fixture } = await setup();
+      await press();
+      expect(message().textContent).toContain('Saved!');
+      plus(el).click();
+      await fixture.whenStable();
+      expect(message().textContent?.trim()).toBe('');
     });
   });
 

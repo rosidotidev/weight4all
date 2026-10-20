@@ -35,6 +35,24 @@
   font-weight: var(--w4a-type-app-bar-title-weight);
 }
 
+.app-bar-date {
+  margin-inline-start: auto;
+  font-size: var(--w4a-type-body-size);
+  color: var(--w4a-on-surface-variant);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--w4a-space-3);
+  min-height: 56px;
+  padding: 0 var(--w4a-space-4);
+  margin-bottom: var(--w4a-space-2);
+  font-size: var(--w4a-type-app-bar-title-size);
+  font-weight: var(--w4a-type-app-bar-title-weight);
+  color: var(--w4a-on-surface);
+}
+
 .logo {
   flex: none;
   width: 26px;

@@ -2,7 +2,9 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
+import { ClockService } from '../core/state/clock.service';
 import { LayoutService } from '../core/state/layout.service';
+import { formatDay } from '../domain/day';
 import { I18n } from '../shared/i18n';
 import { StringKey } from '../shared/strings';
 
@@ -45,7 +47,9 @@ const TABS: readonly Tab[] = [
   styleUrl: './shell.component.scss',
 })
 export class ShellComponent {
-  protected readonly t = inject(I18n).t;
+  private readonly i18n = inject(I18n);
+  protected readonly t = this.i18n.t;
+  private readonly clock = inject(ClockService);
   protected readonly windowClass = inject(LayoutService).windowClass;
   protected readonly tabs = TABS;
   private readonly router = inject(Router);
@@ -63,4 +67,12 @@ export class ShellComponent {
     const tab = TABS.find((candidate) => url === candidate.path || url.startsWith(`${candidate.path}/`));
     return !tab || tab.path === '/today' ? this.t().appName : this.t()[tab.label];
   });
+
+  /** Expanded app bar: the Tab name at the left, today's date at the right (desktop mockup). */
+  protected readonly tabTitle = computed(() => {
+    const url = this.url();
+    const tab = TABS.find((candidate) => url === candidate.path || url.startsWith(`${candidate.path}/`));
+    return this.t()[(tab ?? TABS[0]).label];
+  });
+  protected readonly date = computed(() => formatDay(this.clock.today(), this.i18n.locale()));
 }
