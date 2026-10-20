@@ -103,6 +103,13 @@ export const strings = {
     en: 'Your day will appear here soon.',
     it: 'Il tuo giorno apparirà qui a breve.',
   },
+  dimensionWeight: { en: 'Weight', it: 'Peso' },
+  todayLoading: { en: 'Loading your days', it: 'Sto caricando i tuoi giorni' },
+  todayLoadError: {
+    en: 'We could not load your days. Please check your connection and try again.',
+    it: 'Non siamo riusciti a caricare i tuoi giorni. Controlla la connessione e riprova.',
+  },
+  todayRetry: { en: 'Try again', it: 'Riprova' },
   navLabel: { en: 'Main navigation', it: 'Navigazione principale' },
   navToday: { en: 'Today', it: 'Oggi' },
   navHistory: { en: 'History', it: 'Storico' },

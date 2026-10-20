@@ -4,12 +4,12 @@ import { Accent, DEFAULT_ACCENT, isAccent } from '../../domain/accent';
 import { DEFAULT_LANGUAGE, Language, isLanguage } from '../../domain/language';
 import { db } from './firebase';
 import { SessionScope, SessionStore } from './session-scope';
+import { SAVE_TIMEOUT_MS, withTimeout } from './timeout';
+
+export { SAVE_TIMEOUT_MS };
 
 export const LANGUAGE_CACHE_KEY = 'w4a.language';
 export const ACCENT_CACHE_KEY = 'w4a.accent';
-
-/** A write that gets no answer (offline Firestore keeps writes pending) counts as failed after this long. */
-export const SAVE_TIMEOUT_MS = 10_000;
 
 function readCachedLanguage(): Language {
   try {
@@ -35,14 +35,6 @@ function writeCache(key: string, value: string): void {
   } catch {
     // cache is best effort
   }
-}
-
-function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  const timeout = new Promise<never>((_, reject) => {
-    timer = setTimeout(() => reject(new Error('timeout')), ms);
-  });
-  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
 }
 
 /**

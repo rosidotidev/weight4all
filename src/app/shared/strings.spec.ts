@@ -55,6 +55,14 @@ describe('strings', () => {
     expect(strings.settingsAccentSaveError.it).toBeTruthy();
   });
 
+  it('has the Today loading texts and the Weight label', () => {
+    expect(strings.dimensionWeight).toEqual({ en: 'Weight', it: 'Peso' });
+    for (const key of ['todayLoading', 'todayLoadError', 'todayRetry'] as const) {
+      expect(strings[key].en).toBeTruthy();
+      expect(strings[key].it).toBeTruthy();
+    }
+  });
+
   it('returns strings from parameterised text in both languages', () => {
     const dict = {
       hello: {

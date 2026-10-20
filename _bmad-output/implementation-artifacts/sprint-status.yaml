@@ -29,7 +29,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 # - Retrospective appends its action items to action_items; the status view surfaces open ones
 generated: 10-20-2026 19:03
-last_updated: 10-20-2026 23:45
+last_updated: 10-20-2026 23:59
 project: bmad612_home
 project_key: NOKEY
 tracking_system: file-system
@@ -48,8 +48,8 @@ development_status:
   1-10-choose-an-accent-color: review
   epic-1-retrospective: optional
 
-  epic-2: backlog
-  2-1-load-the-entries-into-the-app: backlog
+  epic-2: in-progress
+  2-1-load-the-entries-into-the-app: review
   2-2-save-today-s-weight: backlog
   2-3-never-lose-typed-values-when-a-save-fails: backlog
   2-4-adjust-the-weight-quickly: backlog

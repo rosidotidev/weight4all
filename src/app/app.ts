@@ -1,5 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
+import { EntryStore } from './core/data/entry.store';
 import { PreferencesStore } from './core/data/preferences.store';
 import { SessionScope } from './core/data/session-scope';
 import { RouterOutlet } from '@angular/router';
@@ -18,6 +19,7 @@ export class App {
     const i18n = inject(I18n);
     inject(SessionScope); // starts the session lifecycle (AD-9)
     const preferences = inject(PreferencesStore);
+    inject(EntryStore); // registered before the session resolves, so it loads on sign-in
     // Exactly one `theme-<id>` class on <html>, following the accent
     effect(() => {
       const next = `theme-${preferences.accent()}`;

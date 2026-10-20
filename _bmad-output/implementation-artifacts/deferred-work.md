@@ -69,3 +69,10 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-1-10-choose-an-accent-color.md`
   summary: Decide whether an Account without a saved accent should fall back to violet instead of inheriting the previous user's cached accent (and Language).
   evidence: `reset()` leaves accent and Language untouched by design, so a second user with no saved value keeps the first user's and the next save writes it (unverified severity: medium on shared devices).
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-2-1-load-the-entries-into-the-app.md`
+  summary: Make `EntryStore.save` and `remove` refuse or merge when called while `status` is not `ready`.
+  evidence: A write confirmed during the initial read is replaced by the load snapshot (unverified severity: medium); Story 2.2's form must gate on `ready`, which hides it today.
+- source_spec: `_bmad-output/implementation-artifacts/spec-2-1-load-the-entries-into-the-app.md`
+  summary: Put a timeout on the initial `getDocs` so an offline stalled read reaches `error` and Retry.
+  evidence: Writes have a 10 s race but the read does not; Today could stay on the skeleton (unverified severity: medium; settle with an offline run).

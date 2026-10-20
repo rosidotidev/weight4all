@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { SessionScope } from './core/data/session-scope';
+import { EntryStore } from './core/data/entry.store';
 import { PreferencesStore } from './core/data/preferences.store';
 import { App } from './app';
 import { I18n } from './shared/i18n';
@@ -97,6 +98,16 @@ describe('App', () => {
     expect(el.querySelector('#saved')!.textContent).toBe('Salvato!');
     expect(el.querySelector<HTMLInputElement>('#field')).toBe(input);
     expect(input.value).toBe('72.5');
+  });
+
+  it('instantiates EntryStore at startup so it registers with SessionScope', () => {
+    const registered: unknown[] = [];
+    TestBed.overrideProvider(SessionScope, {
+      useFactory: () => ({ registerStore: (s: unknown) => registered.push(s), sessionEpoch: () => 0 }),
+      deps: [],
+    });
+    TestBed.createComponent(App);
+    expect(registered).toContain(TestBed.inject(EntryStore));
   });
 
   it('starts SessionScope when App is created', () => {
