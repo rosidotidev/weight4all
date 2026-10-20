@@ -146,3 +146,32 @@ button:focus-visible {
   font-weight: var(--w4a-type-caption-weight);
   color: var(--w4a-on-surface-variant);
 }
+
+.value {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--w4a-on-surface);
+}
+.display {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--w4a-space-1);
+}
+.display .number {
+  font-size: var(--w4a-type-value-display-size);
+  font-weight: var(--w4a-type-value-display-weight);
+}
+form.medium {
+  grid-template-columns: 1fr 1fr;
+}
+form.medium .card.faces,
+form.medium .save {
+  grid-column: 1 / -1;
+}
+form.medium .card.faces {
+  order: 3;
+}
+form.medium .save {
+  order: 4;
+}

@@ -1,0 +1,104 @@
+:host {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--w4a-space-2);
+}
+.body {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-bottom: var(--w4a-space-5);
+}
+input {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--w4a-touch-target);
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  appearance: none;
+  cursor: pointer;
+}
+:host(.cleared) input {
+  opacity: 0.45;
+}
+input::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(
+    to right,
+    var(--w4a-primary) var(--w4a-slider-percent),
+    var(--w4a-surface-variant) var(--w4a-slider-percent)
+  );
+}
+input::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(
+    to right,
+    var(--w4a-primary) var(--w4a-slider-percent),
+    var(--w4a-surface-variant) var(--w4a-slider-percent)
+  );
+}
+input::-webkit-slider-thumb {
+  width: 22px;
+  height: 22px;
+  margin-top: -8px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--w4a-primary);
+  appearance: none;
+}
+input::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--w4a-primary);
+}
+input:focus-visible {
+  outline: 2px solid var(--w4a-primary);
+  outline-offset: 2px;
+  border-radius: var(--w4a-rounded-sm);
+}
+.end {
+  position: absolute;
+  bottom: 0;
+  font-size: var(--w4a-type-caption-size);
+  color: var(--w4a-on-surface-variant);
+}
+.start {
+  inset-inline-start: 0;
+}
+.finish {
+  inset-inline-end: 0;
+}
+.clear {
+  flex: none;
+  width: var(--w4a-touch-target);
+  height: var(--w4a-touch-target);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--w4a-rounded-full);
+  cursor: pointer;
+}
+.clear svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.clear circle {
+  fill: var(--w4a-surface-variant);
+}
+.clear path {
+  fill: none;
+  stroke: var(--w4a-on-surface-variant);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.clear:focus-visible {
+  outline: 2px solid var(--w4a-primary);
+  outline-offset: 2px;
+}

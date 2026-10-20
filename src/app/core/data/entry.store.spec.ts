@@ -212,6 +212,15 @@ describe('EntryStore', () => {
       expect(store.entries()['2026-10-20'].values.mood).toBe(4);
     });
 
+    it('writes and reads back a sleep value', async () => {
+      const store = await create();
+      await store.load('u1');
+      await store.save({ day: '2026-10-20', values: { weight: 72.5, sleep: 7.5 } });
+      const [, data] = m.setDoc.mock.calls[0];
+      expect(data).toEqual({ weight: 72.5, sleep: 7.5, updatedAt: 'SERVER_TS' });
+      expect(store.entries()['2026-10-20'].values.sleep).toBe(7.5);
+    });
+
     it('omits absent values from the document', async () => {
       const store = await create();
       await store.load('u1');

@@ -141,7 +141,7 @@ export const strings = {
     it: (p: { step: string }) => `Passo ${p.step} kg`,
   },
   dimensionMood: { en: 'Mood', it: 'Umore' },
-  moodOptional: { en: 'optional', it: 'facoltativo' },
+  optionalTag: { en: 'optional', it: 'facoltativo' },
   moodHint: { en: '1 sad … 10 happy', it: '1 triste … 10 felice' },
   moodRange: {
     en: (p: { min: string; max: string }) => `Choose a mood from ${p.min} to ${p.max}.`,
@@ -150,6 +150,21 @@ export const strings = {
   moodFace: {
     en: (p: { n: string }) => `Mood ${p.n} of 10`,
     it: (p: { n: string }) => `Umore ${p.n} su 10`,
+  },
+  dimensionSleep: { en: 'Sleep', it: 'Sonno' },
+  sleepRange: {
+    en: (p: { min: string; max: string }) => `Choose sleep from ${p.min} to ${p.max} hours in half-hour steps.`,
+    it: (p: { min: string; max: string }) => `Scegli il sonno da ${p.min} a ${p.max} ore a passi di mezz'ora.`,
+  },
+  sleepValueText: {
+    en: (p: { hours: string }) => `${p.hours} hours`,
+    it: (p: { hours: string }) => `${p.hours} ore`,
+  },
+  sleepNone: { en: 'No sleep value', it: 'Nessun valore di sonno' },
+  sleepClear: { en: 'Clear sleep', it: 'Cancella sonno' },
+  sleepEnd: {
+    en: (p: { hours: string }) => `${p.hours} h`,
+    it: (p: { hours: string }) => `${p.hours} h`,
   },
   entrySave: { en: 'Save', it: 'Salva' },
   entrySaving: { en: 'Saving…', it: 'Salvataggio in corso…' },

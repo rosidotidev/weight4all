@@ -1,11 +1,11 @@
-<form novalidate (submit)="submit($event)">
+<form novalidate [class.medium]="medium()" (submit)="submit($event)">
   @for (field of fields(); track field.dimension.key) {
-    <div class="card">
+    <div class="card" [class.faces]="field.dimension.input === 'faces'" [class.slider]="field.dimension.input === 'slider'">
       @if (field.dimension.input === 'faces') {
         <div class="head">
           <span class="label" [id]="'w4a-label-' + field.dimension.key">{{ t()[field.dimension.labelKey] }}</span>
           @if (!field.dimension.required) {
-            <span class="tag">{{ t().moodOptional }}</span>
+            <span class="tag">{{ t().optionalTag }}</span>
           }
           <span class="side" [id]="'w4a-hint-' + field.dimension.key">{{ field.hint }}</span>
         </div>
@@ -13,7 +13,33 @@
           <w4a-mood-faces
             [value]="selected(field.text, field.dimension)"
             [labelledBy]="'w4a-label-' + field.dimension.key"
-            (changed)="setMood(field.dimension.key, $event)"
+            (changed)="setValue(field.dimension.key, $event)"
+          />
+        </div>
+      } @else if (field.dimension.input === 'slider') {
+        <div class="head">
+          <span class="label" [id]="'w4a-label-' + field.dimension.key">{{ t()[field.dimension.labelKey] }}</span>
+          @if (!field.dimension.required) {
+            <span class="tag">{{ t().optionalTag }}</span>
+          }
+          @if (!medium()) {
+            <span class="side value" aria-hidden="true">{{ field.display }}{{ field.unit ? ' ' + field.unit : '' }}</span>
+          }
+        </div>
+        @if (medium()) {
+          <div class="display" aria-hidden="true">
+            <span class="number">{{ field.display }}</span>
+            @if (field.unit) {
+              <span class="unit">{{ field.unit }}</span>
+            }
+          </div>
+        }
+        <div [id]="'w4a-field-' + field.dimension.key" [attr.aria-describedby]="'w4a-message-' + field.dimension.key">
+          <w4a-sleep-slider
+            [dimension]="field.dimension"
+            [value]="selected(field.text, field.dimension)"
+            [labelledBy]="'w4a-label-' + field.dimension.key"
+            (changed)="setValue(field.dimension.key, $event)"
           />
         </div>
       } @else {

@@ -2,8 +2,8 @@ import { DIMENSIONS, PRIMARY } from './dimensions';
 import { Entry } from './entry';
 
 describe('dimension registry', () => {
-  it('holds Weight then Mood, with Weight as the primary Dimension', () => {
-    expect(DIMENSIONS.map((d) => d.key)).toEqual(['weight', 'mood']);
+  it('holds Weight, Mood then Sleep, with Weight as the primary Dimension', () => {
+    expect(DIMENSIONS.map((d) => d.key)).toEqual(['weight', 'mood', 'sleep']);
     expect(PRIMARY).toBe(DIMENSIONS[0]);
   });
 
@@ -45,6 +45,24 @@ describe('dimension registry', () => {
       labelKey: 'dimensionMood',
       rangeKey: 'moodRange',
       hintKey: 'moodHint',
+    });
+  });
+
+  it('describes Sleep', () => {
+    expect(DIMENSIONS[2]).toEqual({
+      key: 'sleep',
+      unit: 'h',
+      min: 0,
+      max: 24,
+      step: 0.5,
+      decimals: 1,
+      required: false,
+      clearable: true,
+      input: 'slider',
+      defaultValue: 6,
+      chartToken: '--w4a-chart-sleep',
+      labelKey: 'dimensionSleep',
+      rangeKey: 'sleepRange',
     });
   });
 

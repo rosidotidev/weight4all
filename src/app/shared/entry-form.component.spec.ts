@@ -4,6 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { EntryResult, EntryStatus, EntryStore } from '../core/data/entry.store';
 import { PreferencesStore } from '../core/data/preferences.store';
 import { SessionScope } from '../core/data/session-scope';
+import { LayoutService } from '../core/state/layout.service';
 import { DraftStore } from '../core/state/draft.store';
 import { Entry } from '../domain/entry';
 import { Language } from '../domain/language';
@@ -161,7 +162,7 @@ describe('EntryFormComponent', () => {
     await type(text);
     await press();
     expect(save).toHaveBeenCalledTimes(1);
-    expect(save).toHaveBeenCalledWith({ day: DAY, values: { weight: value } });
+    expect(save).toHaveBeenCalledWith({ day: DAY, values: { weight: value, sleep: 6 } });
   });
 
   it('submits on Enter through the form', async () => {
@@ -329,7 +330,7 @@ describe('EntryFormComponent', () => {
       expect(seen).toEqual([]);
       finish({ ok: true });
       await fixture.whenStable();
-      expect(seen).toEqual([{ day: DAY, values: { weight: 72.4 } }]);
+      expect(seen).toEqual([{ day: DAY, values: { weight: 72.4, sleep: 6 } }]);
     });
 
     it('does not emit when the save fails', async () => {
@@ -474,7 +475,7 @@ describe('EntryFormComponent', () => {
       await fixture.whenStable();
       expect(input().value).toBe('72.6');
       await press();
-      expect(save).toHaveBeenCalledWith({ day: DAY, values: { weight: 72.6 } });
+      expect(save).toHaveBeenCalledWith({ day: DAY, values: { weight: 72.6, sleep: 6 } });
     });
 
     it('steps with Up and Down once per key and prevents the default', async () => {
@@ -545,7 +546,7 @@ describe('EntryFormComponent', () => {
       await type('72.7');
       await press();
       expect(save.mock.calls[0][0]).toEqual(save.mock.calls[1][0]);
-      expect(save.mock.calls[0][0].values).toEqual({ weight: 72.7 });
+      expect(save.mock.calls[0][0].values).toEqual({ weight: 72.7, sleep: 6 });
     });
 
     it('clears the saved message when a button changes the value', async () => {
@@ -603,7 +604,7 @@ describe('EntryFormComponent', () => {
       const { press, type } = await setup();
       await type('72.5');
       await press();
-      expect(save).toHaveBeenCalledWith({ day: DAY, values: { weight: 72.5 } });
+      expect(save).toHaveBeenCalledWith({ day: DAY, values: { weight: 72.5, sleep: 6 } });
     });
 
     it('selects, changes and clears with a tap', async () => {
@@ -616,7 +617,7 @@ describe('EntryFormComponent', () => {
       await fixture.whenStable();
       expect(checked(el)).toEqual([3]);
       await press();
-      expect(save).toHaveBeenLastCalledWith({ day: DAY, values: { weight: 72.5, mood: 3 } });
+      expect(save).toHaveBeenLastCalledWith({ day: DAY, values: { weight: 72.5, mood: 3, sleep: 6 } });
     });
 
     it('clears with a second tap and saves without the field', async () => {
@@ -628,7 +629,7 @@ describe('EntryFormComponent', () => {
       await fixture.whenStable();
       expect(checked(el)).toEqual([]);
       await press();
-      expect(save).toHaveBeenLastCalledWith({ day: DAY, values: { weight: 72.5 } });
+      expect(save).toHaveBeenLastCalledWith({ day: DAY, values: { weight: 72.5, sleep: 6 } });
     });
 
     it('keeps the selection in the draft across a remount', async () => {
@@ -668,6 +669,115 @@ describe('EntryFormComponent', () => {
       expect(el.querySelector('.tag')!.textContent).toBe('facoltativo');
       expect(el.querySelector('#w4a-hint-mood')!.textContent).toBe('1 triste … 10 felice');
       expect(faces(el)[6].getAttribute('aria-label')).toBe('Umore 7 su 10');
+    });
+  });
+
+  describe('Sleep', () => {
+    const slider = (el: HTMLElement) => el.querySelector<HTMLInputElement>('input[type="range"]')!;
+    const clear = (el: HTMLElement) => el.querySelector<HTMLButtonElement>('button[aria-label="Clear sleep"]')!;
+    const shown = (el: HTMLElement) => el.querySelector('.side.value')!.textContent;
+    const slide = async (el: HTMLElement, fixture: { whenStable(): Promise<unknown> }, value: string) => {
+      slider(el).value = value;
+      slider(el).dispatchEvent(new Event('input'));
+      await fixture.whenStable();
+    };
+
+    it('shows the card with label, optional tag, value, end labels and clear button', async () => {
+      const { el } = await setup();
+      expect(el.querySelector('#w4a-label-sleep')!.textContent).toBe('Sleep');
+      expect(el.querySelectorAll('.tag')[1].textContent).toBe('optional');
+      expect(shown(el)).toBe('6.0 h');
+      expect(slider(el).value).toBe('6');
+      expect(slider(el).getAttribute('aria-valuetext')).toBe('6.0 hours');
+      expect(slider(el).getAttribute('aria-labelledby')).toBe('w4a-label-sleep');
+      expect(el.querySelector('.body')!.textContent).toContain('0 h');
+      expect(el.querySelector('.body')!.textContent).toContain('24 h');
+      expect(clear(el)).toBeTruthy();
+    });
+
+    it('saves the default 6 when untouched', async () => {
+      const { press, type } = await setup();
+      await type('72.5');
+      await press();
+      expect(save).toHaveBeenCalledWith({ day: DAY, values: { weight: 72.5, sleep: 6 } });
+    });
+
+    it('slides to 7.5 and saves it', async () => {
+      const { el, press, type, fixture } = await setup();
+      await type('72.5');
+      await slide(el, fixture, '7.5');
+      expect(shown(el)).toBe('7.5 h');
+      expect(slider(el).getAttribute('aria-valuetext')).toBe('7.5 hours');
+      await press();
+      expect(save).toHaveBeenCalledWith({ day: DAY, values: { weight: 72.5, sleep: 7.5 } });
+    });
+
+    it('clears with the x button, saves without sleep, and sets a value again on touch', async () => {
+      const { el, press, type, fixture } = await setup();
+      await type('72.5');
+      clear(el).click();
+      await fixture.whenStable();
+      expect(shown(el)).toBe('—');
+      expect(slider(el).getAttribute('aria-valuetext')).toBe('No sleep value');
+      await press();
+      expect(save).toHaveBeenLastCalledWith({ day: DAY, values: { weight: 72.5 } });
+      clear(el).click();
+      await fixture.whenStable();
+      slider(el).dispatchEvent(new PointerEvent('pointerdown', { button: 0 }));
+      await fixture.whenStable();
+      expect(shown(el)).toBe('6.0 h');
+      await slide(el, fixture, '8');
+      expect(shown(el)).toBe('8.0 h');
+    });
+
+    it('shows a stored Sleep, or the cleared state when the Entry has none', async () => {
+      entries.set({ [DAY]: { day: DAY, values: { weight: 72.7, sleep: 8 } } });
+      const stored = await setup();
+      expect(shown(stored.el)).toBe('8.0 h');
+      stored.fixture.destroy();
+      entries.set({ [DAY]: { day: DAY, values: { weight: 72.7 } } });
+      const none = await setup();
+      expect(shown(none.el)).toBe('—');
+      await none.press();
+      expect(save).toHaveBeenLastCalledWith({ day: DAY, values: { weight: 72.7 } });
+    });
+
+    it('keeps the slid value in the draft across a remount', async () => {
+      const first = await setup();
+      await slide(first.el, first.fixture, '9.5');
+      first.fixture.destroy();
+      const second = await setup();
+      expect(shown(second.el)).toBe('9.5 h');
+    });
+
+    it('reports an invalid Sleep in the card and focuses the slider', async () => {
+      TestBed.inject(DraftStore).set(DAY, 'sleep', '6.3');
+      const { el, press, type } = await setup();
+      await type('72.5');
+      await press();
+      expect(save).not.toHaveBeenCalled();
+      expect(el.querySelectorAll<HTMLElement>('.message')[2].textContent).toContain(
+        'Choose sleep from 0 to 24 hours in half-hour steps.',
+      );
+      expect(document.activeElement).toBe(slider(el));
+    });
+
+    it('shows the large value and no side value at medium width', async () => {
+      TestBed.overrideProvider(LayoutService, { useValue: { windowClass: signal('medium') } });
+      const { el } = await setup();
+      expect(el.querySelector('form')!.classList.contains('medium')).toBe(true);
+      expect(el.querySelector('.side.value')).toBeNull();
+      expect(el.querySelector('.display .number')!.textContent).toBe('6.0');
+      expect(el.querySelector('.display .unit')!.textContent).toBe('h');
+    });
+
+    it('names the card and writes the value with a decimal comma in Italian', async () => {
+      language.set('it');
+      const { el } = await setup();
+      expect(el.querySelector('#w4a-label-sleep')!.textContent).toBe('Sonno');
+      expect(shown(el)).toBe('6,0 h');
+      expect(slider(el).getAttribute('aria-valuetext')).toBe('6,0 ore');
+      expect(el.querySelector('button[aria-label="Cancella sonno"]')).toBeTruthy();
     });
   });
 

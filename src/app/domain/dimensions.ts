@@ -2,7 +2,7 @@ export type DimensionInput = 'stepper' | 'faces' | 'slider';
 
 export interface Dimension {
   /** Also the Firestore field name. */
-  readonly key: 'weight' | 'mood';
+  readonly key: 'weight' | 'mood' | 'sleep';
   readonly unit: string;
   readonly min: number;
   readonly max: number;
@@ -15,14 +15,14 @@ export interface Dimension {
   /** CSS custom property holding the chart color. */
   readonly chartToken: string;
   /** Key in `strings.ts`. */
-  readonly labelKey: 'dimensionWeight' | 'dimensionMood';
+  readonly labelKey: 'dimensionWeight' | 'dimensionMood' | 'dimensionSleep';
   /** Keys in `strings.ts` for the blank (required Dimensions only) and out-of-range messages. */
   readonly missingKey?: 'weightMissing';
-  readonly rangeKey: 'weightRange' | 'moodRange';
+  readonly rangeKey: 'weightRange' | 'moodRange' | 'sleepRange';
   /** Keys in `strings.ts` for the stepper buttons and the hint under the field. */
   readonly increaseKey?: 'weightIncrease';
   readonly decreaseKey?: 'weightDecrease';
-  readonly hintKey: 'weightHint' | 'moodHint';
+  readonly hintKey?: 'weightHint' | 'moodHint';
   readonly hintNoLastKey?: 'weightHintNoLast';
 }
 
@@ -63,6 +63,21 @@ export const DIMENSIONS = [
     labelKey: 'dimensionMood',
     rangeKey: 'moodRange',
     hintKey: 'moodHint',
+  },
+  {
+    key: 'sleep',
+    unit: 'h',
+    min: 0,
+    max: 24,
+    step: 0.5,
+    decimals: 1,
+    required: false,
+    clearable: true,
+    input: 'slider',
+    defaultValue: 6,
+    chartToken: '--w4a-chart-sleep',
+    labelKey: 'dimensionSleep',
+    rangeKey: 'sleepRange',
   },
 ] as const satisfies readonly Dimension[];
 

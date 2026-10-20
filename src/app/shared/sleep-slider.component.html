@@ -1,0 +1,23 @@
+<div class="body">
+  <input
+    type="range"
+    [min]="dimension().min"
+    [max]="dimension().max"
+    [step]="dimension().step"
+    [value]="shown()"
+    [style.--w4a-slider-percent]="percent()"
+    [attr.aria-labelledby]="labelledBy()"
+    [attr.aria-valuetext]="valueText()"
+    (input)="edit($event)"
+    (pointerdown)="touch($event)"
+    (keydown)="key($event)"
+  />
+  <span class="end start" aria-hidden="true">{{ minLabel() }}</span>
+  <span class="end finish" aria-hidden="true">{{ maxLabel() }}</span>
+</div>
+<button type="button" class="clear" [attr.aria-label]="t().sleepClear" (click)="changed.emit(null)">
+  <svg viewBox="0 0 44 44" aria-hidden="true" focusable="false">
+    <circle cx="22" cy="22" r="20" />
+    <path d="M17 17L27 27M27 17L17 27" />
+  </svg>
+</button>

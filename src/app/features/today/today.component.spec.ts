@@ -223,7 +223,7 @@ describe('TodayComponent', () => {
     it('celebrates a loss against yesterday above the form', async () => {
       entries.set(Object.fromEntries([entry(ago(1), 72.7)]));
       const { el } = await saveWeight('72.4');
-      expect(save).toHaveBeenCalledWith({ day: today(), values: { weight: 72.4 } });
+      expect(save).toHaveBeenCalledWith({ day: today(), values: { weight: 72.4, sleep: 6 } });
       expect(text(el, '.delta')).toBe('−0.3 kg');
       expect(text(el, '.vs')).toBe('vs yesterday');
       expect(el.querySelector('.card.loss')).not.toBeNull();

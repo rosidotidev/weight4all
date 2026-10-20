@@ -38,3 +38,19 @@ describe('validateValue for Mood', () => {
     expect(validateValue(mood, '')).toEqual({ ok: false, error: 'missing' });
   });
 });
+
+describe('validateValue for Sleep', () => {
+  const sleep = DIMENSIONS[2];
+
+  it.each([0, 6, 6.5, 7, 7.5, 24])('accepts %j', (value) => {
+    expect(validateValue(sleep, String(value))).toEqual({ ok: true, value });
+  });
+
+  it.each(['24.5', '-1', '6.3', '7.25', '25'])('reports %j as range', (text) => {
+    expect(validateValue(sleep, text)).toEqual({ ok: false, error: 'range' });
+  });
+
+  it('reports blank as missing', () => {
+    expect(validateValue(sleep, '')).toEqual({ ok: false, error: 'missing' });
+  });
+});
