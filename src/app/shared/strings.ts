@@ -99,11 +99,14 @@ export const strings = {
     en: 'Something went wrong on our side. Please try again in a moment.',
     it: 'Qualcosa è andato storto da parte nostra. Riprova tra un momento.',
   },
-  todayPlaceholder: {
-    en: 'Your day will appear here soon.',
-    it: 'Il tuo giorno apparirà qui a breve.',
-  },
   dimensionWeight: { en: 'Weight', it: 'Peso' },
+  weightMissing: { en: 'Add your weight to save.', it: 'Aggiungi il tuo peso per salvare.' },
+  weightRange: {
+    en: (p: { min: string; max: string }) => `Enter a weight between ${p.min} and ${p.max} kg.`,
+    it: (p: { min: string; max: string }) => `Inserisci un peso tra ${p.min} e ${p.max} kg.`,
+  },
+  entrySave: { en: 'Save', it: 'Salva' },
+  entrySaving: { en: 'Saving…', it: 'Salvataggio in corso…' },
   todayLoading: { en: 'Loading your days', it: 'Sto caricando i tuoi giorni' },
   todayLoadError: {
     en: 'We could not load your days. Please check your connection and try again.',

@@ -16,6 +16,9 @@ export interface Dimension {
   readonly chartToken: string;
   /** Key in `strings.ts`. */
   readonly labelKey: 'dimensionWeight';
+  /** Keys in `strings.ts` for the blank and out-of-range messages. */
+  readonly missingKey: 'weightMissing';
+  readonly rangeKey: 'weightRange';
 }
 
 /** The ordered list of Dimensions; the only place that names them (AD-3). */
@@ -33,6 +36,8 @@ export const DIMENSIONS = [
     defaultValue: null,
     chartToken: '--w4a-chart-weight',
     labelKey: 'dimensionWeight',
+    missingKey: 'weightMissing',
+    rangeKey: 'weightRange',
   },
 ] as const satisfies readonly Dimension[];
 

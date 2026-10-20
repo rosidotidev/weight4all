@@ -2,6 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
 import { EntryStore } from './core/data/entry.store';
 import { PreferencesStore } from './core/data/preferences.store';
+import { DraftStore } from './core/state/draft.store';
 import { SessionScope } from './core/data/session-scope';
 import { RouterOutlet } from '@angular/router';
 import { I18n } from './shared/i18n';
@@ -19,6 +20,7 @@ export class App {
     const i18n = inject(I18n);
     inject(SessionScope); // starts the session lifecycle (AD-9)
     const preferences = inject(PreferencesStore);
+    inject(DraftStore); // typed values live outside components, so they survive Tab switches (AD-12)
     inject(EntryStore); // registered before the session resolves, so it loads on sign-in
     // Exactly one `theme-<id>` class on <html>, following the accent
     effect(() => {

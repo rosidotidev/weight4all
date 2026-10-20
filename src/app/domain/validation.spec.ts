@@ -1,0 +1,24 @@
+import { PRIMARY } from './dimensions';
+import { validateValue } from './validation';
+
+describe('validateValue', () => {
+  it.each([
+    ['72.7', 72.7],
+    ['72,7', 72.7],
+    [' 72.7 ', 72.7],
+    ['20', 20],
+    ['20.0', 20],
+    ['400', 400],
+    ['400,0', 400],
+  ])('accepts %j', (text, value) => {
+    expect(validateValue(PRIMARY, text)).toEqual({ ok: true, value });
+  });
+
+  it.each(['', '   '])('reports %j as missing', (text) => {
+    expect(validateValue(PRIMARY, text)).toEqual({ ok: false, error: 'missing' });
+  });
+
+  it.each(['19.9', '400.1', '0', '-5', 'abc', '72.55', '72,55', '19,9', '1000'])('reports %j as range', (text) => {
+    expect(validateValue(PRIMARY, text)).toEqual({ ok: false, error: 'range' });
+  });
+});

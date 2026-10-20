@@ -1,10 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { EntryStore } from '../../core/data/entry.store';
+import { ClockService } from '../../core/state/clock.service';
+import { EntryFormComponent } from '../../shared/entry-form.component';
 import { I18n } from '../../shared/i18n';
 
-/** Today: a skeleton while the Entries load, an inline error with Retry on failure, else the placeholder (Story 2.2 adds the form). */
+/** Today: a skeleton while the Entries load, an inline error with Retry on failure, else the form for today. */
 @Component({
   selector: 'w4a-today',
+  imports: [EntryFormComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: `
     :host {
@@ -84,7 +87,7 @@ import { I18n } from '../../shared/i18n';
         </div>
       }
       @default {
-        <p>{{ t().todayPlaceholder }}</p>
+        <w4a-entry-form [day]="clock.today()" />
       }
     }
   `,
@@ -92,4 +95,5 @@ import { I18n } from '../../shared/i18n';
 export class TodayComponent {
   protected readonly t = inject(I18n).t;
   protected readonly store = inject(EntryStore);
+  protected readonly clock = inject(ClockService);
 }

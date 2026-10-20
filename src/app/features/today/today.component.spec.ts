@@ -2,6 +2,8 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { EntryStatus, EntryStore } from '../../core/data/entry.store';
 import { PreferencesStore } from '../../core/data/preferences.store';
+import { dayKey } from '../../domain/day';
+import { Entry } from '../../domain/entry';
 import { Language } from '../../domain/language';
 import { TodayComponent } from './today.component';
 
@@ -9,15 +11,17 @@ describe('TodayComponent', () => {
   let status: ReturnType<typeof signal<EntryStatus>>;
   let retry: ReturnType<typeof vi.fn<() => Promise<void>>>;
   let language: ReturnType<typeof signal<Language>>;
+  let entries: ReturnType<typeof signal<Readonly<Record<string, Entry>>>>;
 
   beforeEach(async () => {
     status = signal<EntryStatus>('loading');
     retry = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
     language = signal<Language>('en');
+    entries = signal<Readonly<Record<string, Entry>>>({});
     await TestBed.configureTestingModule({
       imports: [TodayComponent],
       providers: [
-        { provide: EntryStore, useValue: { status, retry } },
+        { provide: EntryStore, useValue: { status, retry, entries, save: vi.fn() } },
         { provide: PreferencesStore, useValue: { language } },
       ],
     }).compileComponents();
@@ -51,12 +55,32 @@ describe('TodayComponent', () => {
     expect(retry).toHaveBeenCalledTimes(1);
   });
 
-  it('shows the placeholder when ready', async () => {
+  it('binds the form to today, not to another Day', async () => {
+    const today = dayKey(new Date());
+    entries.set({
+      '2000-01-01': { day: '2000-01-01', values: { weight: 60 } },
+      [today]: { day: today, values: { weight: 71.5 } },
+    });
     status.set('ready');
     const { el } = await setup();
-    expect(el.textContent).toContain('Your day will appear here soon.');
+    expect(el.querySelector('input')!.value).toBe('71.5');
+  });
+
+  it('shows the entry form for today when ready', async () => {
+    status.set('ready');
+    const { el } = await setup();
     expect(el.querySelector('.skeleton')).toBeNull();
-    expect(el.querySelector('button')).toBeNull();
+    expect(el.querySelector('w4a-entry-form')).not.toBeNull();
+    expect(el.querySelector('input')).not.toBeNull();
+    expect(el.querySelector('button[type="submit"]')!.textContent).toContain('Save');
+  });
+
+  it('shows no form while loading or on error', async () => {
+    const { fixture, el } = await setup();
+    expect(el.querySelector('w4a-entry-form')).toBeNull();
+    status.set('error');
+    await fixture.whenStable();
+    expect(el.querySelector('w4a-entry-form')).toBeNull();
   });
 
   it('follows state changes and the Language', async () => {

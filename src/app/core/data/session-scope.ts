@@ -1,4 +1,5 @@
 import { Injectable, effect, inject, signal, untracked } from '@angular/core';
+import { DraftStore } from '../state/draft.store';
 import { AuthService, Session, sameSession } from './auth.service';
 
 export interface SessionStore {
@@ -12,6 +13,7 @@ export interface SessionStore {
 @Injectable({ providedIn: 'root' })
 export class SessionScope {
   private readonly auth = inject(AuthService);
+  private readonly drafts = inject(DraftStore);
   private readonly stores: SessionStore[] = [];
   private readonly _sessionEpoch = signal(0);
   private last: Session = this.auth.session();
@@ -35,6 +37,7 @@ export class SessionScope {
     this.last = session;
     this._sessionEpoch.update((n) => n + 1);
     for (const store of this.stores) store.reset();
+    this.drafts.reset();
     if (session.status === 'signedIn') {
       for (const store of this.stores) store.load?.(session.uid);
     }

@@ -20,6 +20,8 @@ describe('dimension registry', () => {
       defaultValue: null,
       chartToken: '--w4a-chart-weight',
       labelKey: 'dimensionWeight',
+      missingKey: 'weightMissing',
+      rangeKey: 'weightRange',
     });
   });
 

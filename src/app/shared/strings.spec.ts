@@ -63,6 +63,16 @@ describe('strings', () => {
     }
   });
 
+  it('has the entry form texts', () => {
+    expect(strings.weightMissing.en).toBe('Add your weight to save.');
+    expect(strings.weightRange.en({ min: '20.0', max: '400.0' })).toBe('Enter a weight between 20.0 and 400.0 kg.');
+    expect(strings.weightRange.it({ min: '20,0', max: '400,0' })).toBe('Inserisci un peso tra 20,0 e 400,0 kg.');
+    for (const key of ['entrySave', 'entrySaving'] as const) {
+      expect(strings[key].en).toBeTruthy();
+      expect(strings[key].it).toBeTruthy();
+    }
+  });
+
   it('returns strings from parameterised text in both languages', () => {
     const dict = {
       hello: {

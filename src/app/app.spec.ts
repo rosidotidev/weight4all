@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { SessionScope } from './core/data/session-scope';
 import { EntryStore } from './core/data/entry.store';
 import { PreferencesStore } from './core/data/preferences.store';
+import { DraftStore } from './core/state/draft.store';
 import { App } from './app';
 import { I18n } from './shared/i18n';
 
@@ -116,6 +117,20 @@ describe('App', () => {
       useFactory: () => {
         created++;
         return { registerStore: () => undefined, sessionEpoch: () => 0 };
+      },
+      deps: [],
+    });
+    expect(created).toBe(0);
+    TestBed.createComponent(App);
+    expect(created).toBe(1);
+  });
+
+  it('instantiates DraftStore at startup', () => {
+    let created = 0;
+    TestBed.overrideProvider(DraftStore, {
+      useFactory: () => {
+        created++;
+        return { reset: () => undefined };
       },
       deps: [],
     });

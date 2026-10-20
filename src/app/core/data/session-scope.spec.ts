@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { AuthService, Session } from './auth.service';
+import { DraftStore } from '../state/draft.store';
 import { SessionScope } from './session-scope';
 
 describe('SessionScope', () => {
@@ -79,5 +80,18 @@ describe('SessionScope', () => {
     scope.registerStore({ reset: only });
     change({ status: 'signedIn', uid: 'u1' });
     expect(only).toHaveBeenCalledTimes(1);
+  });
+
+  it('resets the DraftStore on every session change', () => {
+    const drafts = TestBed.inject(DraftStore);
+    drafts.set('2026-10-20', 'weight', '72');
+    change({ status: 'signedIn', uid: 'u1' });
+    expect(drafts.get('2026-10-20')).toEqual({});
+    drafts.set('2026-10-20', 'weight', '72');
+    change({ status: 'signedIn', uid: 'u2' });
+    expect(drafts.get('2026-10-20')).toEqual({});
+    drafts.set('2026-10-20', 'weight', '72');
+    change({ status: 'signedOut' });
+    expect(drafts.get('2026-10-20')).toEqual({});
   });
 });
