@@ -192,6 +192,9 @@ const CONFETTI = PIECES.map(([shape, x, y, rotation, tone], index) => ({
     .gain .message {
       font-size: 16px;
     }
+    .wave + .logged {
+      margin-block-start: 28px;
+    }
     .logged {
       margin: 6px 0 0;
       font-size: 13px;
