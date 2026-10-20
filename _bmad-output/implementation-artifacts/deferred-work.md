@@ -22,3 +22,7 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-1-4-set-up-the-material-3-theme-and-design-tokens.md`
   summary: Tighten the chart-token isolation test to every selector mentioning `theme-` and drop the synthetic half in `app.spec.ts`.
   evidence: `tokensOf` matches exact selectors, so `:root.theme-violet { --w4a-chart-weight: ... }` would pass; the `app.spec` check only asserts its own injected CSS.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-1-5-register-with-email-and-password.md`
+  summary: Bring the initial bundle back under the 500 kB budget (lazy-load auth routes or `firebase/auth`).
+  evidence: `ng build` warns the initial bundle is 780.58 kB (budget 500 kB, was ~205 kB) because `firebase/auth` enters the initial chunk through eager routes (unverified severity: medium; the performance budget is Story 5.4).
