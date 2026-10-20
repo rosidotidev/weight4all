@@ -121,3 +121,28 @@ button:focus-visible {
   opacity: 0.6;
   cursor: default;
 }
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--w4a-space-2);
+}
+.label {
+  font-size: var(--w4a-type-card-label-size);
+  font-weight: var(--w4a-type-card-label-weight);
+  color: var(--w4a-on-surface-variant);
+}
+.tag {
+  padding: 2px var(--w4a-space-2);
+  font-size: var(--w4a-type-caption-size);
+  font-weight: 500;
+  color: var(--w4a-on-surface-variant);
+  border: 1px solid var(--w4a-outline);
+  border-radius: var(--w4a-rounded-sm);
+}
+.side {
+  margin-inline-start: auto;
+  font-size: var(--w4a-type-caption-size);
+  font-weight: var(--w4a-type-caption-weight);
+  color: var(--w4a-on-surface-variant);
+}

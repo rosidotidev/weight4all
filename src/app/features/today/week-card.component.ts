@@ -79,7 +79,7 @@ export class WeekCardComponent {
         text:
           mean === null
             ? null
-            : `${formatNumber(mean, Math.max(dimension.decimals, 1), locale)} ${dimension.unit}`,
+            : `${formatNumber(mean, Math.max(dimension.decimals, 1), locale)}${dimension.unit ? ' ' + dimension.unit : ''}`,
       };
     });
   });

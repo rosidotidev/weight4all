@@ -1,0 +1,29 @@
+<div class="group" role="radiogroup" [attr.aria-labelledby]="labelledBy()">
+  @for (face of faces(); track face.n) {
+    <button
+      type="button"
+      role="radio"
+      class="face"
+      [class.selected]="value() === face.n"
+      [attr.aria-checked]="value() === face.n"
+      [attr.aria-label]="face.label"
+      [tabindex]="tabStop(face.n) ? 0 : -1"
+      (click)="toggle(face.n)"
+      (keydown.arrowright)="move($event, face.n, 1)"
+      (keydown.arrowdown)="move($event, face.n, 1)"
+      (keydown.arrowleft)="move($event, face.n, -1)"
+      (keydown.arrowup)="move($event, face.n, -1)"
+    >
+      <svg viewBox="0 0 50 50" aria-hidden="true" focusable="false">
+        @if (value() === face.n) {
+          <circle class="ring" [attr.cx]="center" [attr.cy]="center" r="23.25" />
+        }
+        <circle class="head" [attr.cx]="center" [attr.cy]="center" r="17" />
+        <circle class="feature" [attr.cx]="center - 6" [attr.cy]="center - 3.4" r="1.9" />
+        <circle class="feature" [attr.cx]="center + 6" [attr.cy]="center - 3.4" r="1.9" />
+        <path class="mouth" [attr.d]="face.mouth" />
+      </svg>
+      <span class="number" aria-hidden="true">{{ numbers().get(face.n) }}</span>
+    </button>
+  }
+</div>

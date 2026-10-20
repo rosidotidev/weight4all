@@ -47,7 +47,7 @@ export class RecentEntriesComponent {
         text:
           value === undefined
             ? null
-            : `${formatNumber(value, dimension.decimals, locale)} ${dimension.unit}`,
+            : `${formatNumber(value, dimension.decimals, locale)}${dimension.unit ? ' ' + dimension.unit : ''}`,
       };
     });
   }

@@ -14,16 +14,17 @@ import type { MatSnackBarRef } from '@angular/material/snack-bar';
 import { EntryErrorCode, EntryStore } from '../core/data/entry.store';
 import { SessionScope } from '../core/data/session-scope';
 import { DraftStore } from '../core/state/draft.store';
-import { DIMENSIONS, DimensionKey } from '../domain/dimensions';
+import { DIMENSIONS, Dimension, DimensionKey } from '../domain/dimensions';
 import { DayKey, Entry, initialDraft } from '../domain/entry';
 import { previousEntry } from '../domain/history';
 import { formatNumber, parseDecimal, stepValue } from '../domain/number';
 import { ValueError, validateValue } from '../domain/validation';
 import { I18n } from './i18n';
+import { MoodFacesComponent } from './mood-faces.component';
 import { saveErrorKey } from './save-error';
 
 interface Field {
-  readonly dimension: (typeof DIMENSIONS)[number];
+  readonly dimension: Dimension;
   readonly text: string;
   readonly error: ValueError | null;
   readonly message: string;
@@ -36,6 +37,7 @@ const MINUS = 'M19 13H5v-2h14z';
 /** The one Entry form (AD-12): a card per Dimension, validation on Save, and the save flow. */
 @Component({
   selector: 'w4a-entry-form',
+  imports: [MoodFacesComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './entry-form.component.html',
   styleUrl: './entry-form.component.scss',
@@ -84,43 +86,60 @@ export class EntryFormComponent {
     const t = this.t();
     const failure = this.failure();
     const previous = this.previous();
-    return DIMENSIONS.map((dimension, index) => {
+    return (DIMENSIONS as readonly Dimension[]).map((dimension, index) => {
       const edit = edits[dimension.key];
       const start = initial[dimension.key];
       const text = edit ? edit.text : start === undefined ? '' : formatNumber(start, dimension.decimals, locale);
       const error = errors[dimension.key] ?? null;
       let message = '';
-      if (error === 'missing') message = t[dimension.missingKey];
+      if (error === 'missing') message = dimension.missingKey ? t[dimension.missingKey] : '';
       else if (error === 'range') {
-        message = t[dimension.rangeKey]({
+        message = (t[dimension.rangeKey] as (p: { min: string; max: string }) => string)({
           min: formatNumber(dimension.min, dimension.decimals, locale),
           max: formatNumber(dimension.max, dimension.decimals, locale),
         });
       } else if (index === 0 && failure) message = t[saveErrorKey(failure)];
       else if (index === 0 && this.saved()) message = t.saved;
-      const step = formatNumber(dimension.step, dimension.decimals, locale);
-      const last = previous?.values[dimension.key];
-      const hint =
-        last === undefined
-          ? t[dimension.hintNoLastKey]({ step })
-          : t[dimension.hintKey]({ value: formatNumber(last, dimension.decimals, locale), step });
+      const hint = dimension.input === 'faces' ? (t[dimension.hintKey] as string) : this.stepperHint(dimension, previous);
       return { dimension, text, error, message, hint };
     });
   });
+
+  /** The caption under a stepper: the last value and the step, or the step alone. */
+  private stepperHint(dimension: Dimension, previous: Entry | null): string {
+    const locale = this.i18n.locale();
+    const t = this.t();
+    const step = formatNumber(dimension.step, dimension.decimals, locale);
+    const last = previous?.values[dimension.key];
+    if (last === undefined || !dimension.hintNoLastKey) {
+      return dimension.hintNoLastKey ? t[dimension.hintNoLastKey]({ step }) : '';
+    }
+    const hint = t[dimension.hintKey] as (p: { value: string; step: string }) => string;
+    return hint({ value: formatNumber(last, dimension.decimals, locale), step });
+  }
+
+  protected setMood(key: DimensionKey, value: number | null): void {
+    this.change(key, value === null ? '' : String(value));
+  }
+
+  protected selected(text: string, dimension: Dimension): number | null {
+    const value = parseDecimal(text, 0);
+    return value === null || value < dimension.min || value > dimension.max ? null : value;
+  }
 
   protected edit(key: DimensionKey, event: Event): void {
     this.change(key, (event.target as HTMLInputElement).value);
   }
 
   /** Up/Down in the field step once and keep the caret and the page where they are. */
-  protected key(event: Event, dimension: (typeof DIMENSIONS)[number], direction: 1 | -1): void {
+  protected key(event: Event, dimension: Dimension, direction: 1 | -1): void {
     if (dimension.input !== 'stepper') return;
     event.preventDefault();
     this.step(dimension, direction);
   }
 
   /** One step from the typed number, else from the suggestion, else from the minimum. */
-  protected step(dimension: (typeof DIMENSIONS)[number], direction: 1 | -1): void {
+  protected step(dimension: Dimension, direction: 1 | -1): void {
     const field = this.fields().find((candidate) => candidate.dimension === dimension);
     const typed = parseDecimal(field?.text ?? '', dimension.decimals);
     const from = typed ?? this.previous()?.values[dimension.key] ?? dimension.min;
@@ -151,7 +170,12 @@ export class EntryFormComponent {
       } else {
         this.saved.set(false);
         this.errors.set({ [dimension.key]: result.error });
-        this.host.nativeElement.querySelector<HTMLInputElement>(`#w4a-field-${dimension.key}`)?.focus();
+        const target = this.host.nativeElement.querySelector<HTMLElement>(
+          dimension.input === 'faces'
+            ? `#w4a-field-${dimension.key} [role="radio"][tabindex="0"]`
+            : `#w4a-field-${dimension.key}`,
+        );
+        target?.focus();
         return;
       }
     }

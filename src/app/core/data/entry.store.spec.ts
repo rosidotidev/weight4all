@@ -89,6 +89,14 @@ describe('EntryStore', () => {
       });
     });
 
+    it('reads a stored mood and treats a non-numeric one as absent', async () => {
+      m.getDocs.mockResolvedValue(docs(['2026-10-19', { weight: 70, mood: 4 }], ['2026-10-20', { weight: 71, mood: 'x' }]));
+      const store = await create();
+      await store.load('u1');
+      expect(store.entries()['2026-10-19'].values).toEqual({ weight: 70, mood: 4 });
+      expect(store.entries()['2026-10-20'].values).toEqual({ weight: 71 });
+    });
+
     it('treats a non-numeric value as absent', async () => {
       m.getDocs.mockResolvedValue(docs(['2026-10-20', { weight: 'x' }]));
       const store = await create();
@@ -193,6 +201,15 @@ describe('EntryStore', () => {
       await store.save(entry);
       expect(store.entries()['2026-10-19']).toEqual({ day: '2026-10-19', values: { weight: 70 } });
       expect(store.entries()['2026-10-20']).toEqual(entry);
+    });
+
+    it('writes and reads back a mood value', async () => {
+      const store = await create();
+      await store.load('u1');
+      await store.save({ day: '2026-10-20', values: { weight: 72.5, mood: 4 } });
+      const [, data] = m.setDoc.mock.calls[0];
+      expect(data).toEqual({ weight: 72.5, mood: 4, updatedAt: 'SERVER_TS' });
+      expect(store.entries()['2026-10-20'].values.mood).toBe(4);
     });
 
     it('omits absent values from the document', async () => {

@@ -2,7 +2,7 @@ export type DimensionInput = 'stepper' | 'faces' | 'slider';
 
 export interface Dimension {
   /** Also the Firestore field name. */
-  readonly key: string;
+  readonly key: 'weight' | 'mood';
   readonly unit: string;
   readonly min: number;
   readonly max: number;
@@ -15,15 +15,15 @@ export interface Dimension {
   /** CSS custom property holding the chart color. */
   readonly chartToken: string;
   /** Key in `strings.ts`. */
-  readonly labelKey: 'dimensionWeight';
-  /** Keys in `strings.ts` for the blank and out-of-range messages. */
-  readonly missingKey: 'weightMissing';
-  readonly rangeKey: 'weightRange';
+  readonly labelKey: 'dimensionWeight' | 'dimensionMood';
+  /** Keys in `strings.ts` for the blank (required Dimensions only) and out-of-range messages. */
+  readonly missingKey?: 'weightMissing';
+  readonly rangeKey: 'weightRange' | 'moodRange';
   /** Keys in `strings.ts` for the stepper buttons and the hint under the field. */
-  readonly increaseKey: 'weightIncrease';
-  readonly decreaseKey: 'weightDecrease';
-  readonly hintKey: 'weightHint';
-  readonly hintNoLastKey: 'weightHintNoLast';
+  readonly increaseKey?: 'weightIncrease';
+  readonly decreaseKey?: 'weightDecrease';
+  readonly hintKey: 'weightHint' | 'moodHint';
+  readonly hintNoLastKey?: 'weightHintNoLast';
 }
 
 /** The ordered list of Dimensions; the only place that names them (AD-3). */
@@ -47,6 +47,22 @@ export const DIMENSIONS = [
     decreaseKey: 'weightDecrease',
     hintKey: 'weightHint',
     hintNoLastKey: 'weightHintNoLast',
+  },
+  {
+    key: 'mood',
+    unit: '',
+    min: 1,
+    max: 10,
+    step: 1,
+    decimals: 0,
+    required: false,
+    clearable: true,
+    input: 'faces',
+    defaultValue: null,
+    chartToken: '--w4a-chart-mood',
+    labelKey: 'dimensionMood',
+    rangeKey: 'moodRange',
+    hintKey: 'moodHint',
   },
 ] as const satisfies readonly Dimension[];
 

@@ -2,8 +2,8 @@ import { DIMENSIONS, PRIMARY } from './dimensions';
 import { Entry } from './entry';
 
 describe('dimension registry', () => {
-  it('holds Weight only, as the primary Dimension', () => {
-    expect(DIMENSIONS.map((d) => d.key)).toEqual(['weight']);
+  it('holds Weight then Mood, with Weight as the primary Dimension', () => {
+    expect(DIMENSIONS.map((d) => d.key)).toEqual(['weight', 'mood']);
     expect(PRIMARY).toBe(DIMENSIONS[0]);
   });
 
@@ -26,6 +26,25 @@ describe('dimension registry', () => {
       decreaseKey: 'weightDecrease',
       hintKey: 'weightHint',
       hintNoLastKey: 'weightHintNoLast',
+    });
+  });
+
+  it('describes Mood', () => {
+    expect(DIMENSIONS[1]).toEqual({
+      key: 'mood',
+      unit: '',
+      min: 1,
+      max: 10,
+      step: 1,
+      decimals: 0,
+      required: false,
+      clearable: true,
+      input: 'faces',
+      defaultValue: null,
+      chartToken: '--w4a-chart-mood',
+      labelKey: 'dimensionMood',
+      rangeKey: 'moodRange',
+      hintKey: 'moodHint',
     });
   });
 

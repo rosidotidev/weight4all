@@ -1,13 +1,29 @@
 <form novalidate (submit)="submit($event)">
   @for (field of fields(); track field.dimension.key) {
     <div class="card">
+      @if (field.dimension.input === 'faces') {
+        <div class="head">
+          <span class="label" [id]="'w4a-label-' + field.dimension.key">{{ t()[field.dimension.labelKey] }}</span>
+          @if (!field.dimension.required) {
+            <span class="tag">{{ t().moodOptional }}</span>
+          }
+          <span class="side" [id]="'w4a-hint-' + field.dimension.key">{{ field.hint }}</span>
+        </div>
+        <div [id]="'w4a-field-' + field.dimension.key" [attr.aria-describedby]="'w4a-message-' + field.dimension.key">
+          <w4a-mood-faces
+            [value]="selected(field.text, field.dimension)"
+            [labelledBy]="'w4a-label-' + field.dimension.key"
+            (changed)="setMood(field.dimension.key, $event)"
+          />
+        </div>
+      } @else {
       <label [for]="'w4a-field-' + field.dimension.key">{{ t()[field.dimension.labelKey] }}</label>
       <div class="row">
         @if (field.dimension.input === 'stepper') {
           <button
             type="button"
             class="step minus"
-            [attr.aria-label]="t()[field.dimension.decreaseKey]"
+            [attr.aria-label]="field.dimension.decreaseKey ? t()[field.dimension.decreaseKey] : null"
             (click)="step(field.dimension, -1)"
           >
             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path [attr.d]="minus" /></svg>
@@ -32,7 +48,7 @@
           <button
             type="button"
             class="step plus"
-            [attr.aria-label]="t()[field.dimension.increaseKey]"
+            [attr.aria-label]="field.dimension.increaseKey ? t()[field.dimension.increaseKey] : null"
             (click)="step(field.dimension, 1)"
           >
             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path [attr.d]="plus" /></svg>
@@ -40,6 +56,7 @@
         }
       </div>
       <p class="hint" [id]="'w4a-hint-' + field.dimension.key">{{ field.hint }}</p>
+      }
       <p class="message" aria-live="polite" [id]="'w4a-message-' + field.dimension.key">
         {{ field.message }}
       </p>

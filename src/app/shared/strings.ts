@@ -140,6 +140,17 @@ export const strings = {
     en: (p: { step: string }) => `Step ${p.step} kg`,
     it: (p: { step: string }) => `Passo ${p.step} kg`,
   },
+  dimensionMood: { en: 'Mood', it: 'Umore' },
+  moodOptional: { en: 'optional', it: 'facoltativo' },
+  moodHint: { en: '1 sad … 10 happy', it: '1 triste … 10 felice' },
+  moodRange: {
+    en: (p: { min: string; max: string }) => `Choose a mood from ${p.min} to ${p.max}.`,
+    it: (p: { min: string; max: string }) => `Scegli un umore da ${p.min} a ${p.max}.`,
+  },
+  moodFace: {
+    en: (p: { n: string }) => `Mood ${p.n} of 10`,
+    it: (p: { n: string }) => `Umore ${p.n} su 10`,
+  },
   entrySave: { en: 'Save', it: 'Salva' },
   entrySaving: { en: 'Saving…', it: 'Salvataggio in corso…' },
   saveErrorNetwork: {

@@ -1,0 +1,61 @@
+:host {
+  display: block;
+}
+.group {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--w4a-space-2) 0;
+  justify-items: center;
+}
+:host(.wide) .group {
+  grid-template-columns: repeat(10, 1fr);
+}
+.face {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: var(--w4a-touch-target);
+  min-height: var(--w4a-touch-target);
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: var(--w4a-rounded-md, 12px);
+  cursor: pointer;
+}
+svg {
+  width: 50px;
+  height: 50px;
+}
+.head {
+  fill: var(--w4a-mood-face-fill);
+  stroke: var(--w4a-mood-face-stroke);
+  stroke-width: 2;
+}
+.feature {
+  fill: var(--w4a-mood-face-stroke);
+}
+.mouth {
+  fill: none;
+  stroke: var(--w4a-mood-face-stroke);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.ring {
+  fill: var(--w4a-primary-container);
+  stroke: var(--w4a-primary);
+  stroke-width: 3.5;
+}
+.number {
+  font-size: var(--w4a-type-body-size);
+  color: var(--w4a-on-surface-variant);
+}
+.selected .number {
+  font-weight: 700;
+  color: var(--w4a-on-primary-container);
+}
+.face:focus-visible {
+  outline: 2px solid var(--w4a-primary);
+  outline-offset: 2px;
+}

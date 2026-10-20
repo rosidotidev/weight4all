@@ -453,7 +453,7 @@ describe('EntryFormComponent', () => {
       expect(plus(el).getAttribute('aria-label')).toBe('Increase weight by 0.1 kg');
       expect(minus(el).getAttribute('aria-label')).toBe('Decrease weight by 0.1 kg');
       expect(plus(el).type).toBe('button');
-      expect(el.querySelectorAll('button')).toHaveLength(3);
+      expect(el.querySelectorAll('.step')).toHaveLength(2);
     });
 
     it('names the buttons in Italian', async () => {
@@ -582,6 +582,93 @@ describe('EntryFormComponent', () => {
     await press();
     expect(save).toHaveBeenCalledTimes(1);
     expect(save.mock.calls[0][0].day).toBe(DAY);
+  });
+
+  describe('Mood', () => {
+    const faces = (el: HTMLElement) => Array.from(el.querySelectorAll<HTMLButtonElement>('[role="radio"]'));
+    const checked = (el: HTMLElement) =>
+      faces(el).flatMap((face, i) => (face.getAttribute('aria-checked') === 'true' ? [i + 1] : []));
+
+    it('shows the card with label, optional tag, hint and ten faces', async () => {
+      const { el } = await setup();
+      expect(el.querySelector('#w4a-label-mood')!.textContent).toBe('Mood');
+      expect(el.querySelector('.tag')!.textContent).toBe('optional');
+      expect(el.querySelector('#w4a-hint-mood')!.textContent).toBe('1 sad … 10 happy');
+      expect(el.querySelector('[role="radiogroup"]')!.getAttribute('aria-labelledby')).toBe('w4a-label-mood');
+      expect(faces(el)).toHaveLength(10);
+      expect(faces(el)[6].getAttribute('aria-label')).toBe('Mood 7 of 10');
+    });
+
+    it('saves Weight only when Mood is untouched', async () => {
+      const { press, type } = await setup();
+      await type('72.5');
+      await press();
+      expect(save).toHaveBeenCalledWith({ day: DAY, values: { weight: 72.5 } });
+    });
+
+    it('selects, changes and clears with a tap', async () => {
+      const { el, press, type, fixture } = await setup();
+      await type('72.5');
+      faces(el)[6].click();
+      await fixture.whenStable();
+      expect(checked(el)).toEqual([7]);
+      faces(el)[2].click();
+      await fixture.whenStable();
+      expect(checked(el)).toEqual([3]);
+      await press();
+      expect(save).toHaveBeenLastCalledWith({ day: DAY, values: { weight: 72.5, mood: 3 } });
+    });
+
+    it('clears with a second tap and saves without the field', async () => {
+      const { el, press, type, fixture } = await setup();
+      await type('72.5');
+      faces(el)[2].click();
+      await fixture.whenStable();
+      faces(el)[2].click();
+      await fixture.whenStable();
+      expect(checked(el)).toEqual([]);
+      await press();
+      expect(save).toHaveBeenLastCalledWith({ day: DAY, values: { weight: 72.5 } });
+    });
+
+    it('keeps the selection in the draft across a remount', async () => {
+      const first = await setup();
+      faces(first.el)[3].click();
+      await first.fixture.whenStable();
+      first.fixture.destroy();
+      const second = await setup();
+      expect(checked(second.el)).toEqual([4]);
+    });
+
+    it('shows a stored Mood and rewrites the Entry without it when cleared', async () => {
+      entries.set({ [DAY]: { day: DAY, values: { weight: 72.7, mood: 4 } } });
+      const { el, press, fixture } = await setup();
+      expect(checked(el)).toEqual([4]);
+      faces(el)[3].click();
+      await fixture.whenStable();
+      await press();
+      expect(save).toHaveBeenCalledWith({ day: DAY, values: { weight: 72.7 } });
+    });
+
+    it('reports an out-of-range Mood in the card and focuses the faces', async () => {
+      TestBed.inject(DraftStore).set(DAY, 'mood', '11');
+      const { el, press, type } = await setup();
+      await type('72.5');
+      await press();
+      expect(save).not.toHaveBeenCalled();
+      expect(el.querySelectorAll<HTMLElement>('.message')[1].textContent).toContain('Choose a mood from 1 to 10.');
+      expect(el.contains(document.activeElement)).toBe(true);
+      expect(document.activeElement!.getAttribute('role')).toBe('radio');
+    });
+
+    it('names the card in Italian', async () => {
+      language.set('it');
+      const { el } = await setup();
+      expect(el.querySelector('#w4a-label-mood')!.textContent).toBe('Umore');
+      expect(el.querySelector('.tag')!.textContent).toBe('facoltativo');
+      expect(el.querySelector('#w4a-hint-mood')!.textContent).toBe('1 triste … 10 felice');
+      expect(faces(el)[6].getAttribute('aria-label')).toBe('Umore 7 su 10');
+    });
   });
 
   it('clears the message when the user edits after an error', async () => {
