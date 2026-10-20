@@ -177,4 +177,14 @@ describe('strings', () => {
     expect(strings.weightHintNoLast.en({ step: '0.1' })).toBe('Step 0.1 kg');
     expect(strings.weightHintNoLast.it({ step: '0,1' })).toBe('Passo 0,1 kg');
   });
+
+  it('has the This week copy of EXPERIENCE.md in both languages', () => {
+    expect([strings.weekTitle.en, strings.weekTitle.it]).toEqual(['This week', 'Questa settimana']);
+    expect(strings.weekLogged.en({ count: '6' })).toBe('6 of 7 days logged');
+    expect(strings.weekLogged.it({ count: '6' })).toBe('6 giorni su 7 registrati');
+    expect(strings.weekAverage.en({ label: 'Weight' })).toBe('Avg weight');
+    expect(strings.weekAverage.it({ label: 'Peso' })).toBe('Peso medio');
+    expect([strings.weekNoData.en, strings.weekNoData.it]).toEqual(['No data', 'Nessun dato']);
+    expect(strings.recentEmpty.en).toBe('Nothing logged yet.');
+  });
 });

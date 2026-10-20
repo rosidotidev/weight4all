@@ -1,0 +1,19 @@
+<h2 class="heading">{{ t().recentHeading }}</h2>
+@if (rows().length > 0) {
+  <ul class="list">
+    @for (row of rows(); track row.day) {
+      <li class="row">
+        <span class="date">{{ row.date }}</span>
+        @for (cell of row.cells; track cell.key) {
+          @if (cell.text !== null) {
+            <span class="value">{{ cell.text }}</span>
+          } @else {
+            <span class="value absent">{{ t().historyDash }}</span>
+          }
+        }
+      </li>
+    }
+  </ul>
+} @else {
+  <p class="empty">{{ t().recentEmpty }}</p>
+}

@@ -9,22 +9,25 @@ import {
 } from '@angular/core';
 import { EntryStore } from '../../core/data/entry.store';
 import { ClockService } from '../../core/state/clock.service';
+import { LayoutService } from '../../core/state/layout.service';
 import { PRIMARY } from '../../domain/dimensions';
 import { Entry } from '../../domain/entry';
 import { HappyEffect, happyEffect } from '../../domain/happy-effect';
 import { EntryFormComponent } from '../../shared/entry-form.component';
 import { I18n } from '../../shared/i18n';
 import { HappyEffectComponent } from './happy-effect.component';
+import { RecentEntriesComponent } from './recent-entries.component';
+import { WeekCardComponent } from './week-card.component';
 
 interface ShownEffect {
   readonly effect: HappyEffect;
   readonly value: number;
 }
 
-/** Today: a skeleton while the Entries load, an inline error with Retry on failure, else the form for today, with the amber banner while today has no Entry. */
+/** Today: a skeleton while the Entries load, an inline error with Retry on failure, else the form for today, with the amber banner while today has no Entry. On expanded windows a right column shows This week and the last 5 Entries. */
 @Component({
   selector: 'w4a-today',
-  imports: [EntryFormComponent, HappyEffectComponent],
+  imports: [EntryFormComponent, HappyEffectComponent, WeekCardComponent, RecentEntriesComponent],
   host: { tabindex: '-1' },
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './today.component.html',
@@ -34,6 +37,9 @@ export class TodayComponent {
   protected readonly t = inject(I18n).t;
   protected readonly store = inject(EntryStore);
   protected readonly clock = inject(ClockService);
+  private readonly layout = inject(LayoutService);
+  /** The right column (This week, last entries) shows on the expanded window class only. */
+  protected readonly wide = computed(() => this.layout.windowClass() === 'expanded');
   protected readonly effect = signal<ShownEffect | null>(null);
   /** One card at a time; a new save makes a new object, so the card is recreated (confetti, focus). */
   protected readonly shownEffects = computed(() => {

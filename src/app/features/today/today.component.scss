@@ -7,6 +7,23 @@
 :host:focus {
   outline: none;
 }
+.layout.wide {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: calc(var(--w4a-space-4) * 2);
+}
+.layout.wide .main {
+  flex: 0 1 var(--w4a-form-column-width);
+  min-width: min(100%, 360px);
+}
+.aside {
+  display: grid;
+  flex: none;
+  gap: var(--w4a-space-5);
+  width: 320px;
+}
 .skeleton {
   display: grid;
   gap: var(--w4a-space-4);

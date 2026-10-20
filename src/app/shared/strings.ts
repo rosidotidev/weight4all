@@ -240,6 +240,23 @@ export const strings = {
   },
   historyDelete: { en: 'Delete', it: 'Elimina' },
   entryDelete: { en: 'Delete', it: 'Elimina' },
+  weekTitle: { en: 'This week', it: 'Questa settimana' },
+  weekRegionLabel: { en: 'This week summary', it: 'Riepilogo della settimana' },
+  weekRange: {
+    en: (p: { from: string; to: string }) => `${p.from} – ${p.to}`,
+    it: (p: { from: string; to: string }) => `${p.from} – ${p.to}`,
+  },
+  weekLogged: {
+    en: (p: { count: string }) => `${p.count} of 7 days logged`,
+    it: (p: { count: string }) => `${p.count} giorni su 7 registrati`,
+  },
+  weekAverage: {
+    en: (p: { label: string }) => `Avg ${p.label.toLowerCase()}`,
+    it: (p: { label: string }) => `${p.label} medio`,
+  },
+  weekNoData: { en: 'No data', it: 'Nessun dato' },
+  recentHeading: { en: 'Last entries · newest first', it: 'Ultime registrazioni · dalla più recente' },
+  recentEmpty: { en: 'Nothing logged yet.', it: 'Ancora nessuna registrazione.' },
   reportPlaceholder: {
     en: 'Your report will appear here soon.',
     it: 'Il tuo report apparirà qui a breve.',

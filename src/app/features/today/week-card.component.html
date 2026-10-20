@@ -1,0 +1,32 @@
+<section class="card" [attr.aria-label]="t().weekRegionLabel">
+  <div class="head">
+    <h2 class="title">{{ t().weekTitle }}</h2>
+    <span class="range">{{ range() }}</span>
+  </div>
+  <ul class="dots" aria-hidden="true">
+    @for (dot of dots(); track dot.day) {
+      <li class="day">
+        <span class="dot" [class.logged]="dot.logged">
+          @if (dot.logged) {
+            <svg viewBox="0 0 24 24" focusable="false"><path d="M7 12.5l3.5 3.5L17 8.5" /></svg>
+          }
+        </span>
+        <span class="initial">{{ dot.initial }}</span>
+      </li>
+    }
+  </ul>
+  <p class="count">{{ t().weekLogged({ count: '' + count() }) }}</p>
+  <hr class="divider" />
+  <div class="stats">
+    @for (stat of stats(); track stat.key) {
+      <div class="stat">
+        <span class="caption">{{ stat.caption }}</span>
+        @if (stat.text !== null) {
+          <span class="value">{{ stat.text }}</span>
+        } @else {
+          <span class="value none">{{ t().weekNoData }}</span>
+        }
+      </div>
+    }
+  </div>
+</section>

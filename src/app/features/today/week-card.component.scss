@@ -1,0 +1,94 @@
+:host {
+  display: block;
+  font-family: var(--w4a-font-family);
+  color: var(--w4a-on-surface);
+}
+.card {
+  padding: var(--w4a-space-5);
+  background: var(--w4a-surface-container);
+  border-radius: var(--w4a-rounded-xl);
+}
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--w4a-space-2);
+}
+.title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+.range,
+.caption {
+  font-size: var(--w4a-type-caption-size);
+  color: var(--w4a-on-surface-variant);
+}
+.dots {
+  display: flex;
+  justify-content: space-between;
+  margin: var(--w4a-space-4) 0 var(--w4a-space-2);
+  padding: 0;
+  list-style: none;
+}
+.day {
+  display: grid;
+  justify-items: center;
+  gap: var(--w4a-space-2);
+}
+.dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 22px;
+  height: 22px;
+  border: 1.5px solid var(--w4a-outline);
+  border-radius: var(--w4a-rounded-full);
+}
+.dot.logged {
+  background: var(--w4a-primary);
+  border-color: var(--w4a-primary);
+}
+.dot svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: var(--w4a-on-primary);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.initial {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--w4a-on-surface-variant);
+}
+.count {
+  margin: var(--w4a-space-2) 0 0;
+  font-size: 13px;
+  color: var(--w4a-on-surface-variant);
+}
+.divider {
+  margin: var(--w4a-space-3) 0;
+  border: 0;
+  border-top: 1px solid var(--w4a-surface-variant);
+}
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--w4a-space-3) var(--w4a-space-6);
+}
+.stat {
+  display: grid;
+  gap: var(--w4a-space-1);
+}
+.value {
+  font-size: var(--w4a-type-stat-value-size);
+  font-weight: var(--w4a-type-stat-value-weight);
+}
+.value.none {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--w4a-on-surface-variant);
+}

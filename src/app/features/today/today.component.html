@@ -19,22 +19,32 @@
     </div>
   }
   @case ('ready') {
-    @if (!store.entries()[clock.today()]) {
-      <div class="banner" role="status">
-        <span class="banner-dot" aria-hidden="true"></span>
-        <div>
-          <p class="banner-title">{{ t().todayMissingTitle }}</p>
-          <p class="banner-body">{{ t().todayMissingBody }}</p>
-        </div>
+    <div class="layout" [class.wide]="wide()">
+      <div class="main">
+        @if (!store.entries()[clock.today()]) {
+          <div class="banner" role="status">
+            <span class="banner-dot" aria-hidden="true"></span>
+            <div>
+              <p class="banner-title">{{ t().todayMissingTitle }}</p>
+              <p class="banner-body">{{ t().todayMissingBody }}</p>
+            </div>
+          </div>
+        }
+        @for (shown of shownEffects(); track shown) {
+          <w4a-happy-effect
+            [effect]="shown.effect"
+            [value]="shown.value"
+            (closed)="closeEffect()"
+          />
+        }
+        <w4a-entry-form [day]="clock.today()" (confirmed)="showEffect($event)" />
       </div>
-    }
-    @for (shown of shownEffects(); track shown) {
-      <w4a-happy-effect
-        [effect]="shown.effect"
-        [value]="shown.value"
-        (closed)="closeEffect()"
-      />
-    }
-    <w4a-entry-form [day]="clock.today()" (confirmed)="showEffect($event)" />
+      @if (wide()) {
+        <aside class="aside">
+          <w4a-week-card />
+          <w4a-recent-entries />
+        </aside>
+      }
+    </div>
   }
 }

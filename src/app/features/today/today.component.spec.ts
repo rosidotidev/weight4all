@@ -3,6 +3,8 @@ import { TestBed } from '@angular/core/testing';
 import { EntryResult, EntryStatus, EntryStore } from '../../core/data/entry.store';
 import { PreferencesStore } from '../../core/data/preferences.store';
 import { ClockService } from '../../core/state/clock.service';
+import { LayoutService } from '../../core/state/layout.service';
+import { WindowClass } from '../../domain/window-class';
 import { addDays, dayKey } from '../../domain/day';
 import { Entry } from '../../domain/entry';
 import { Language } from '../../domain/language';
@@ -13,12 +15,14 @@ describe('TodayComponent', () => {
   let retry: ReturnType<typeof vi.fn<() => Promise<void>>>;
   let language: ReturnType<typeof signal<Language>>;
   let entries: ReturnType<typeof signal<Readonly<Record<string, Entry>>>>;
+  let windowClass: ReturnType<typeof signal<WindowClass>>;
   let save: ReturnType<typeof vi.fn<(entry: Entry) => Promise<EntryResult>>>;
 
   beforeEach(async () => {
     status = signal<EntryStatus>('loading');
     retry = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
     language = signal<Language>('en');
+    windowClass = signal<WindowClass>('compact');
     entries = signal<Readonly<Record<string, Entry>>>({});
     // Like the real store: the Entry is in the signal by the time `save` resolves ok.
     save = vi.fn<(entry: Entry) => Promise<EntryResult>>().mockImplementation(async (entry) => {
@@ -30,6 +34,7 @@ describe('TodayComponent', () => {
       providers: [
         { provide: EntryStore, useValue: { status, retry, entries, save } },
         { provide: PreferencesStore, useValue: { language } },
+        { provide: LayoutService, useValue: { windowClass } },
       ],
     }).compileComponents();
   });
@@ -351,6 +356,32 @@ describe('TodayComponent', () => {
       expect(card(el)).not.toBeNull();
       expect(el.querySelector<HTMLInputElement>('input')!.disabled).toBe(false);
       expect(el.querySelector('[aria-modal]')).toBeNull();
+    });
+  });
+
+  describe('right column', () => {
+    it('shows This week and the last entries on expanded when ready', async () => {
+      status.set('ready');
+      windowClass.set('expanded');
+      const { el } = await setup();
+      expect(el.querySelector('w4a-week-card')).not.toBeNull();
+      expect(el.querySelector('w4a-recent-entries')).not.toBeNull();
+    });
+
+    it.each<WindowClass>(['compact', 'medium'])('does not show it on %s', async (cls) => {
+      status.set('ready');
+      windowClass.set(cls);
+      const { el } = await setup();
+      expect(el.querySelector('w4a-week-card')).toBeNull();
+      expect(el.querySelector('w4a-recent-entries')).toBeNull();
+    });
+
+    it.each<EntryStatus>(['loading', 'error'])('does not show it while %s', async (st) => {
+      status.set(st);
+      windowClass.set('expanded');
+      const { el } = await setup();
+      expect(el.querySelector('w4a-week-card')).toBeNull();
+      expect(el.querySelector('w4a-recent-entries')).toBeNull();
     });
   });
 });
