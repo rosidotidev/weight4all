@@ -3,7 +3,7 @@ title: '2-6 Get a warm response after saving'
 type: 'feature'
 created: '2026-10-20'
 baseline_commit: '96619c942f83f35c31710439dd93cc36dbbddb47'
-status: 'in-review'
+status: 'done'
 route: 'dispatch'
 review_loop_iteration: 0
 context:
@@ -72,9 +72,30 @@ context:
 
 ## Implementation Notes
 
+- `formatDay` gained an optional `weekday` flag for "vs 14 Oct"; the strings spec allows `!` in the loss and welcome copy; the gradient stops derive from the accent, so they approximate the mockup.
+- The card is recreated per save (Today `@for` over a one-item list).
+
 ## Spec Change Log
 
 ## Review Triage Log
+
+| Finding | Verdict | Route | Evidence |
+|---|---|---|---|
+| Second save with the card open reuses it: no confetti, no focus on Done (BH, EC) | medium | patch | The card is non-modal, so a second save is reachable; Today now recreates the card per save and keeps the first opener. Tests added. |
+| Esc closes the card even when another overlay already handled it (BH, EC) | low | patch | One-line `defaultPrevented` guard; test added. |
+| Session change or midnight leaves the card open (EC) | low | rejected | Today is unmounted on logout; midnight with the card open is cosmetic and needs a new guard. |
+| Save confirmed after midnight shows no card (BH, EC) | low | rejected | Rare, and the inline Saved line still confirms. |
+| Opener disabled when closing (EC) | false | rejected | `saving` is false before `confirmed` emits, so Save is enabled. |
+| Fixed id, reduced-motion read once, static confetti stays (BH, EC) | low | rejected | One instance exists; static confetti is the spec and the mockup. |
+| Earlier Entry without a weight gives welcome (EC) | false | rejected | Weight is required, so every Entry has one. |
+| NaN or extra decimals in `decimalDifference` (EC) | false | rejected | Inputs are validated one-decimal values. |
+| `formatDay` without weekday orders day then month (BH, EC) | low | rejected | Matches the spec copy for en and it; the app has those two locales. |
+| Gendered "Benvenuto!", hardcoded kg in `effectLogged` (BH) | low | rejected | Copy is from the EXPERIENCE.md table; `weightHint` also names kg in strings. |
+| No live announcement of the card (BH, EC) | low | rejected | The form's polite "Saved!" line already announces the save. |
+| AA across accents unchecked (BH, EC) | false | rejected | The implementer computed at least 5.0:1 for all six accent seeds. |
+| Hardcoded layout px (BH) | low | rejected | Values come from the mockup, as in the other cards. |
+| Artifact notes empty, sprint status differs (BH) | low | rejected | Updated at step 5. |
+| Verification gap layer | none | n/a | No gaps filed. |
 
 ## Verification
 
