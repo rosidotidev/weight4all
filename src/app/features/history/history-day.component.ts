@@ -14,6 +14,7 @@ import { HappyEffect, happyEffect } from '../../domain/happy-effect';
 import { EntryFormComponent } from '../../shared/entry-form.component';
 import { I18n } from '../../shared/i18n';
 import { HappyEffectComponent } from '../today/happy-effect.component';
+import { DeleteEntryDialogComponent } from './delete-entry-dialog.component';
 
 interface ShownEffect {
   readonly effect: HappyEffect;
@@ -26,7 +27,7 @@ interface ShownEffect {
  */
 @Component({
   selector: 'w4a-history-day',
-  imports: [A11yModule, EntryFormComponent, HappyEffectComponent],
+  imports: [A11yModule, DeleteEntryDialogComponent, EntryFormComponent, HappyEffectComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(document:keydown.escape)': 'onEscape($event)', '(click)': 'onClick($event)' },
   templateUrl: './history-day.component.html',
@@ -47,6 +48,9 @@ export class HistoryDayComponent {
     inject(ActivatedRoute).paramMap.pipe(map((p) => p.get('dayKey') ?? '')),
     { initialValue: '' },
   );
+
+  /** Whether the Delete confirmation is open over this screen. */
+  protected readonly confirmingDelete = signal(false);
 
   private readonly effect = signal<ShownEffect | null>(null);
   protected readonly shownEffects = computed(() => {
@@ -84,8 +88,14 @@ export class HistoryDayComponent {
 
   protected onEscape(event: Event): void {
     // The Happy effect card handles its own Esc.
-    if (event.defaultPrevented || this.effect()) return;
+    // The Delete confirmation closes itself on Esc and marks the event handled.
+    if (event.defaultPrevented || this.effect() || this.confirmingDelete()) return;
     this.cancel();
+  }
+
+  protected onDeleted(): void {
+    this.confirmingDelete.set(false);
+    this.close();
   }
 
   protected close(): void {

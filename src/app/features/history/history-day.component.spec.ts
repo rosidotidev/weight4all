@@ -23,6 +23,7 @@ describe('HistoryDayComponent', () => {
   let retry: ReturnType<typeof vi.fn<() => Promise<void>>>;
   let save: ReturnType<typeof vi.fn<(entry: Entry) => Promise<EntryResult>>>;
   let navigate: ReturnType<typeof vi.fn>;
+  let remove: ReturnType<typeof vi.fn<(day: string) => Promise<EntryResult>>>;
 
   beforeEach(() => {
     status = signal<EntryStatus>('ready');
@@ -38,13 +39,17 @@ describe('HistoryDayComponent', () => {
       return { ok: true };
     });
     navigate = vi.fn().mockResolvedValue(true);
+    remove = vi.fn<(day: string) => Promise<EntryResult>>().mockImplementation(async (day) => {
+      entries.update((all) => Object.fromEntries(Object.entries(all).filter(([key]) => key !== day)));
+      return { ok: true };
+    });
   });
 
   function setup(dayKey: string) {
     TestBed.configureTestingModule({
       imports: [HistoryDayComponent],
       providers: [
-        { provide: EntryStore, useValue: { status, entries, retry, save } },
+        { provide: EntryStore, useValue: { status, entries, retry, save, remove } },
         { provide: PreferencesStore, useValue: { language } },
         { provide: ClockService, useValue: { today: signal(TODAY) } },
         { provide: LayoutService, useValue: { windowClass } },
@@ -201,5 +206,69 @@ describe('HistoryDayComponent', () => {
     const second = TestBed.createComponent(HistoryDayComponent);
     second.detectChanges();
     expect(input(second.nativeElement).value).toBe('70.2');
+  });
+
+  describe('Delete', () => {
+    const deleteButton = (el: HTMLElement) => el.querySelector<HTMLButtonElement>('button.delete');
+    const dialog = (el: HTMLElement) => el.querySelector('w4a-delete-entry-dialog');
+
+    it('is offered only when the Day has an Entry', () => {
+      expect(deleteButton(setup('2026-10-14').el)?.textContent).toContain('Delete');
+      TestBed.resetTestingModule();
+      expect(deleteButton(setup('2026-10-16').el)).toBeNull();
+    });
+
+    it('opens the confirmation without removing anything', () => {
+      const fixture = setup('2026-10-14');
+      deleteButton(fixture.el)!.click();
+      fixture.detectChanges();
+      expect(dialog(fixture.el)).not.toBeNull();
+      expect(remove).not.toHaveBeenCalled();
+    });
+
+    it('Cancel in the confirmation closes only it', () => {
+      const fixture = setup('2026-10-14');
+      deleteButton(fixture.el)!.click();
+      fixture.detectChanges();
+      fixture.el.querySelector<HTMLButtonElement>('w4a-delete-entry-dialog button.cancel')!.click();
+      fixture.detectChanges();
+      expect(dialog(fixture.el)).toBeNull();
+      expect(navigate).not.toHaveBeenCalled();
+      expect(entries()['2026-10-14']).toBeDefined();
+    });
+
+    it('Esc closes the confirmation but not Entry edit', () => {
+      const fixture = setup('2026-10-14');
+      deleteButton(fixture.el)!.click();
+      fixture.detectChanges();
+      fixture.el
+        .querySelector('[role="alertdialog"]')!
+        .dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+      fixture.detectChanges();
+      expect(dialog(fixture.el)).toBeNull();
+      expect(navigate).not.toHaveBeenCalled();
+    });
+
+    it('a confirmed delete removes the Entry and closes to History', async () => {
+      const fixture = setup('2026-10-14');
+      deleteButton(fixture.el)!.click();
+      fixture.detectChanges();
+      fixture.el.querySelector<HTMLButtonElement>('button.confirm')!.click();
+      await fixture.whenStable();
+      expect(remove).toHaveBeenCalledWith('2026-10-14');
+      expect(navigate).toHaveBeenCalledWith(['/history']);
+    });
+
+    it('a failed delete keeps Entry edit open', async () => {
+      remove.mockResolvedValue({ ok: false, code: 'network' });
+      const fixture = setup('2026-10-14');
+      deleteButton(fixture.el)!.click();
+      fixture.detectChanges();
+      fixture.el.querySelector<HTMLButtonElement>('button.confirm')!.click();
+      await fixture.whenStable();
+      fixture.detectChanges();
+      expect(navigate).not.toHaveBeenCalled();
+      expect(fixture.el.querySelector('[role="alertdialog"] [role="alert"]')).not.toBeNull();
+    });
   });
 });

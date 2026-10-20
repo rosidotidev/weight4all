@@ -85,6 +85,10 @@
 <mat-menu #menu="matMenu">
   <ng-template matMenuContent let-day="day">
     <button mat-menu-item type="button" (click)="open(day)">{{ t().historyEdit }}</button>
+    <button mat-menu-item type="button" class="delete-item" style="color: var(--mat-sys-error)" (click)="askDelete(day)">{{ t().historyDelete }}</button>
   </ng-template>
 </mat-menu>
+@if (deleting(); as day) {
+  <w4a-delete-entry-dialog [day]="day" (cancelled)="closeDelete()" (deleted)="closeDelete()" />
+}
 <router-outlet (deactivate)="restoreFocus()" />

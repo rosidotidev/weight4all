@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
-import { EntryStatus, EntryStore } from '../../core/data/entry.store';
+import { EntryResult, EntryStatus, EntryStore } from '../../core/data/entry.store';
 import { PreferencesStore } from '../../core/data/preferences.store';
 import { ClockService } from '../../core/state/clock.service';
 import { addDays } from '../../domain/day';
@@ -21,17 +21,22 @@ describe('HistoryComponent', () => {
   let entries: ReturnType<typeof signal<Readonly<Record<string, Entry>>>>;
   let language: ReturnType<typeof signal<Language>>;
   let retry: ReturnType<typeof vi.fn<() => Promise<void>>>;
+  let remove: ReturnType<typeof vi.fn<(day: string) => Promise<EntryResult>>>;
 
   beforeEach(async () => {
     status = signal<EntryStatus>('ready');
     entries = signal<Readonly<Record<string, Entry>>>({});
     language = signal<Language>('en');
     retry = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
+    remove = vi.fn<(day: string) => Promise<EntryResult>>().mockImplementation(async (day) => {
+      entries.update((all) => Object.fromEntries(Object.entries(all).filter(([key]) => key !== day)));
+      return { ok: true };
+    });
     await TestBed.configureTestingModule({
       imports: [HistoryComponent],
       providers: [
         provideRouter([]),
-        { provide: EntryStore, useValue: { status, entries, retry } },
+        { provide: EntryStore, useValue: { status, entries, retry, remove } },
         { provide: PreferencesStore, useValue: { language } },
         { provide: ClockService, useValue: { today: signal(TODAY) } },
       ],
@@ -181,6 +186,78 @@ describe('HistoryComponent', () => {
       expect(item.textContent).toContain('Edit');
       item.click();
       expect(navigate).toHaveBeenCalledWith(['/history', '2026-10-19']);
+    });
+
+    it('the overflow menu offers Delete, which asks first and then removes the Entry', async () => {
+      const { fixture, el } = await setup();
+      el.querySelector<HTMLButtonElement>('.more')!.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+      const items = Array.from(document.querySelectorAll<HTMLButtonElement>('[mat-menu-item]'));
+      expect(items.map((i) => i.textContent?.trim())).toEqual(['Edit', 'Delete']);
+      items[1].click();
+      fixture.detectChanges();
+      expect(remove).not.toHaveBeenCalled();
+      expect(el.querySelector('[role="alertdialog"]')).not.toBeNull();
+      el.querySelector<HTMLButtonElement>('button.confirm')!.click();
+      await fixture.whenStable();
+      fixture.detectChanges();
+      expect(remove).toHaveBeenCalledWith('2026-10-19');
+      expect(el.querySelector('[role="alertdialog"]')).toBeNull();
+      expect(el.querySelector('.row .date')!.textContent).toBe('Sun 18 Oct');
+      expect(el.querySelectorAll('.row')).toHaveLength(1);
+    });
+
+    describe('focus after the Delete dialog', () => {
+      beforeEach(() => {
+        vi.spyOn(HTMLElement.prototype, 'getClientRects').mockReturnValue([{}] as unknown as DOMRectList);
+      });
+
+      async function openDelete() {
+        const { fixture, el } = await setup();
+        document.body.appendChild(el);
+        const more = el.querySelector<HTMLButtonElement>('.more')!;
+        more.click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        document.querySelectorAll<HTMLButtonElement>('[mat-menu-item]')[1].click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        return { fixture, el, more };
+      }
+
+      it('Cancel returns focus to the overflow button', async () => {
+        const { fixture, el, more } = await openDelete();
+        el.querySelector<HTMLButtonElement>('button.cancel')!.click();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(document.activeElement).toBe(more);
+        el.remove();
+      });
+
+      it('a confirmed delete puts focus on the host, not the body', async () => {
+        const { fixture, el } = await openDelete();
+        el.querySelector<HTMLButtonElement>('button.confirm')!.click();
+        await fixture.whenStable();
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(document.activeElement).toBe(el);
+        el.remove();
+      });
+    });
+
+    it('Cancel in the Delete confirmation leaves the Entry listed', async () => {
+      const { fixture, el } = await setup();
+      el.querySelector<HTMLButtonElement>('.more')!.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+      document.querySelectorAll<HTMLButtonElement>('[mat-menu-item]')[1].click();
+      fixture.detectChanges();
+      el.querySelector<HTMLButtonElement>('button.cancel')!.click();
+      fixture.detectChanges();
+      expect(el.querySelector('[role="alertdialog"]')).toBeNull();
+      expect(remove).not.toHaveBeenCalled();
+      expect(entries()['2026-10-19']).toBeDefined();
     });
 
     it('a touch drag left over 48 px reveals the Edit action, and tapping it opens the Day', async () => {

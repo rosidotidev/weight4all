@@ -1,0 +1,23 @@
+<div class="backdrop" aria-hidden="true" (click)="cancel()"></div>
+<div
+  class="dialog"
+  role="alertdialog"
+  aria-modal="true"
+  aria-labelledby="w4a-delete-title"
+  aria-describedby="w4a-delete-body"
+  cdkTrapFocus
+  [cdkTrapFocusAutoCapture]="true"
+  (keydown.escape)="onEscape($event)"
+>
+  <h2 class="title" id="w4a-delete-title">{{ t().deleteTitle }}</h2>
+  <p class="body" id="w4a-delete-body">{{ t().deleteBody }}</p>
+  @if (failed()) {
+    <p class="error" role="alert">{{ t().deleteError }}</p>
+  }
+  <div class="actions">
+    <button type="button" class="cancel" cdkFocusInitial (click)="cancel()">{{ t().entryCancel }}</button>
+    <button type="button" class="confirm" #confirmButton [disabled]="deleting()" (click)="confirm()">
+      {{ deleting() ? t().deleteDeleting : t().deleteConfirm }}
+    </button>
+  </div>
+</div>

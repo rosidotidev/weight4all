@@ -130,6 +130,24 @@ describe('strings', () => {
     }
   });
 
+  it('has the Delete confirmation copy of EXPERIENCE.md in both languages', () => {
+    expect(strings.deleteTitle).toEqual({
+      en: 'Delete this entry?',
+      it: 'Eliminare questa registrazione?',
+    });
+    expect(strings.deleteBody).toEqual({
+      en: "This removes the day's numbers.",
+      it: 'Verranno rimossi i numeri del giorno.',
+    });
+    expect([strings.deleteConfirm.en, strings.deleteConfirm.it]).toEqual(['Delete', 'Elimina']);
+    expect(strings.entryCancel.it).toBe('Annulla');
+    expect(strings.deleteError.en).toBe("Couldn't delete. Nothing was removed. Try again.");
+    for (const key of ['deleteDeleting', 'deleteError', 'historyDelete', 'entryDelete'] as const) {
+      expect(strings[key].en).toBeTruthy();
+      expect(strings[key].it).toBeTruthy();
+    }
+  });
+
   it('returns strings from parameterised text in both languages', () => {
     const dict = {
       hello: {

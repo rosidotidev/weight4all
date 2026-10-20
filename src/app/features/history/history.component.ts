@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Injector, afterNextRender, computed, inject, signal } from '@angular/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { EntryStore } from '../../core/data/entry.store';
@@ -11,6 +11,7 @@ import { Entry } from '../../domain/entry';
 import { HistoryRow, buildHistoryRows } from '../../domain/history';
 import { formatNumber } from '../../domain/number';
 import { I18n } from '../../shared/i18n';
+import { DeleteEntryDialogComponent } from './delete-entry-dialog.component';
 
 /** Material "edit" (pencil) and "more vert" icons, 24x24 viewBox. */
 const PENCIL =
@@ -28,8 +29,9 @@ interface Cell {
 /** History: every Entry newest first with dashed rows for the Days in between, in a virtual list. */
 @Component({
   selector: 'w4a-history',
-  imports: [ScrollingModule, RouterLink, RouterOutlet, MatMenuModule],
+  imports: [ScrollingModule, RouterLink, RouterOutlet, MatMenuModule, DeleteEntryDialogComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { tabindex: '-1' },
   templateUrl: './history.component.html',
   styleUrl: './history.component.scss',
 })
@@ -40,10 +42,14 @@ export class HistoryComponent {
   private readonly clock = inject(ClockService);
   private readonly router = inject(Router);
   private readonly document = inject(DOCUMENT);
+  private readonly injector = inject(Injector);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   protected readonly pencil = PENCIL;
   protected readonly dots = DOTS;
   /** The Day whose Edit action is revealed; one row at a time. */
   protected readonly revealed = signal<string | null>(null);
+  /** The Day whose Delete confirmation is open. */
+  protected readonly deleting = signal<string | null>(null);
   private opener: HTMLElement | null = null;
   private swipe: { x: number; y: number; day: string; done: boolean } | null = null;
 
@@ -87,6 +93,28 @@ export class HistoryComponent {
     if (event) this.remember(event);
     this.revealed.set(null);
     void this.router.navigate(['/history', day]);
+  }
+
+  /** The menu's Delete: ask first; the overflow button (remembered on open) gets focus back afterwards. */
+  protected askDelete(day: string): void {
+    this.revealed.set(null);
+    this.deleting.set(day);
+  }
+
+  protected closeDelete(): void {
+    const day = this.deleting();
+    this.deleting.set(null);
+    const opener = this.opener;
+    this.opener = null;
+    // Wait for the dialog's trap to release focus, then place it ourselves. The row may be gone after a
+    // delete (the virtual list can recycle its button for another row), so check the Entry still exists.
+    afterNextRender(
+      () => {
+        if (opener?.isConnected && day && this.store.entries()[day]) opener.focus();
+        else this.host.nativeElement.focus();
+      },
+      { injector: this.injector },
+    );
   }
 
   /** Back on the list: focus returns to the opener, unless the user already moved focus elsewhere. */

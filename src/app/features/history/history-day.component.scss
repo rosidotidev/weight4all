@@ -80,6 +80,7 @@
 .actions {
   display: flex;
   justify-content: center;
+  gap: var(--w4a-space-2);
   max-width: var(--w4a-form-column-width);
   margin: var(--w4a-space-2) auto 0;
 }
@@ -96,6 +97,10 @@ button {
 }
 button.cancel {
   color: var(--w4a-primary);
+  background: transparent;
+}
+button.delete {
+  color: var(--mat-sys-error);
   background: transparent;
 }
 button:focus-visible {

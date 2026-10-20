@@ -227,6 +227,19 @@ export const strings = {
     it: (p: { date: string }) => `Registrazione per ${p.date}`,
   },
   entryCancel: { en: 'Cancel', it: 'Annulla' },
+  deleteTitle: { en: 'Delete this entry?', it: 'Eliminare questa registrazione?' },
+  deleteBody: {
+    en: "This removes the day's numbers.",
+    it: 'Verranno rimossi i numeri del giorno.',
+  },
+  deleteConfirm: { en: 'Delete', it: 'Elimina' },
+  deleteDeleting: { en: 'Deleting…', it: 'Eliminazione…' },
+  deleteError: {
+    en: "Couldn't delete. Nothing was removed. Try again.",
+    it: 'Eliminazione non riuscita. Non è stato rimosso nulla. Riprova.',
+  },
+  historyDelete: { en: 'Delete', it: 'Elimina' },
+  entryDelete: { en: 'Delete', it: 'Elimina' },
   reportPlaceholder: {
     en: 'Your report will appear here soon.',
     it: 'Il tuo report apparirà qui a breve.',

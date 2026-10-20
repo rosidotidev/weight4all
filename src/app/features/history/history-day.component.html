@@ -34,6 +34,12 @@
     }
   }
   <div class="actions">
+    @if (store.status() === 'ready' && store.entries()[day()]) {
+      <button type="button" class="delete" (click)="confirmingDelete.set(true)">{{ t().entryDelete }}</button>
+    }
     <button type="button" class="cancel" (click)="cancel()">{{ t().entryCancel }}</button>
   </div>
 </div>
+@if (confirmingDelete()) {
+  <w4a-delete-entry-dialog [day]="day()" (cancelled)="confirmingDelete.set(false)" (deleted)="onDeleted()" />
+}
