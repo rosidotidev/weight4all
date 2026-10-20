@@ -148,6 +148,11 @@ export const strings = {
     en: 'We could not load your days. Please check your connection and try again.',
     it: 'Non siamo riusciti a caricare i tuoi giorni. Controlla la connessione e riprova.',
   },
+  todayMissingTitle: { en: "Today isn't logged yet", it: 'Oggi non è ancora registrato' },
+  todayMissingBody: {
+    en: "Add today's numbers whenever you're ready.",
+    it: 'Aggiungi i numeri di oggi quando vuoi.',
+  },
   todayRetry: { en: 'Try again', it: 'Riprova' },
   navLabel: { en: 'Main navigation', it: 'Navigazione principale' },
   navToday: { en: 'Today', it: 'Oggi' },

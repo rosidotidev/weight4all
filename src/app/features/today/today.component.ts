@@ -4,7 +4,7 @@ import { ClockService } from '../../core/state/clock.service';
 import { EntryFormComponent } from '../../shared/entry-form.component';
 import { I18n } from '../../shared/i18n';
 
-/** Today: a skeleton while the Entries load, an inline error with Retry on failure, else the form for today. */
+/** Today: a skeleton while the Entries load, an inline error with Retry on failure, else the form for today, with the amber banner while today has no Entry. */
 @Component({
   selector: 'w4a-today',
   imports: [EntryFormComponent],
@@ -54,6 +54,36 @@ import { I18n } from '../../shared/i18n';
       max-width: var(--w4a-form-column-width);
       margin-inline: auto;
     }
+    .banner {
+      display: flex;
+      align-items: center;
+      gap: var(--w4a-space-4);
+      max-width: var(--w4a-form-column-width);
+      margin-inline: auto;
+      margin-block-end: var(--w4a-card-gap);
+      padding: var(--w4a-space-3) var(--w4a-space-4);
+      background: var(--w4a-banner-container);
+      color: var(--w4a-on-banner-container);
+      border-radius: var(--w4a-rounded-md);
+    }
+    .banner-dot {
+      flex: none;
+      width: 14px;
+      height: 14px;
+      margin: 4px;
+      background: var(--w4a-banner-dot);
+      border-radius: var(--w4a-rounded-full);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--w4a-banner-dot) 40%, transparent);
+    }
+    .banner-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .banner-body {
+      margin: 0;
+      font-size: 12.5px;
+    }
     button {
       min-height: 44px;
       padding: 0 24px;
@@ -91,7 +121,16 @@ import { I18n } from '../../shared/i18n';
           <button type="button" (click)="store.retry()">{{ t().todayRetry }}</button>
         </div>
       }
-      @default {
+      @case ('ready') {
+        @if (!store.entries()[clock.today()]) {
+          <div class="banner" role="status">
+            <span class="banner-dot" aria-hidden="true"></span>
+            <div>
+              <p class="banner-title">{{ t().todayMissingTitle }}</p>
+              <p class="banner-body">{{ t().todayMissingBody }}</p>
+            </div>
+          </div>
+        }
         <w4a-entry-form [day]="clock.today()" />
       }
     }

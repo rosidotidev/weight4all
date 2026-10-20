@@ -2,6 +2,7 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { EntryStatus, EntryStore } from '../../core/data/entry.store';
 import { PreferencesStore } from '../../core/data/preferences.store';
+import { ClockService } from '../../core/state/clock.service';
 import { dayKey } from '../../domain/day';
 import { Entry } from '../../domain/entry';
 import { Language } from '../../domain/language';
@@ -98,5 +99,78 @@ describe('TodayComponent', () => {
     status.set('ready');
     await fixture.whenStable();
     expect(el.querySelector('w4a-entry-form')).not.toBeNull();
+  });
+
+  describe('missing-entry banner', () => {
+    const today = () => dayKey(new Date());
+    const banner = (el: HTMLElement) => el.querySelector('.banner');
+
+    it('shows both lines above the form when ready and today has no Entry', async () => {
+      status.set('ready');
+      const { el } = await setup();
+      const b = banner(el)!;
+      expect(b.getAttribute('role')).toBe('status');
+      expect(b.textContent).toContain("Today isn't logged yet");
+      expect(b.textContent).toContain("Add today's numbers whenever you're ready.");
+      expect(b.querySelector('button, [role="alert"], svg, mat-icon')).toBeNull();
+      const form = el.querySelector('w4a-entry-form')!;
+      expect(b.compareDocumentPosition(form) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    });
+
+    it('is absent while loading and on error', async () => {
+      const { fixture, el } = await setup();
+      expect(banner(el)).toBeNull();
+      status.set('error');
+      await fixture.whenStable();
+      expect(banner(el)).toBeNull();
+    });
+
+    it('is absent when today is logged', async () => {
+      entries.set({ [today()]: { day: today(), values: { weight: 70 } } });
+      status.set('ready');
+      const { el } = await setup();
+      expect(banner(el)).toBeNull();
+    });
+
+    it('shows when only other Days have Entries', async () => {
+      entries.set({ '2000-01-01': { day: '2000-01-01', values: { weight: 60 } } });
+      status.set('ready');
+      const { el } = await setup();
+      expect(banner(el)).not.toBeNull();
+    });
+
+    it('disappears when today is saved and returns when it is deleted', async () => {
+      status.set('ready');
+      const { fixture, el } = await setup();
+      expect(banner(el)).not.toBeNull();
+      entries.set({ [today()]: { day: today(), values: { weight: 70 } } });
+      await fixture.whenStable();
+      expect(banner(el)).toBeNull();
+      entries.set({});
+      await fixture.whenStable();
+      expect(banner(el)).not.toBeNull();
+    });
+
+    it('follows midnight rollover to a new today that has no Entry', async () => {
+      const day = signal('2026-01-01');
+      TestBed.overrideProvider(ClockService, { useValue: { today: day } });
+      entries.set({ '2026-01-01': { day: '2026-01-01', values: { weight: 70 } } });
+      status.set('ready');
+      const { fixture, el } = await setup();
+      expect(banner(el)).toBeNull();
+      day.set('2026-01-02');
+      await fixture.whenStable();
+      expect(banner(el)).not.toBeNull();
+    });
+
+    it('is Italian when the Language is it, with no dismiss control', async () => {
+      language.set('it');
+      status.set('ready');
+      const { el } = await setup();
+      const b = banner(el)!;
+      expect(b.textContent).toContain('Oggi non è ancora registrato');
+      expect(b.textContent).toContain('Aggiungi i numeri di oggi quando vuoi.');
+      expect(b.querySelector('button')).toBeNull();
+    });
   });
 });

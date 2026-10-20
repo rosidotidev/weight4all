@@ -19,7 +19,8 @@ describe('strings', () => {
     for (const [key, entry] of Object.entries(strings)) {
       for (const lang of LANGS) {
         const value = (entry as Record<Language, unknown>)[lang];
-        const text = typeof value === 'function' ? (value as (p: never) => string)(SAMPLE_PARAMS) : value;
+        const text =
+          typeof value === 'function' ? (value as (p: never) => string)(SAMPLE_PARAMS) : value;
         expect(typeof text, `${key}.${lang}`).toBe('string');
         expect((text as string).trim().length, `${key}.${lang}`).toBeGreaterThan(0);
       }
@@ -31,7 +32,8 @@ describe('strings', () => {
       if (key === 'saved') continue;
       for (const lang of LANGS) {
         const value = (entry as Record<Language, unknown>)[lang];
-        const text = typeof value === 'function' ? (value as (p: never) => string)(SAMPLE_PARAMS) : value;
+        const text =
+          typeof value === 'function' ? (value as (p: never) => string)(SAMPLE_PARAMS) : value;
         expect(String(text), `${key}.${lang}`).not.toContain('!');
       }
     }
@@ -57,7 +59,13 @@ describe('strings', () => {
 
   it('has the Today loading texts and the Weight label', () => {
     expect(strings.dimensionWeight).toEqual({ en: 'Weight', it: 'Peso' });
-    for (const key of ['todayLoading', 'todayLoadError', 'todayRetry'] as const) {
+    for (const key of [
+      'todayLoading',
+      'todayLoadError',
+      'todayRetry',
+      'todayMissingTitle',
+      'todayMissingBody',
+    ] as const) {
       expect(strings[key].en).toBeTruthy();
       expect(strings[key].it).toBeTruthy();
     }
@@ -65,8 +73,12 @@ describe('strings', () => {
 
   it('has the entry form texts', () => {
     expect(strings.weightMissing.en).toBe('Add your weight to save.');
-    expect(strings.weightRange.en({ min: '20.0', max: '400.0' })).toBe('Enter a weight between 20.0 and 400.0 kg.');
-    expect(strings.weightRange.it({ min: '20,0', max: '400,0' })).toBe('Inserisci un peso tra 20,0 e 400,0 kg.');
+    expect(strings.weightRange.en({ min: '20.0', max: '400.0' })).toBe(
+      'Enter a weight between 20.0 and 400.0 kg.',
+    );
+    expect(strings.weightRange.it({ min: '20,0', max: '400,0' })).toBe(
+      'Inserisci un peso tra 20,0 e 400,0 kg.',
+    );
     for (const key of ['entrySave', 'entrySaving'] as const) {
       expect(strings[key].en).toBeTruthy();
       expect(strings[key].it).toBeTruthy();
@@ -77,8 +89,12 @@ describe('strings', () => {
     const message = "Couldn't save. Your numbers are still here. Try again.";
     expect(strings.saveErrorNetwork.en).toBe(message);
     expect(strings.saveErrorTimeout.en).toBe(message);
-    expect(strings.saveErrorNetwork.it).toBe('Salvataggio non riuscito. I tuoi numeri sono ancora qui. Riprova.');
-    expect(strings.saveErrorTimeout.it).toBe('Salvataggio non riuscito. I tuoi numeri sono ancora qui. Riprova.');
+    expect(strings.saveErrorNetwork.it).toBe(
+      'Salvataggio non riuscito. I tuoi numeri sono ancora qui. Riprova.',
+    );
+    expect(strings.saveErrorTimeout.it).toBe(
+      'Salvataggio non riuscito. I tuoi numeri sono ancora qui. Riprova.',
+    );
     expect(strings.saveErrorPermission.en).toContain('log in again');
     expect(strings.saveErrorPermission.it).toContain('Accedi di nuovo');
     for (const key of ['saveErrorInvalid', 'saveErrorUnknown', 'snackbarDismiss'] as const) {
@@ -99,10 +115,20 @@ describe('strings', () => {
   });
 
   it('names the weight stepper and its hint in both languages', () => {
-    expect(strings.weightIncrease).toEqual({ en: 'Increase weight by 0.1 kg', it: 'Aumenta il peso di 0,1 kg' });
-    expect(strings.weightDecrease).toEqual({ en: 'Decrease weight by 0.1 kg', it: 'Diminuisci il peso di 0,1 kg' });
-    expect(strings.weightHint.en({ value: '72.7', step: '0.1' })).toBe('Last time: 72.7 kg · step 0.1 kg');
-    expect(strings.weightHint.it({ value: '72,7', step: '0,1' })).toBe('Ultima volta: 72,7 kg · passo 0,1 kg');
+    expect(strings.weightIncrease).toEqual({
+      en: 'Increase weight by 0.1 kg',
+      it: 'Aumenta il peso di 0,1 kg',
+    });
+    expect(strings.weightDecrease).toEqual({
+      en: 'Decrease weight by 0.1 kg',
+      it: 'Diminuisci il peso di 0,1 kg',
+    });
+    expect(strings.weightHint.en({ value: '72.7', step: '0.1' })).toBe(
+      'Last time: 72.7 kg · step 0.1 kg',
+    );
+    expect(strings.weightHint.it({ value: '72,7', step: '0,1' })).toBe(
+      'Ultima volta: 72,7 kg · passo 0,1 kg',
+    );
     expect(strings.weightHintNoLast.en({ step: '0.1' })).toBe('Step 0.1 kg');
     expect(strings.weightHintNoLast.it({ step: '0,1' })).toBe('Passo 0,1 kg');
   });
