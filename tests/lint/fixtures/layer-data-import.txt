@@ -1,0 +1,2 @@
+import { EntryStore } from '../data/entry.store';
+export const s = EntryStore;

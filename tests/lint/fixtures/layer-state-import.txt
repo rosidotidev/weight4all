@@ -1,0 +1,2 @@
+import { ClockService } from '../state/clock.service';
+export const c = ClockService;

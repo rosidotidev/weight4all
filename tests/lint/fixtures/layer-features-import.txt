@@ -1,0 +1,2 @@
+import { routes } from '../../features/today/today.routes';
+export const r = routes;

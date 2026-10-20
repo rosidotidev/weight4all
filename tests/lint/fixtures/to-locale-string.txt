@@ -1,0 +1,1 @@
+export const s = (1.25).toLocaleString('it-IT');

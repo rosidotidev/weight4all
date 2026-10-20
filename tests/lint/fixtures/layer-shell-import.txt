@@ -1,0 +1,2 @@
+import { routes } from '../../shell/app.routes';
+export const r = routes;

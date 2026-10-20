@@ -1,0 +1,2 @@
+import { dayKey } from '../../domain/day';
+export const d = dayKey;

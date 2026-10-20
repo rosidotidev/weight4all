@@ -1,0 +1,1 @@
+export const t = Date.parse('2026-01-01');

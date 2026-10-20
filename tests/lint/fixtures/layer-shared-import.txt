@@ -1,0 +1,2 @@
+import { EntryForm } from '../../shared/entry-form';
+export const s = EntryForm;

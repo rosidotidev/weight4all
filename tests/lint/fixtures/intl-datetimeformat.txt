@@ -1,0 +1,1 @@
+export const f = new Intl.DateTimeFormat('it-IT');
