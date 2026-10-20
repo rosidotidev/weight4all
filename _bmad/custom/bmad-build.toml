@@ -1,0 +1,18 @@
+# Team overrides for bmad-build. Committed to the repo — applies to every developer on the project.
+
+[workflow]
+
+# The UX must match the mockups, not approximate them.
+persistent_facts = [
+  "UX conformance: the built UI must look and behave like the mockups in {project-root}/_bmad-output/planning-artifacts/ux-designs/ux-bmad612_home-2026-10-19/mockups/ (SVGs; index.html embeds them) and follow DESIGN.md and EXPERIENCE.md in the parent folder. Every spec that touches UI must name, in its Code Map, the mockup file and DESIGN.md components it realizes, and must include a `UX check` entry under Verification (see the on_complete instruction). A mockup detail the story's intent leaves out is still part of the story if the screen it belongs to is being built or changed; leave it out only when a later story in epics.md owns it, and then name that story in Implementation Notes.",
+  "Known deviations from the mockups on Today and the shell, found on 2026-10-20 and not owned by any story: the shell has no top app bar (title plus date on expanded; 'Weight4All' bar on compact), the Today form column is left-aligned instead of a centered ~600 px column, and the navigation drawer has no logo and app name. The next story that changes Today or the shell (Story 2.4 for the Weight card) closes them. Story 2.4 must also rebuild the Weight card like the mockup: a large centered number (`value-display`) with a small kg unit, 56 px round minus and plus buttons, and the caption 'Last time: X kg · step 0.1 kg', while keeping the number typeable.",
+]
+
+# Runs after Build completes. The check cannot run inside the review layers, which only read the diff.
+on_complete = """
+UX check (only when the build changed UI; otherwise say 'no UI change' and stop):
+1. Use the existing dev server on http://localhost:4200 and the emulators on 8080 and 9099 if they listen; otherwise start them (`npm run emulators`, `npm start`) in the background. Use the browser tools. Use the signed-in session the browser already has; never type passwords or create accounts, and if no session exists, ask the user.
+2. Serve the mockups folder temporarily with `python -m http.server 8765 --bind 127.0.0.1` from it, open index.html in a second tab, and stop that server and close that tab when done. Do not open the SVG files directly: they cannot be screenshotted.
+3. For each screen the build changed, screenshot the app at 360, 768 and 1280 px wide (resize the window; verify the viewport really changed with `window.innerWidth`, and if it did not, say so and use only the width you have) and compare it with the matching mockup (phone, tablet, desktop). Do not save data to the user's Account: press only actions that write nothing, or use a clearly marked test Account on the emulator after asking.
+4. Report a table of deviations: element, mockup, build, owner (this story, a later story named in epics.md, or unowned). Fix deviations this story owns now, re-run the checks in the spec's Verification and commit the fix. Add unowned deviations to the Known deviations fact's successor in `_bmad-output/implementation-artifacts/deferred-work.md`. Say plainly what you could not check.
+"""
