@@ -35,6 +35,9 @@
     <button class="submit" type="submit" [disabled]="pending()">{{ t().loginSubmit }}</button>
   </form>
   <p class="alt">
+    <a routerLink="/reset">{{ t().loginForgotLink }}</a>
+  </p>
+  <p class="alt">
     {{ t().loginNoAccount }}
     <a routerLink="/register">{{ t().loginRegisterLink }}</a>
   </p>

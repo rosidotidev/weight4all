@@ -1,0 +1,38 @@
+<main class="reset">
+  <h1 class="title">{{ t().resetTitle }}</h1>
+  <div class="status" aria-live="polite">
+    @if (sent()) {
+      <p class="confirmation">{{ t().resetConfirmation }}</p>
+    }
+  </div>
+  @if (!sent()) {
+    <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="field">
+        <label for="reset-email">{{ t().resetEmailLabel }}</label>
+        <input
+          #emailInput
+          id="reset-email"
+          type="email"
+          autocomplete="email"
+          formControlName="email"
+          [attr.aria-invalid]="emailError() ? 'true' : null"
+          [attr.aria-describedby]="emailError() ? 'reset-email-error' : null"
+        />
+        <p id="reset-email-error" class="error" aria-live="polite">
+          @if (emailError(); as code) {
+            {{ message(code) }}
+          }
+        </p>
+      </div>
+      <p class="error form-error" aria-live="polite">
+        @if (formError(); as code) {
+          {{ message(code) }}
+        }
+      </p>
+      <button class="submit" type="submit" [disabled]="pending()">{{ t().resetSubmit }}</button>
+    </form>
+  }
+  <p class="alt">
+    <a routerLink="/login">{{ t().resetBackToLogin }}</a>
+  </p>
+</main>

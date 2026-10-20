@@ -5,6 +5,7 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { AuthService, Session } from './core/data/auth.service';
 import { routes } from './app.routes';
 import { LoginComponent } from './features/auth/login.component';
+import { ResetComponent } from './features/auth/reset.component';
 import { RegisterComponent } from './features/auth/register.component';
 import { SettingsComponent } from './features/settings/settings.component';
 import { TodayComponent } from './features/today/today.component';
@@ -20,7 +21,7 @@ describe('routes', () => {
         provideRouter(routes),
         {
           provide: AuthService,
-          useValue: { session, register: vi.fn(), login: vi.fn(), logout: vi.fn() },
+          useValue: { session, register: vi.fn(), login: vi.fn(), logout: vi.fn(), sendPasswordReset: vi.fn() },
         },
       ],
     });
@@ -79,8 +80,19 @@ describe('routes', () => {
     expect(TestBed.inject(Router).url).toBe('/today');
   });
 
-  it.each(['/foo', '/reset'])('signed out: unknown address %s ends on LoginComponent', async (url) => {
-    const harness = await open(url);
+  it('signed out: /reset renders ResetComponent', async () => {
+    const harness = await open('/reset');
+    expect(harness.routeDebugElement?.componentInstance).toBeInstanceOf(ResetComponent);
+  });
+
+  it('signed in: /reset still renders ResetComponent', async () => {
+    session.set({ status: 'signedIn', uid: 'u1' });
+    const harness = await open('/reset');
+    expect(harness.routeDebugElement?.componentInstance).toBeInstanceOf(ResetComponent);
+  });
+
+  it('signed out: an unknown address ends on LoginComponent', async () => {
+    const harness = await open('/foo');
     expect(harness.routeDebugElement?.componentInstance).toBeInstanceOf(LoginComponent);
   });
 

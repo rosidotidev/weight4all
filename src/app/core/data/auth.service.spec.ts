@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const createUserWithEmailAndPassword = vi.fn();
 const signInWithEmailAndPassword = vi.fn();
 const signOut = vi.fn();
+const sendPasswordResetEmail = vi.fn();
 const onAuthStateChanged = vi.fn();
 
 vi.mock('firebase/app', () => ({ initializeApp: vi.fn(() => ({})) }));
@@ -12,6 +13,7 @@ vi.mock('firebase/auth', () => ({
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  sendPasswordResetEmail,
   onAuthStateChanged,
 }));
 vi.mock('firebase/firestore', () => ({
@@ -148,5 +150,46 @@ describe('AuthService.login and logout', () => {
     emit({ uid: 'u1' });
     expect(await service.logout()).toEqual({ ok: false, code: 'network' });
     expect(service.session()).toEqual({ status: 'signedIn', uid: 'u1' });
+  });
+});
+
+describe('AuthService.sendPasswordReset', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.resetModules();
+  });
+
+  it('returns ok and sends to the given address', async () => {
+    sendPasswordResetEmail.mockResolvedValue(undefined);
+    const { service } = await create();
+    expect(await service.sendPasswordReset('a@b.it')).toEqual({ ok: true });
+    expect(sendPasswordResetEmail).toHaveBeenCalledWith({ auth: true }, 'a@b.it');
+  });
+
+  it('maps auth/user-not-found to ok so an unregistered address is not revealed', async () => {
+    sendPasswordResetEmail.mockRejectedValue({ code: 'auth/user-not-found', message: 'RAW TEXT' });
+    const { service } = await create();
+    expect(await service.sendPasswordReset('a@b.it')).toEqual({ ok: true });
+  });
+
+  const resetCases: [string, string][] = [
+    ['auth/invalid-email', 'invalid-email'],
+    ['auth/network-request-failed', 'network'],
+    ['auth/too-many-requests', 'unknown'],
+  ];
+  for (const [firebaseCode, code] of resetCases) {
+    it(`maps ${firebaseCode} to ${code} without raw text`, async () => {
+      sendPasswordResetEmail.mockRejectedValue({ code: firebaseCode, message: 'RAW TEXT' });
+      const { service } = await create();
+      const result = await service.sendPasswordReset('a@b.it');
+      expect(result).toEqual({ ok: false, code });
+      expect(JSON.stringify(result)).not.toContain('RAW');
+    });
+  }
+
+  it('maps a non-Firebase error to unknown', async () => {
+    sendPasswordResetEmail.mockRejectedValue(new Error('boom'));
+    const { service } = await create();
+    expect(await service.sendPasswordReset('a@b.it')).toEqual({ ok: false, code: 'unknown' });
   });
 });

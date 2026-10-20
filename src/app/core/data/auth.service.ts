@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth';
@@ -85,6 +86,24 @@ export class AuthService {
       this._session.set({ status: 'signedIn', uid: credential.user.uid });
       return { ok: true };
     } catch (error) {
+      return { ok: false, code: toAuthErrorCode(error) };
+    }
+  }
+
+  /**
+   * Sends the reset email. An unregistered address maps to `ok` so the answer never
+   * reveals who has an Account (FR-3, AD-9), even when Firebase protection is off.
+   */
+  async sendPasswordReset(email: string): Promise<AuthResult> {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      return { ok: true };
+    } catch (error) {
+      const code =
+        typeof error === 'object' && error !== null && 'code' in error
+          ? (error as { code: unknown }).code
+          : undefined;
+      if (code === 'auth/user-not-found') return { ok: true };
       return { ok: false, code: toAuthErrorCode(error) };
     }
   }

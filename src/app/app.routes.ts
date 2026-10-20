@@ -15,6 +15,11 @@ export const routes: Routes = [
       import('./features/auth/register.component').then((m) => m.RegisterComponent),
   },
   {
+    path: 'reset',
+    canActivate: [sessionGuard],
+    loadComponent: () => import('./features/auth/reset.component').then((m) => m.ResetComponent),
+  },
+  {
     path: 'today',
     canActivate: [sessionGuard],
     loadComponent: () => import('./features/today/today.component').then((m) => m.TodayComponent),

@@ -155,6 +155,13 @@ describe('LoginComponent', () => {
 
   it('links to /register', async () => {
     const { el } = await setup();
-    expect(el.querySelector('a')!.getAttribute('href')).toBe('/register');
+    const hrefs = Array.from(el.querySelectorAll('a')).map((a) => a.getAttribute('href'));
+    expect(hrefs).toContain('/register');
+  });
+
+  it('links to /reset', async () => {
+    const { el } = await setup();
+    const hrefs = Array.from(el.querySelectorAll('a')).map((a) => a.getAttribute('href'));
+    expect(hrefs).toContain('/reset');
   });
 });

@@ -40,3 +40,11 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-1-6-log-in-stay-logged-in-and-log-out.md`
   summary: Keep a signed-out page from reappearing with stale content when the browser restores it from its back/forward cache after logout.
   evidence: Seen in Chrome against the local app: after Log out, browser Back showed the old `/today` screen (a fresh load went to `/login`). Harmless for the placeholder, but it would show Entry data once Today is real (AD-9, Story 1.6 AC: back navigation shows no Entry data). Candidate fixes: `Cache-Control: no-store` on Hosting, or clear the view on `pageshow` when the page was restored from cache and the session is signed out.
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-1-7-reset-a-forgotten-password.md`
+  summary: Story 5.6 release checklist: enable email-enumeration protection in the Firebase console (Authentication > Settings > User actions).
+  evidence: It is a console setting, no code can enable it; the client maps `auth/user-not-found` to ok, but only the setting hides the difference for sign-in and sign-up (AD-11, FR-3).
+
+- source_spec: `_bmad-output/implementation-artifacts/spec-1-7-reset-a-forgotten-password.md`
+  summary: Send the password-reset email in the app Language and give the Firebase page a way back to the app.
+  evidence: Nothing sets the Firebase `languageCode` from the Language and `sendPasswordResetEmail` gets no `ActionCodeSettings`, so an Italian user receives an English email with no continue link (unverified severity: low, nice-to-have; fits Story 1.9).

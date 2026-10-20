@@ -43,6 +43,15 @@ export const strings = {
   loginSubmit: { en: 'Log in', it: 'Accedi' },
   loginNoAccount: { en: 'New here?', it: 'Sei nuovo?' },
   loginRegisterLink: { en: 'Create an account', it: 'Crea un account' },
+  loginForgotLink: { en: 'Forgot your password?', it: 'Hai dimenticato la password?' },
+  resetTitle: { en: 'Reset your password', it: 'Reimposta la password' },
+  resetEmailLabel: { en: 'Email', it: 'Email' },
+  resetSubmit: { en: 'Send reset link', it: 'Invia il link' },
+  resetConfirmation: {
+    en: 'If this email has an account, a message with a link to choose a new password is on its way. It may take a few minutes to arrive.',
+    it: 'Se questa email ha un account, sta arrivando un messaggio con il link per scegliere una nuova password. Potrebbe volerci qualche minuto.',
+  },
+  resetBackToLogin: { en: 'Back to log in', it: 'Torna al login' },
   settingsTitle: { en: 'Settings', it: 'Impostazioni' },
   settingsLogout: { en: 'Log out', it: 'Esci' },
   authErrorInvalidCredentials: {
