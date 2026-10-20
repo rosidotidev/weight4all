@@ -96,9 +96,10 @@ interface Field {
     }
     button {
       width: 100%;
-      min-height: max(44px, var(--w4a-touch-target));
+      min-height: 56px;
       padding: 0 24px;
       font: inherit;
+      font-size: 18px;
       font-weight: 500;
       color: var(--w4a-on-primary);
       background: var(--w4a-primary);

@@ -12,6 +12,37 @@
   flex-direction: row;
 }
 
+.main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.app-bar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--w4a-space-3);
+  padding: var(--w4a-space-4) var(--w4a-margin-compact);
+  background: var(--w4a-surface);
+}
+
+.app-bar-title {
+  margin: 0;
+  font-size: var(--w4a-type-app-bar-title-size);
+  font-weight: var(--w4a-type-app-bar-title-weight);
+}
+
+.logo {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--w4a-rounded-full);
+  background: radial-gradient(circle, var(--w4a-on-primary) 0 5px, var(--w4a-primary) 5.5px);
+}
+
 .content {
   flex: 1 1 auto;
   min-width: 0;

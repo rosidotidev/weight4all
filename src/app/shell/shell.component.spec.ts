@@ -93,4 +93,15 @@ describe('ShellComponent', () => {
     expect(labels).toEqual(['Oggi', 'Storico', 'Report', 'Impostazioni']);
     expect(nav().getAttribute('aria-label')).toBe('Navigazione principale');
   });
+
+  it('titles the app bar with the app name on Today and the Tab name elsewhere', async () => {
+    const { harness, el } = await setup('/today');
+    const title = () => el.querySelector('header h1')?.textContent?.trim();
+    expect(title()).toBe('Weight4All');
+    await harness.navigateByUrl('/settings');
+    expect(title()).toBe('Settings');
+    language.set('it');
+    await harness.navigateByUrl('/history/2026-10-19');
+    expect(title()).toBe('Storico');
+  });
 });

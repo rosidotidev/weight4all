@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { filter, map } from 'rxjs';
 import { LayoutService } from '../core/state/layout.service';
 import { I18n } from '../shared/i18n';
 import { StringKey } from '../shared/strings';
@@ -46,4 +48,19 @@ export class ShellComponent {
   protected readonly t = inject(I18n).t;
   protected readonly windowClass = inject(LayoutService).windowClass;
   protected readonly tabs = TABS;
+  private readonly router = inject(Router);
+  private readonly url = toSignal(
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map((event) => event.urlAfterRedirects),
+    ),
+    { initialValue: this.router.url },
+  );
+
+  /** The app bar names the screen; Today carries the app name (DESIGN.md, App bar). */
+  protected readonly title = computed(() => {
+    const url = this.url();
+    const tab = TABS.find((candidate) => url === candidate.path || url.startsWith(`${candidate.path}/`));
+    return !tab || tab.path === '/today' ? this.t().appName : this.t()[tab.label];
+  });
 }

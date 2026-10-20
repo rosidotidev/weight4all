@@ -62,7 +62,7 @@ export const strings = {
     en: 'We could not save your language, so we went back to the previous one. Please try again.',
     it: 'Non siamo riusciti a salvare la lingua, quindi abbiamo ripristinato quella di prima. Riprova pure.',
   },
-  settingsAccentLegend: { en: 'Accent color', it: 'Colore di accento' },
+  settingsAccentLegend: { en: 'Accent color', it: "Colore d'accento" },
   accentViolet: { en: 'Violet', it: 'Viola' },
   accentTeal: { en: 'Teal', it: 'Verde acqua' },
   accentOrange: { en: 'Orange', it: 'Arancione' },
@@ -74,7 +74,12 @@ export const strings = {
     it: 'Non siamo riusciti a salvare il colore, quindi abbiamo ripristinato quello di prima. Riprova pure.',
   },
   settingsAccountHeading: { en: 'Account', it: 'Account' },
-  settingsSignedInAs: { en: 'Signed in as', it: 'Accesso eseguito come' },
+  settingsFooterThanks: { en: 'Thanks for being here.', it: 'Grazie di esserci.' },
+  settingsFooterCount: {
+    en: 'Every log counts, at your own pace.',
+    it: 'Ogni registrazione conta, ai tuoi tempi.',
+  },
+  settingsSignedInAs: { en: 'Signed in as', it: 'Accesso come' },
   authErrorInvalidCredentials: {
     en: 'That email and password do not match. Please try again.',
     it: 'Email e password non corrispondono. Riprova pure.',
@@ -100,7 +105,7 @@ export const strings = {
     it: 'Qualcosa è andato storto da parte nostra. Riprova tra un momento.',
   },
   dimensionWeight: { en: 'Weight', it: 'Peso' },
-  weightMissing: { en: 'Add your weight to save.', it: 'Aggiungi il tuo peso per salvare.' },
+  weightMissing: { en: 'Add your weight to save.', it: 'Aggiungi il peso per salvare.' },
   weightRange: {
     en: (p: { min: string; max: string }) => `Enter a weight between ${p.min} and ${p.max} kg.`,
     it: (p: { min: string; max: string }) => `Inserisci un peso tra ${p.min} e ${p.max} kg.`,

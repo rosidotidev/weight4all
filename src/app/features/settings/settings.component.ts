@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/data/auth.service';
 import { PreferencesStore } from '../../core/data/preferences.store';
@@ -104,7 +104,10 @@ const ACCENT_OPTIONS: readonly { readonly accent: Accent; readonly label: Accent
     .swatches {
       display: flex;
       flex-wrap: wrap;
-      gap: var(--w4a-space-1);
+      gap: var(--w4a-space-3);
+      padding: var(--w4a-space-4) var(--w4a-space-3);
+      background: var(--w4a-surface-container);
+      border-radius: var(--w4a-rounded-xl);
     }
     .swatch {
       position: relative;
@@ -136,7 +139,7 @@ const ACCENT_OPTIONS: readonly { readonly accent: Accent; readonly label: Accent
     .swatch input:checked + span {
       box-shadow:
         inset 0 0 0 3px var(--w4a-surface),
-        0 0 0 3px var(--w4a-on-surface);
+        0 0 0 3px var(--w4a-primary);
     }
     .swatch input:checked + span::before {
       content: '\\2713';
@@ -150,22 +153,55 @@ const ACCENT_OPTIONS: readonly { readonly accent: Accent; readonly label: Accent
       background: var(--w4a-surface-container);
       border-radius: var(--w4a-rounded-xl);
     }
+    .who {
+      display: flex;
+      align-items: center;
+      gap: var(--w4a-space-4);
+      padding-bottom: var(--w4a-space-4);
+      border-bottom: 1px solid var(--w4a-surface-variant);
+    }
+    .avatar {
+      flex: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: var(--w4a-rounded-full);
+      color: var(--w4a-on-primary-container);
+      background: var(--w4a-primary-container);
+      font-size: 17px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .footer {
+      margin: var(--w4a-space-6) 0 0;
+      text-align: center;
+      color: var(--w4a-on-surface-variant);
+      font-size: var(--w4a-type-body-size);
+    }
+    .footer strong {
+      display: block;
+      font-weight: 500;
+    }
     .caption {
       margin: 0;
       font-size: var(--w4a-type-caption-size);
       color: var(--w4a-on-surface-variant);
     }
     .email {
-      margin: var(--w4a-space-1) 0 var(--w4a-space-4);
+      margin: 0;
+      font-weight: 500;
       overflow-wrap: anywhere;
     }
     button {
       min-height: 44px;
-      padding: 0 24px;
+      margin-top: var(--w4a-space-2);
+      padding: 0 var(--w4a-space-2);
       font: inherit;
-      font-weight: 500;
-      color: var(--w4a-on-primary);
-      background: var(--w4a-primary);
+      font-weight: 700;
+      color: var(--w4a-primary);
+      background: transparent;
       border: 0;
       border-radius: var(--w4a-rounded-full);
       cursor: pointer;
@@ -185,7 +221,6 @@ const ACCENT_OPTIONS: readonly { readonly accent: Accent; readonly label: Accent
   `,
   template: `
     <main>
-      <h1>{{ t().settingsTitle }}</h1>
       <fieldset>
         <legend>{{ t().settingsAccentLegend }}</legend>
         <div class="swatches">
@@ -234,8 +269,13 @@ const ACCENT_OPTIONS: readonly { readonly accent: Accent; readonly label: Accent
       <section aria-labelledby="account-heading">
         <h2 id="account-heading">{{ t().settingsAccountHeading }}</h2>
         <div class="account">
-          <p class="caption">{{ t().settingsSignedInAs }}</p>
-          <p class="email">{{ auth.email() }}</p>
+          <div class="who">
+            <span class="avatar" aria-hidden="true">{{ initial() }}</span>
+            <div>
+              <p class="caption">{{ t().settingsSignedInAs }}</p>
+              <p class="email">{{ auth.email() }}</p>
+            </div>
+          </div>
           <button type="button" [disabled]="pending()" (click)="logout()">
             {{ t().settingsLogout }}
           </button>
@@ -246,6 +286,10 @@ const ACCENT_OPTIONS: readonly { readonly accent: Accent; readonly label: Accent
           </p>
         </div>
       </section>
+      <p class="footer">
+        <strong>{{ t().settingsFooterThanks }}</strong>
+        {{ t().settingsFooterCount }}
+      </p>
     </main>
   `,
 })
@@ -256,6 +300,7 @@ export class SettingsComponent {
   protected readonly t = inject(I18n).t;
   protected readonly options = LANGUAGE_OPTIONS;
   protected readonly accents = ACCENT_OPTIONS;
+  protected readonly initial = computed(() => (this.auth.email() ?? '').charAt(0));
   protected readonly pending = signal(false);
   protected readonly failed = signal(false);
 
