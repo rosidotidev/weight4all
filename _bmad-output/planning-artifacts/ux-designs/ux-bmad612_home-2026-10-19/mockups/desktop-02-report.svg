@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Weight4All proposal mockup (M3-style, light theme only) - desktop-02-report.svg
+Palette:
+ primary            #5A46D6
+ on-primary         #FFFFFF
+ primary-container  #E4DEFF
+ on-primary-container #1B0A68
+ surface            #FFFBFF
+ surface-container  #F3EDF7
+ surface-variant    #E7E0EC
+ on-surface         #1C1B1F
+ on-surface-variant #49454F
+ outline            #7A757F
+ chart weight       #2F5BD8 (circle marker)
+ chart mood         #D9480F (square marker)
+ chart sleep        #0B8A7B (triangle marker)
+ banner tonal       #FFE9C7 text #4A3000 dot #E08A00
+Notes: font Roboto/Arial/sans-serif, no external assets, mood faces are SVG shapes. Desktop browser 1440x900, side drawer, Report tab.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" width="1440" height="900" font-family="Roboto, Arial, sans-serif">
+<rect x="0.0" y="0.0" width="1440.0" height="900.0" rx="0" fill="#ECE8F2"/>
+<clipPath id="cd"><rect x="0" y="0" width="1440" height="900" rx="12"/></clipPath>
+<g clip-path="url(#cd)"><rect x="0.0" y="0.0" width="1440.0" height="900.0" rx="0" fill="#FFFBFF"/>
+<rect x="312.0" y="152.0" width="54.0" height="32.0" rx="8" fill="none" stroke="#7A757F" stroke-width="1"/>
+<text x="339.0" y="173.0" font-size="13" fill="#49454F" font-weight="500" text-anchor="middle">7 d</text>
+<rect x="374.0" y="152.0" width="74.0" height="32.0" rx="8" fill="#E4DEFF"/>
+<path d="M384 168l4 4 7-8" fill="none" stroke="#1B0A68" stroke-width="2" stroke-linecap="round"/>
+<text x="416.0" y="173.0" font-size="13" fill="#1B0A68" font-weight="700" text-anchor="middle">30 d</text>
+<rect x="456.0" y="152.0" width="60.0" height="32.0" rx="8" fill="none" stroke="#7A757F" stroke-width="1"/>
+<text x="486.0" y="173.0" font-size="13" fill="#49454F" font-weight="500" text-anchor="middle">90 d</text>
+<rect x="524.0" y="152.0" width="52.0" height="32.0" rx="8" fill="none" stroke="#7A757F" stroke-width="1"/>
+<text x="550.0" y="173.0" font-size="13" fill="#49454F" font-weight="500" text-anchor="middle">1 y</text>
+<rect x="584.0" y="152.0" width="50.0" height="32.0" rx="8" fill="none" stroke="#7A757F" stroke-width="1"/>
+<text x="609.0" y="173.0" font-size="13" fill="#49454F" font-weight="500" text-anchor="middle">All</text>
+<rect x="312.0" y="196.0" width="724.0" height="340.0" rx="24" fill="#F3EDF7"/>
+<circle cx="326.0" cy="220.0" r="4.5" fill="#2F5BD8" stroke="#fff" stroke-width="1.5"/>
+<text x="337.0" y="225.0" font-size="12.5" fill="#1C1B1F" font-weight="500" text-anchor="start">Weight (kg)</text>
+<rect x="437.5" y="215.5" width="9.0" height="9.0" fill="#D9480F" stroke="#fff" stroke-width="1.5"/>
+<text x="453.0" y="225.0" font-size="12.5" fill="#1C1B1F" font-weight="500" text-anchor="start">Mood (1–10)</text>
+<path d="M554.0 214.5L559.5 224.5H548.5z" fill="#0B8A7B" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+<text x="565.0" y="225.0" font-size="12.5" fill="#1C1B1F" font-weight="500" text-anchor="start">Sleep (h)</text>
+<line x1="348.0" y1="262.0" x2="1018.0" y2="262.0" stroke="#E7E0EC" stroke-width="1"/>
+<line x1="348.0" y1="317.0" x2="1018.0" y2="317.0" stroke="#E7E0EC" stroke-width="1"/>
+<line x1="348.0" y1="372.0" x2="1018.0" y2="372.0" stroke="#E7E0EC" stroke-width="1"/>
+<line x1="348.0" y1="427.0" x2="1018.0" y2="427.0" stroke="#E7E0EC" stroke-width="1"/>
+<line x1="348.0" y1="482.0" x2="1018.0" y2="482.0" stroke="#E7E0EC" stroke-width="1"/>
+<line x1="348.0" y1="295.0" x2="422.4" y2="306.0" stroke="#2F5BD8" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="422.4" y1="306.0" x2="496.9" y2="301.6" stroke="#2F5BD8" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="496.9" y1="301.6" x2="571.3" y2="328.0" stroke="#2F5BD8" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="571.3" y1="328.0" x2="645.8" y2="345.6" stroke="#2F5BD8" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="645.8" y1="345.6" x2="794.7" y2="372.0" stroke="#2F5BD8" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6 5"/>
+<line x1="794.7" y1="372.0" x2="869.1" y2="367.6" stroke="#2F5BD8" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="869.1" y1="367.6" x2="943.6" y2="398.4" stroke="#2F5BD8" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="943.6" y1="398.4" x2="1018.0" y2="416.0" stroke="#2F5BD8" stroke-width="2.5" stroke-linecap="round"/>
+<circle cx="348.0" cy="295.0" r="4.5" fill="#2F5BD8" stroke="#fff" stroke-width="1.5"/>
+<circle cx="422.4" cy="306.0" r="4.5" fill="#2F5BD8" stroke="#fff" stroke-width="1.5"/>
+<circle cx="496.9" cy="301.6" r="4.5" fill="#2F5BD8" stroke="#fff" stroke-width="1.5"/>
+<circle cx="571.3" cy="328.0" r="4.5" fill="#2F5BD8" stroke="#fff" stroke-width="1.5"/>
+<circle cx="645.8" cy="345.6" r="4.5" fill="#2F5BD8" stroke="#fff" stroke-width="1.5"/>
+<circle cx="794.7" cy="372.0" r="4.5" fill="#2F5BD8" stroke="#fff" stroke-width="1.5"/>
+<circle cx="869.1" cy="367.6" r="4.5" fill="#2F5BD8" stroke="#fff" stroke-width="1.5"/>
+<circle cx="943.6" cy="398.4" r="4.5" fill="#2F5BD8" stroke="#fff" stroke-width="1.5"/>
+<circle cx="1018.0" cy="416.0" r="4.5" fill="#2F5BD8" stroke="#fff" stroke-width="1.5"/>
+<line x1="348.0" y1="372.0" x2="422.4" y2="350.0" stroke="#D9480F" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="422.4" y1="350.0" x2="496.9" y2="361.0" stroke="#D9480F" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="496.9" y1="361.0" x2="571.3" y2="328.0" stroke="#D9480F" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="571.3" y1="328.0" x2="645.8" y2="339.0" stroke="#D9480F" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="645.8" y1="339.0" x2="794.7" y2="306.0" stroke="#D9480F" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6 5"/>
+<line x1="794.7" y1="306.0" x2="869.1" y2="323.6" stroke="#D9480F" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="869.1" y1="323.6" x2="943.6" y2="295.0" stroke="#D9480F" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="943.6" y1="295.0" x2="1018.0" y2="284.0" stroke="#D9480F" stroke-width="2.5" stroke-linecap="round"/>
+<rect x="343.5" y="367.5" width="9.0" height="9.0" fill="#D9480F" stroke="#fff" stroke-width="1.5"/>
+<rect x="417.9" y="345.5" width="9.0" height="9.0" fill="#D9480F" stroke="#fff" stroke-width="1.5"/>
+<rect x="492.4" y="356.5" width="9.0" height="9.0" fill="#D9480F" stroke="#fff" stroke-width="1.5"/>
+<rect x="566.8" y="323.5" width="9.0" height="9.0" fill="#D9480F" stroke="#fff" stroke-width="1.5"/>
+<rect x="641.3" y="334.5" width="9.0" height="9.0" fill="#D9480F" stroke="#fff" stroke-width="1.5"/>
+<rect x="790.2" y="301.5" width="9.0" height="9.0" fill="#D9480F" stroke="#fff" stroke-width="1.5"/>
+<rect x="864.6" y="319.1" width="9.0" height="9.0" fill="#D9480F" stroke="#fff" stroke-width="1.5"/>
+<rect x="939.1" y="290.5" width="9.0" height="9.0" fill="#D9480F" stroke="#fff" stroke-width="1.5"/>
+<rect x="1013.5" y="279.5" width="9.0" height="9.0" fill="#D9480F" stroke="#fff" stroke-width="1.5"/>
+<line x1="348.0" y1="350.0" x2="422.4" y2="394.0" stroke="#0B8A7B" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="422.4" y1="394.0" x2="496.9" y2="361.0" stroke="#0B8A7B" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="496.9" y1="361.0" x2="571.3" y2="372.0" stroke="#0B8A7B" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="571.3" y1="372.0" x2="645.8" y2="328.0" stroke="#0B8A7B" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="645.8" y1="328.0" x2="794.7" y2="383.0" stroke="#0B8A7B" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6 5"/>
+<line x1="794.7" y1="383.0" x2="869.1" y2="339.0" stroke="#0B8A7B" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="869.1" y1="339.0" x2="943.6" y2="350.0" stroke="#0B8A7B" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="943.6" y1="350.0" x2="1018.0" y2="317.0" stroke="#0B8A7B" stroke-width="2.5" stroke-linecap="round"/>
+<path d="M348.0 344.5L353.5 354.5H342.5z" fill="#0B8A7B" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M422.4 388.5L427.9 398.5H416.9z" fill="#0B8A7B" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M496.9 355.5L502.4 365.5H491.4z" fill="#0B8A7B" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M571.3 366.5L576.8 376.5H565.8z" fill="#0B8A7B" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M645.8 322.5L651.3 332.5H640.3z" fill="#0B8A7B" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M794.7 377.5L800.2 387.5H789.2z" fill="#0B8A7B" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M869.1 333.5L874.6 343.5H863.6z" fill="#0B8A7B" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M943.6 344.5L949.1 354.5H938.1z" fill="#0B8A7B" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M1018.0 311.5L1023.5 321.5H1012.5z" fill="#0B8A7B" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+<text x="720.2" y="256.0" font-size="11" fill="#49454F" font-weight="400" text-anchor="middle">no entries · bridged</text>
+<text x="348.0" y="504.0" font-size="11.5" fill="#49454F" font-weight="400" text-anchor="middle">20 Sep</text>
+<text x="571.3" y="504.0" font-size="11.5" fill="#49454F" font-weight="400" text-anchor="middle">29 Sep</text>
+<text x="794.7" y="504.0" font-size="11.5" fill="#49454F" font-weight="400" text-anchor="middle">9 Oct</text>
+<text x="1018.0" y="504.0" font-size="11.5" fill="#49454F" font-weight="400" text-anchor="middle">19 Oct</text>
+<text x="674.0" y="528.0" font-size="11.5" fill="#49454F" font-weight="400" text-anchor="middle">Each line uses its own scale. Dashed = days without an entry.</text>
+<rect x="1052.0" y="196.0" width="356.0" height="104.0" rx="20" fill="#F3EDF7"/>
+<circle cx="1072.0" cy="222.0" r="5.3999999999999995" fill="#2F5BD8" stroke="#fff" stroke-width="1.5"/>
+<text x="1088.0" y="227.0" font-size="16" fill="#1C1B1F" font-weight="700" text-anchor="start">Weight</text>
+<text x="1392.0" y="226.0" font-size="12" fill="#49454F" font-weight="400" text-anchor="end">last 30 days</text>
+<text x="1068.0" y="256.0" font-size="12" fill="#49454F" font-weight="400" text-anchor="start">Average</text>
+<text x="1068.0" y="282.0" font-size="18" fill="#1C1B1F" font-weight="700" text-anchor="start">72.6</text>
+<text x="1156.0" y="256.0" font-size="12" fill="#49454F" font-weight="400" text-anchor="start">Min</text>
+<text x="1156.0" y="282.0" font-size="18" fill="#1C1B1F" font-weight="700" text-anchor="start">71.9</text>
+<text x="1244.0" y="256.0" font-size="12" fill="#49454F" font-weight="400" text-anchor="start">Max</text>
+<text x="1244.0" y="282.0" font-size="18" fill="#1C1B1F" font-weight="700" text-anchor="start">73.4</text>
+<text x="1332.0" y="256.0" font-size="12" fill="#49454F" font-weight="400" text-anchor="start">Change</text>
+<text x="1332.0" y="282.0" font-size="18" fill="#1C1B1F" font-weight="700" text-anchor="start">−0.8 kg</text>
+<rect x="1052.0" y="314.0" width="356.0" height="104.0" rx="20" fill="#F3EDF7"/>
+<rect x="1066.6" y="334.6" width="10.8" height="10.8" fill="#D9480F" stroke="#fff" stroke-width="1.5"/>
+<text x="1088.0" y="345.0" font-size="16" fill="#1C1B1F" font-weight="700" text-anchor="start">Mood</text>
+<text x="1392.0" y="344.0" font-size="12" fill="#49454F" font-weight="400" text-anchor="end">last 30 days</text>
+<text x="1068.0" y="374.0" font-size="12" fill="#49454F" font-weight="400" text-anchor="start">Average</text>
+<text x="1068.0" y="400.0" font-size="18" fill="#1C1B1F" font-weight="700" text-anchor="start">7.2</text>
+<text x="1156.0" y="374.0" font-size="12" fill="#49454F" font-weight="400" text-anchor="start">Min</text>
+<text x="1156.0" y="400.0" font-size="18" fill="#1C1B1F" font-weight="700" text-anchor="start">5</text>
+<text x="1244.0" y="374.0" font-size="12" fill="#49454F" font-weight="400" text-anchor="start">Max</text>
+<text x="1244.0" y="400.0" font-size="18" fill="#1C1B1F" font-weight="700" text-anchor="start">9</text>
+<text x="1332.0" y="374.0" font-size="12" fill="#49454F" font-weight="400" text-anchor="start">Change</text>
+<text x="1332.0" y="400.0" font-size="18" fill="#1C1B1F" font-weight="700" text-anchor="start">+1.5</text>
+<rect x="1052.0" y="432.0" width="356.0" height="104.0" rx="20" fill="#F3EDF7"/>
+<path d="M1072.0 451.4L1078.6 463.4H1065.4z" fill="#0B8A7B" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+<text x="1088.0" y="463.0" font-size="16" fill="#1C1B1F" font-weight="700" text-anchor="start">Sleep</text>
+<text x="1392.0" y="462.0" font-size="12" fill="#49454F" font-weight="400" text-anchor="end">last 30 days</text>
+<text x="1068.0" y="492.0" font-size="12" fill="#49454F" font-weight="400" text-anchor="start">Average</text>
+<text x="1068.0" y="518.0" font-size="18" fill="#1C1B1F" font-weight="700" text-anchor="start">7.3 h</text>
+<text x="1156.0" y="492.0" font-size="12" fill="#49454F" font-weight="400" text-anchor="start">Min</text>
+<text x="1156.0" y="518.0" font-size="18" fill="#1C1B1F" font-weight="700" text-anchor="start">5.5 h</text>
+<text x="1244.0" y="492.0" font-size="12" fill="#49454F" font-weight="400" text-anchor="start">Max</text>
+<text x="1244.0" y="518.0" font-size="18" fill="#1C1B1F" font-weight="700" text-anchor="start">8.5 h</text>
+<text x="1332.0" y="492.0" font-size="12" fill="#49454F" font-weight="400" text-anchor="start">Change</text>
+<text x="1332.0" y="518.0" font-size="18" fill="#1C1B1F" font-weight="700" text-anchor="start">+0.5 h</text>
+<text x="316.0" y="566.0" font-size="13" fill="#49454F" font-weight="500" text-anchor="start">Per-dimension charts · each with its own axis</text>
+<rect x="312.0" y="578.0" width="354.7" height="296.0" rx="20" fill="#F3EDF7"/>
+<circle cx="336.0" cy="606.0" r="5.3999999999999995" fill="#2F5BD8" stroke="#fff" stroke-width="1.5"/>
+<text x="352.0" y="612.0" font-size="16" fill="#1C1B1F" font-weight="700" text-anchor="start">Weight</text>
+<text x="650.7" y="611.0" font-size="12" fill="#49454F" font-weight="400" text-anchor="end">last 30 days</text>
+<text x="360.0" y="628.0" font-size="11" fill="#49454F" font-weight="400" text-anchor="end">kg</text>
+<line x1="368.0" y1="822.0" x2="648.7" y2="822.0" stroke="#E7E0EC" stroke-width="1"/>
+<text x="360.0" y="826.0" font-size="11" fill="#49454F" font-weight="400" text-anchor="end">71.5</text>
+<line x1="368.0" y1="776.0" x2="648.7" y2="776.0" stroke="#E7E0EC" stroke-width="1"/>
+<text x="360.0" y="780.0" font-size="11" fill="#49454F" font-weight="400" text-anchor="end">72.0</text>
+<line x1="368.0" y1="730.0" x2="648.7" y2="730.0" stroke="#E7E0EC" stroke-width="1"/>
+<text x="360.0" y="734.0" font-size="11" fill="#49454F" font-weight="400" text-anchor="end">72.5</text>
+<line x1="368.0" y1="684.0" x2="648.7" y2="684.0" stroke="#E7E0EC" stroke-width="1"/>
+<text x="360.0" y="688.0" font-size="11" fill="#49454F" font-weight="400" text-anchor="end">73.0</text>
+<line x1="368.0" y1="638.0" x2="648.7" y2="638.0" stroke="#E7E0EC" stroke-width="1"/>
+<text x="360.0" y="642.0" font-size="11" fill="#49454F" font-weight="400" text-anchor="end">73.5</text>
+<line x1="368.0" y1="647.2" x2="399.2" y2="659.7" stroke="#2F5BD8" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="399.2" y1="659.7" x2="430.4" y2="654.7" stroke="#2F5BD8" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="430.4" y1="654.7" x2="461.6" y2="684.8" stroke="#2F5BD8" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="461.6" y1="684.8" x2="492.7" y2="704.9" stroke="#2F5BD8" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="492.7" y1="704.9" x2="555.1" y2="735.0" stroke="#2F5BD8" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6 5"/>
+<line x1="555.1" y1="735.0" x2="586.3" y2="730.0" stroke="#2F5BD8" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="586.3" y1="730.0" x2="617.5" y2="765.1" stroke="#2F5BD8" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="617.5" y1="765.1" x2="648.7" y2="785.2" stroke="#2F5BD8" stroke-width="2.5" stroke-linecap="round"/>
+<circle cx="368.0" cy="647.2" r="4.5" fill="#2F5BD8" stroke="#fff" stroke-width="1.5"/>
+<circle cx="399.2" cy="659.7" r="4.5" fill="#2F5BD8" stroke="#fff" stroke-width="1.5"/>
+<circle cx="430.4" cy="654.7" r="4.5" fill="#2F5BD8" stroke="#fff" stroke-width="1.5"/>
+<circle cx="461.6" cy="684.8" r="4.5" fill="#2F5BD8" stroke="#fff" stroke-width="1.5"/>
+<circle cx="492.7" cy="704.9" r="4.5" fill="#2F5BD8" stroke="#fff" stroke-width="1.5"/>
+<circle cx="555.1" cy="735.0" r="4.5" fill="#2F5BD8" stroke="#fff" stroke-width="1.5"/>
+<circle cx="586.3" cy="730.0" r="4.5" fill="#2F5BD8" stroke="#fff" stroke-width="1.5"/>
+<circle cx="617.5" cy="765.1" r="4.5" fill="#2F5BD8" stroke="#fff" stroke-width="1.5"/>
+<circle cx="648.7" cy="785.2" r="4.5" fill="#2F5BD8" stroke="#fff" stroke-width="1.5"/>
+<text x="368.0" y="844.0" font-size="11.5" fill="#49454F" font-weight="400" text-anchor="middle">20 Sep</text>
+<text x="461.6" y="844.0" font-size="11.5" fill="#49454F" font-weight="400" text-anchor="middle">29 Sep</text>
+<text x="555.1" y="844.0" font-size="11.5" fill="#49454F" font-weight="400" text-anchor="middle">9 Oct</text>
+<text x="648.7" y="844.0" font-size="11.5" fill="#49454F" font-weight="400" text-anchor="middle">19 Oct</text>
+<text x="489.3" y="866.0" font-size="11" fill="#49454F" font-weight="400" text-anchor="middle">Own axis · dashed = no entry</text>
+<rect x="682.7" y="578.0" width="354.7" height="296.0" rx="20" fill="#F3EDF7"/>
+<rect x="701.3" y="600.6" width="10.8" height="10.8" fill="#D9480F" stroke="#fff" stroke-width="1.5"/>
+<text x="722.7" y="612.0" font-size="16" fill="#1C1B1F" font-weight="700" text-anchor="start">Mood</text>
+<text x="1021.3" y="611.0" font-size="12" fill="#49454F" font-weight="400" text-anchor="end">last 30 days</text>
+<text x="730.7" y="628.0" font-size="11" fill="#49454F" font-weight="400" text-anchor="end">1–10</text>
+<line x1="738.7" y1="822.0" x2="1019.3" y2="822.0" stroke="#E7E0EC" stroke-width="1"/>
+<text x="730.7" y="826.0" font-size="11" fill="#49454F" font-weight="400" text-anchor="end">4</text>
+<line x1="738.7" y1="760.7" x2="1019.3" y2="760.7" stroke="#E7E0EC" stroke-width="1"/>
+<text x="730.7" y="764.7" font-size="11" fill="#49454F" font-weight="400" text-anchor="end">6</text>
+<line x1="738.7" y1="699.3" x2="1019.3" y2="699.3" stroke="#E7E0EC" stroke-width="1"/>
+<text x="730.7" y="703.3" font-size="11" fill="#49454F" font-weight="400" text-anchor="end">8</text>
+<line x1="738.7" y1="638.0" x2="1019.3" y2="638.0" stroke="#E7E0EC" stroke-width="1"/>
+<text x="730.7" y="642.0" font-size="11" fill="#49454F" font-weight="400" text-anchor="end">10</text>
+<line x1="738.7" y1="791.3" x2="769.9" y2="760.7" stroke="#D9480F" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="769.9" y1="760.7" x2="801.0" y2="776.0" stroke="#D9480F" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="801.0" y1="776.0" x2="832.2" y2="730.0" stroke="#D9480F" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="832.2" y1="730.0" x2="863.4" y2="745.3" stroke="#D9480F" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="863.4" y1="745.3" x2="925.8" y2="699.3" stroke="#D9480F" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6 5"/>
+<line x1="925.8" y1="699.3" x2="957.0" y2="723.9" stroke="#D9480F" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="957.0" y1="723.9" x2="988.1" y2="684.0" stroke="#D9480F" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="988.1" y1="684.0" x2="1019.3" y2="668.7" stroke="#D9480F" stroke-width="2.5" stroke-linecap="round"/>
+<rect x="734.2" y="786.8" width="9.0" height="9.0" fill="#D9480F" stroke="#fff" stroke-width="1.5"/>
+<rect x="765.4" y="756.2" width="9.0" height="9.0" fill="#D9480F" stroke="#fff" stroke-width="1.5"/>
+<rect x="796.5" y="771.5" width="9.0" height="9.0" fill="#D9480F" stroke="#fff" stroke-width="1.5"/>
+<rect x="827.7" y="725.5" width="9.0" height="9.0" fill="#D9480F" stroke="#fff" stroke-width="1.5"/>
+<rect x="858.9" y="740.8" width="9.0" height="9.0" fill="#D9480F" stroke="#fff" stroke-width="1.5"/>
+<rect x="921.3" y="694.8" width="9.0" height="9.0" fill="#D9480F" stroke="#fff" stroke-width="1.5"/>
+<rect x="952.5" y="719.4" width="9.0" height="9.0" fill="#D9480F" stroke="#fff" stroke-width="1.5"/>
+<rect x="983.6" y="679.5" width="9.0" height="9.0" fill="#D9480F" stroke="#fff" stroke-width="1.5"/>
+<rect x="1014.8" y="664.2" width="9.0" height="9.0" fill="#D9480F" stroke="#fff" stroke-width="1.5"/>
+<text x="738.7" y="844.0" font-size="11.5" fill="#49454F" font-weight="400" text-anchor="middle">20 Sep</text>
+<text x="832.2" y="844.0" font-size="11.5" fill="#49454F" font-weight="400" text-anchor="middle">29 Sep</text>
+<text x="925.8" y="844.0" font-size="11.5" fill="#49454F" font-weight="400" text-anchor="middle">9 Oct</text>
+<text x="1019.3" y="844.0" font-size="11.5" fill="#49454F" font-weight="400" text-anchor="middle">19 Oct</text>
+<text x="860.0" y="866.0" font-size="11" fill="#49454F" font-weight="400" text-anchor="middle">Own axis · dashed = no entry</text>
+<rect x="1053.3" y="578.0" width="354.7" height="296.0" rx="20" fill="#F3EDF7"/>
+<path d="M1077.3 599.4L1083.9 611.4H1070.7z" fill="#0B8A7B" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+<text x="1093.3" y="612.0" font-size="16" fill="#1C1B1F" font-weight="700" text-anchor="start">Sleep</text>
+<text x="1392.0" y="611.0" font-size="12" fill="#49454F" font-weight="400" text-anchor="end">last 30 days</text>
+<text x="1101.3" y="628.0" font-size="11" fill="#49454F" font-weight="400" text-anchor="end">h</text>
+<line x1="1109.3" y1="822.0" x2="1390.0" y2="822.0" stroke="#E7E0EC" stroke-width="1"/>
+<text x="1101.3" y="826.0" font-size="11" fill="#49454F" font-weight="400" text-anchor="end">5 h</text>
+<line x1="1109.3" y1="776.0" x2="1390.0" y2="776.0" stroke="#E7E0EC" stroke-width="1"/>
+<text x="1101.3" y="780.0" font-size="11" fill="#49454F" font-weight="400" text-anchor="end">6 h</text>
+<line x1="1109.3" y1="730.0" x2="1390.0" y2="730.0" stroke="#E7E0EC" stroke-width="1"/>
+<text x="1101.3" y="734.0" font-size="11" fill="#49454F" font-weight="400" text-anchor="end">7 h</text>
+<line x1="1109.3" y1="684.0" x2="1390.0" y2="684.0" stroke="#E7E0EC" stroke-width="1"/>
+<text x="1101.3" y="688.0" font-size="11" fill="#49454F" font-weight="400" text-anchor="end">8 h</text>
+<line x1="1109.3" y1="638.0" x2="1390.0" y2="638.0" stroke="#E7E0EC" stroke-width="1"/>
+<text x="1101.3" y="642.0" font-size="11" fill="#49454F" font-weight="400" text-anchor="end">9 h</text>
+<line x1="1109.3" y1="720.1" x2="1140.5" y2="799.0" stroke="#0B8A7B" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="1140.5" y1="799.0" x2="1171.7" y2="739.9" stroke="#0B8A7B" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="1171.7" y1="739.9" x2="1202.9" y2="759.6" stroke="#0B8A7B" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="1202.9" y1="759.6" x2="1234.1" y2="680.7" stroke="#0B8A7B" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="1234.1" y1="680.7" x2="1296.4" y2="779.3" stroke="#0B8A7B" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="6 5"/>
+<line x1="1296.4" y1="779.3" x2="1327.6" y2="700.4" stroke="#0B8A7B" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="1327.6" y1="700.4" x2="1358.8" y2="720.1" stroke="#0B8A7B" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="1358.8" y1="720.1" x2="1390.0" y2="661.0" stroke="#0B8A7B" stroke-width="2.5" stroke-linecap="round"/>
+<path d="M1109.3 714.6L1114.8 724.6H1103.8z" fill="#0B8A7B" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M1140.5 793.5L1146.0 803.5H1135.0z" fill="#0B8A7B" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M1171.7 734.4L1177.2 744.4H1166.2z" fill="#0B8A7B" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M1202.9 754.1L1208.4 764.1H1197.4z" fill="#0B8A7B" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M1234.1 675.2L1239.6 685.2H1228.6z" fill="#0B8A7B" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M1296.4 773.8L1301.9 783.8H1290.9z" fill="#0B8A7B" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M1327.6 694.9L1333.1 704.9H1322.1z" fill="#0B8A7B" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M1358.8 714.6L1364.3 724.6H1353.3z" fill="#0B8A7B" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M1390.0 655.5L1395.5 665.5H1384.5z" fill="#0B8A7B" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+<text x="1109.3" y="844.0" font-size="11.5" fill="#49454F" font-weight="400" text-anchor="middle">20 Sep</text>
+<text x="1202.9" y="844.0" font-size="11.5" fill="#49454F" font-weight="400" text-anchor="middle">29 Sep</text>
+<text x="1296.4" y="844.0" font-size="11.5" fill="#49454F" font-weight="400" text-anchor="middle">9 Oct</text>
+<text x="1390.0" y="844.0" font-size="11.5" fill="#49454F" font-weight="400" text-anchor="middle">19 Oct</text>
+<text x="1230.7" y="866.0" font-size="11" fill="#49454F" font-weight="400" text-anchor="middle">Own axis · dashed = no entry</text>
+<rect x="280.0" y="76.0" width="1160.0" height="64.0" rx="0" fill="#FFFBFF"/>
+<text x="312.0" y="117.0" font-size="22" fill="#1C1B1F" font-weight="500" text-anchor="start">Report</text>
+<line x1="280" y1="140" x2="1440" y2="140" stroke="#E7E0EC"/>
+<rect x="0.0" y="76.0" width="280.0" height="824.0" rx="0" fill="#F3EDF7"/>
+<circle cx="40.0" cy="112.0" r="13" fill="#5A46D6"/>
+<circle cx="40.0" cy="112.0" r="5" fill="#fff"/>
+<text x="62.0" y="120.0" font-size="22" fill="#1C1B1F" font-weight="500" text-anchor="start">Weight4All</text>
+<rect x="35" y="169.5" width="18" height="17" rx="3" stroke="#49454F" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M35 175.5H53" stroke="#49454F" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="44" cy="181.5" r="1.6" fill="#49454F"/>
+<text x="72.0" y="184.0" font-size="14" fill="#1C1B1F" font-weight="500" text-anchor="start">Today</text>
+<circle cx="44" cy="238" r="9" stroke="#49454F" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M44 233V238L48 241" stroke="#49454F" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="72.0" y="244.0" font-size="14" fill="#1C1B1F" font-weight="500" text-anchor="start">History</text>
+<rect x="12.0" y="270.0" width="256.0" height="56.0" rx="28" fill="#E4DEFF"/>
+<path d="M36 306V299M44 306V290M52 306V295" stroke="#1B0A68" stroke-width="4" stroke-linecap="round"/>
+<text x="72.0" y="304.0" font-size="14" fill="#1B0A68" font-weight="700" text-anchor="start">Report</text>
+<circle cx="44" cy="358" r="7.5" stroke="#49454F" stroke-width="3.5" stroke-dasharray="3.2 2.6" fill="none"/><circle cx="44" cy="358" r="4" stroke="#49454F" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="72.0" y="364.0" font-size="14" fill="#1C1B1F" font-weight="500" text-anchor="start">Settings</text>
+<line x1="16" y1="800" x2="264" y2="800" stroke="#E7E0EC"/>
+<circle cx="40.0" cy="838.0" r="16" fill="#E4DEFF"/>
+<text x="40.0" y="844.0" font-size="15" fill="#1B0A68" font-weight="700" text-anchor="middle">B</text>
+<text x="66.0" y="834.0" font-size="11" fill="#49454F" font-weight="400" text-anchor="start">Signed in as</text>
+<text x="66.0" y="852.0" font-size="13" fill="#1C1B1F" font-weight="500" text-anchor="start">bob@example.com</text>
+<rect x="0.0" y="0.0" width="1440.0" height="40.0" rx="0" fill="#E7E0EC"/>
+<rect x="0.0" y="40.0" width="1440.0" height="36.0" rx="0" fill="#F3EDF7"/>
+<circle cx="22.0" cy="20.0" r="6" fill="#7A757F" fill-opacity=".55"/>
+<circle cx="42.0" cy="20.0" r="6" fill="#7A757F" fill-opacity=".55"/>
+<circle cx="62.0" cy="20.0" r="6" fill="#7A757F" fill-opacity=".55"/>
+<path d="M100 40V16Q100 8 108 8H250Q258 8 258 16V40Z" fill="#F3EDF7"/>
+<circle cx="122.0" cy="24.0" r="7" fill="#5A46D6"/>
+<circle cx="122.0" cy="24.0" r="3" fill="#fff"/>
+<text x="138.0" y="28.0" font-size="13" fill="#1C1B1F" font-weight="500" text-anchor="start">Weight4All</text>
+<text x="238.0" y="28.0" font-size="14" fill="#49454F" font-weight="400" text-anchor="middle">×</text>
+<text x="280.0" y="30.0" font-size="18" fill="#49454F" font-weight="400" text-anchor="middle">+</text>
+<path d="M24 58h14M24 58l5-5M24 58l5 5" stroke="#49454F" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M68 58h-14M68 58l-5-5M68 58l-5 5" stroke="#49454F" stroke-width="2" fill="none" stroke-linecap="round" stroke-opacity=".5"/>
+<path d="M100 58a6 6 0 1 0 2 -6M102 50v4h-4" stroke="#49454F" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="130.0" y="45.0" width="1000.0" height="26.0" rx="13" fill="#FFFBFF" stroke="#E7E0EC" stroke-width="1"/>
+<rect x="143.0" y="56.0" width="9.0" height="7.0" rx="1.5" fill="#49454F"/>
+<path d="M144.5 56v-2a3 3 0 0 1 6 0v2" fill="none" stroke="#49454F" stroke-width="1.5"/>
+<text x="164.0" y="63.0" font-size="13" fill="#1C1B1F" font-weight="400" text-anchor="start">weight4all.example</text>
+<path d="M1380 58h14M1410 53l8 10M1418 53l-8 10" stroke="#49454F" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+</g>
+<rect x="0.5" y="0.5" width="1439.0" height="899.0" rx="12" fill="none" stroke="#7A757F" stroke-width="1"/>
+</svg>
