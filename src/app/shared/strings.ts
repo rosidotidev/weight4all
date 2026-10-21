@@ -301,6 +301,17 @@ export const strings = {
   statNoData: { en: 'No data', it: 'Nessun dato' },
   reportChartNoData: { en: 'No data in this Range', it: 'Nessun dato in questo intervallo' },
   reportCombinedAriaLabel: { en: 'Weight, mood and sleep chart', it: 'Grafico di peso, umore e sonno' },
+  reportEmpty: {
+    en: 'No data yet. Log a day on Today and your chart appears here.',
+    it: 'Ancora nessun dato. Registra un giorno in Oggi e qui comparirà il grafico.',
+  },
+  reportEmptyLink: { en: 'Open Today', it: 'Apri Oggi' },
+  reportLoading: { en: 'Loading your days', it: 'Sto caricando i tuoi giorni' },
+  reportLoadError: {
+    en: 'Entries could not be loaded.',
+    it: 'Non è stato possibile caricare le registrazioni.',
+  },
+  reportRetry: { en: 'Try again', it: 'Riprova' },
   chartFootnote: {
     en: 'Each line uses its own scale. Dashed = days without an entry.',
     it: 'Ogni linea ha la sua scala. Tratteggio = giorni senza registrazione.',

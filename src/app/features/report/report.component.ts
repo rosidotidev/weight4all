@@ -16,13 +16,21 @@ import {
   PointElement,
   Tooltip,
 } from 'chart.js';
+import { RouterLink } from '@angular/router';
 import { provideCharts } from 'ng2-charts';
 import { EntryStore } from '../../core/data/entry.store';
 import { ClockService } from '../../core/state/clock.service';
 import { RangeId, enumerateDays, formatDay, resolveRange } from '../../domain/day';
 import { DIMENSIONS } from '../../domain/dimensions';
 import { dimensionStatistics, formatStat } from '../../domain/stats';
-import { AxisBounds, SeriesPoint, axisBounds, buildSeries, countValues } from '../../domain/series';
+import {
+  AxisBounds,
+  SeriesPoint,
+  axisBounds,
+  buildSeries,
+  countValues,
+  isEmptyReport,
+} from '../../domain/series';
 import { I18n } from '../../shared/i18n';
 import { MarkerStyle, legendLabel, markerFor } from './chart-config';
 import { CombinedChartComponent, CombinedLine } from './combined-chart.component';
@@ -84,7 +92,7 @@ interface ChartCard {
 @Component({
   selector: 'w4a-report',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CombinedChartComponent, DimensionChartComponent],
+  imports: [CombinedChartComponent, DimensionChartComponent, RouterLink],
   // Chart.js is registered here, so it loads with the Report route and not with the app shell.
   providers: [
     provideCharts({
@@ -97,9 +105,18 @@ interface ChartCard {
 export class ReportComponent {
   private readonly i18n = inject(I18n);
   protected readonly t = this.i18n.t;
-  private readonly entries = inject(EntryStore).entries;
+  protected readonly store = inject(EntryStore);
+  private readonly entries = this.store.entries;
   private readonly clock = inject(ClockService);
   private readonly chipButtons = viewChildren<ElementRef<HTMLButtonElement>>('chip');
+
+  /** No Entries at all, once loaded: the message replaces the charts (Story 4.4). */
+  protected readonly isEmpty = computed(() =>
+    isEmptyReport(this.store.status(), Object.keys(this.entries()).length),
+  );
+
+  /** At least one Dimension has a Real value in the Range; otherwise the combined card shows the text. */
+  protected readonly rangeHasData = computed(() => this.charts().some((chart) => chart.hasValue));
 
   /** The selected Range; it lives in the component, so a resize or rotation keeps it. */
   protected readonly range = signal<RangeId>('30d');

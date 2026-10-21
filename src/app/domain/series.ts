@@ -29,6 +29,14 @@ export function buildSeries(
   });
 }
 
+/**
+ * The Report's empty message: shown only once the Entries have loaded and there are none. While
+ * loading or after a failed load there is nothing to say yet, so it is not shown.
+ */
+export function isEmptyReport(status: 'loading' | 'ready' | 'error', entryCount: number): boolean {
+  return status === 'ready' && entryCount === 0;
+}
+
 /** The number of Days with a Real value. */
 export function countValues(series: readonly SeriesPoint[]): number {
   return series.reduce((count, point) => (point.value === null ? count : count + 1), 0);

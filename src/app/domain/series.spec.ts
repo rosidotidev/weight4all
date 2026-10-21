@@ -1,6 +1,37 @@
 import { DIMENSIONS } from './dimensions';
 import { Entry } from './entry';
-import { axisBounds, buildSeries, countValues } from './series';
+import { axisBounds, buildSeries, countValues, isEmptyReport } from './series';
+
+describe('isEmptyReport', () => {
+  it('is true only when the Entries are loaded and there are none', () => {
+    expect(isEmptyReport('ready', 0)).toBe(true);
+    expect(isEmptyReport('ready', 1)).toBe(false);
+  });
+
+  it('is false while loading, so the message cannot flash before the first load', () => {
+    expect(isEmptyReport('loading', 0)).toBe(false);
+  });
+
+  it('is false after a failed load, which has its own message', () => {
+    expect(isEmptyReport('error', 0)).toBe(false);
+  });
+});
+
+describe('a single Real value', () => {
+  it('is one point with a value, and its axis is padded so it stays visible', () => {
+    const series = buildSeries(
+      { '2026-10-10': { day: '2026-10-10', values: { weight: 72 } } },
+      '2026-10-01',
+      '2026-10-20',
+      'weight',
+    );
+    expect(countValues(series)).toBe(1);
+    const bounds = axisBounds(DIMENSIONS[0], series);
+    expect(bounds).not.toBeNull();
+    expect(bounds!.min).toBeLessThan(72);
+    expect(bounds!.max).toBeGreaterThan(72);
+  });
+});
 
 const entry = (day: string, values: Entry['values']): Entry => ({ day, values });
 const entries = (list: Entry[]) => Object.fromEntries(list.map((e) => [e.day, e]));
