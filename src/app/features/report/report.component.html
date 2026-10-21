@@ -1,1 +1,46 @@
-<p>{{ t().reportPlaceholder }}</p>
+<div class="chips" role="radiogroup" [attr.aria-label]="t().reportRangeLabel">
+  @for (chip of chips(); track chip.id; let i = $index) {
+    <button
+      #chip
+      type="button"
+      role="radio"
+      class="chip"
+      [class.selected]="chip.id === range()"
+      [attr.aria-checked]="chip.id === range()"
+      [attr.tabindex]="chip.id === range() ? 0 : -1"
+      (click)="range.set(chip.id)"
+      (keydown)="onChipKeydown($event, i)"
+    >
+      @if (chip.id === range()) {
+        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M7 12.5l3.5 3.5L17 8.5" /></svg>
+      }
+      <span>{{ chip.label }}</span>
+    </button>
+  }
+</div>
+<div class="cards">
+  @for (card of cards(); track card.key) {
+    <section class="card" [attr.aria-label]="card.name">
+      <div class="head">
+        <h2 class="name">
+          <span
+            class="marker"
+            aria-hidden="true"
+            [attr.data-shape]="card.marker"
+            [style.background-color]="'var(' + card.token + ')'"
+          ></span>
+          {{ card.name }}
+        </h2>
+        <span class="caption">{{ card.caption }}</span>
+      </div>
+      <dl class="cells">
+        @for (cell of card.cells; track cell.key) {
+          <div class="cell">
+            <dt class="label">{{ cell.label }}</dt>
+            <dd class="value" [class.none]="cell.text === null">{{ cell.text ?? t().statNoData }}</dd>
+          </div>
+        }
+      </dl>
+    </section>
+  }
+</div>

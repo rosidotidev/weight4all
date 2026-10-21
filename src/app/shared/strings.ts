@@ -283,10 +283,22 @@ export const strings = {
   weekNoData: { en: 'No data', it: 'Nessun dato' },
   recentHeading: { en: 'Last entries · newest first', it: 'Ultime registrazioni · dalla più recente' },
   recentEmpty: { en: 'Nothing logged yet.', it: 'Ancora nessuna registrazione.' },
-  reportPlaceholder: {
-    en: 'Your report will appear here soon.',
-    it: 'Il tuo report apparirà qui a breve.',
+  reportRangeLabel: { en: 'Report range', it: 'Intervallo del report' },
+  rangeDays7: { en: '7 d', it: '7 g' },
+  rangeDays30: { en: '30 d', it: '30 g' },
+  rangeDays90: { en: '90 d', it: '90 g' },
+  rangeYear: { en: '1 y', it: '1 a' },
+  rangeAll: { en: 'All', it: 'Tutto' },
+  statLastDays: {
+    en: (p: { count: string }) => `last ${p.count} days`,
+    it: (p: { count: string }) => `ultimi ${p.count} giorni`,
   },
+  statAllTime: { en: 'all time', it: 'tutto il periodo' },
+  statAverage: { en: 'Average', it: 'Media' },
+  statMin: { en: 'Min', it: 'Min' },
+  statMax: { en: 'Max', it: 'Max' },
+  statChange: { en: 'Change', it: 'Variazione' },
+  statNoData: { en: 'No data', it: 'Nessun dato' },
 } satisfies Dictionary;
 
 export type StringKey = keyof typeof strings;
