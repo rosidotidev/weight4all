@@ -91,6 +91,6 @@
   </ng-template>
 </mat-menu>
 @if (deleting(); as day) {
-  <w4a-delete-entry-dialog [day]="day" (cancelled)="closeDelete()" (deleted)="closeDelete()" />
+  <w4a-delete-entry-dialog [day]="day" (cancelled)="closeDelete()" (deleted)="onDeleted()" />
 }
 <router-outlet (deactivate)="restoreFocus()" />

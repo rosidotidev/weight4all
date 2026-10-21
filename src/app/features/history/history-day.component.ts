@@ -13,6 +13,7 @@ import { Entry } from '../../domain/entry';
 import { HappyEffect, happyEffect } from '../../domain/happy-effect';
 import { EntryFormComponent } from '../../shared/entry-form.component';
 import { I18n } from '../../shared/i18n';
+import { LiveAnnouncer } from '../../shared/live-announcer';
 import { HappyEffectComponent } from '../today/happy-effect.component';
 import { DeleteEntryDialogComponent } from './delete-entry-dialog.component';
 
@@ -41,6 +42,7 @@ export class HistoryDayComponent {
   private readonly drafts = inject(DraftStore);
   private readonly router = inject(Router);
   private readonly layout = inject(LayoutService);
+  private readonly announcer = inject(LiveAnnouncer);
   protected readonly wide = computed(() => this.layout.windowClass() !== 'compact');
 
   /** Already validated by the route guard. */
@@ -67,6 +69,7 @@ export class HistoryDayComponent {
 
   /** Only a confirmed save of today's Entry earns the Happy effect; a past Day just closes. */
   protected onConfirmed(entry: Entry): void {
+    this.announcer.say(this.t().announceSaved);
     const value = entry.values[PRIMARY.key];
     if (value === undefined || entry.day !== this.clock.today()) {
       this.close();
@@ -94,6 +97,7 @@ export class HistoryDayComponent {
   }
 
   protected onDeleted(): void {
+    this.announcer.say(this.t().announceDeleted);
     this.confirmingDelete.set(false);
     this.close();
   }

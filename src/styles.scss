@@ -16,3 +16,21 @@ body {
   overflow: hidden;
   clip: rect(0 0 0 0);
 }
+
+// Keyboard focus: one rule for every control (AD-15, UX-DR18).
+:focus-visible {
+  outline: 2px solid var(--w4a-primary);
+  outline-offset: 2px;
+}
+
+// Reduced motion: nothing animates or transitions (EXPERIENCE: Accessibility Floor). Durations drop to
+// almost zero, not to none, so animationend and transitionend still fire and close paths complete.
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

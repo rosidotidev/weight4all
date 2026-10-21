@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
+import { LiveAnnouncer } from '../../shared/live-announcer';
 import { EntryResult, EntryStatus, EntryStore } from '../../core/data/entry.store';
 import { PreferencesStore } from '../../core/data/preferences.store';
 import { ClockService } from '../../core/state/clock.service';
@@ -206,6 +207,30 @@ describe('HistoryComponent', () => {
       expect(el.querySelector('[role="alertdialog"]')).toBeNull();
       expect(el.querySelector('.row .date')!.textContent).toBe('Sun 18 Oct');
       expect(el.querySelectorAll('.row')).toHaveLength(1);
+    });
+
+    it('announces Deleted after a confirmed delete, and nothing on Cancel', async () => {
+      const say = vi.spyOn(TestBed.inject(LiveAnnouncer), 'say');
+      const { fixture, el } = await setup();
+      el.querySelector<HTMLButtonElement>('.more')!.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+      const items = Array.from(document.querySelectorAll<HTMLButtonElement>('[mat-menu-item]'));
+      items[1].click();
+      fixture.detectChanges();
+      el.querySelector<HTMLButtonElement>('button.cancel')!.click();
+      await fixture.whenStable();
+      fixture.detectChanges();
+      expect(say).not.toHaveBeenCalled();
+      el.querySelector<HTMLButtonElement>('.more')!.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+      document.querySelectorAll<HTMLButtonElement>('[mat-menu-item]')[1].click();
+      fixture.detectChanges();
+      el.querySelector<HTMLButtonElement>('button.confirm')!.click();
+      await fixture.whenStable();
+      fixture.detectChanges();
+      expect(say).toHaveBeenCalledWith('Deleted');
     });
 
     describe('focus after the Delete dialog', () => {

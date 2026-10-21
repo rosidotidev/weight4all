@@ -15,6 +15,7 @@ import { Entry } from '../../domain/entry';
 import { HappyEffect, happyEffect } from '../../domain/happy-effect';
 import { EntryFormComponent } from '../../shared/entry-form.component';
 import { I18n } from '../../shared/i18n';
+import { LiveAnnouncer } from '../../shared/live-announcer';
 import { HappyEffectComponent } from './happy-effect.component';
 import { RecentEntriesComponent } from './recent-entries.component';
 import { WeekCardComponent } from './week-card.component';
@@ -38,6 +39,7 @@ export class TodayComponent {
   protected readonly store = inject(EntryStore);
   protected readonly clock = inject(ClockService);
   private readonly layout = inject(LayoutService);
+  private readonly announcer = inject(LiveAnnouncer);
   /** The right column (This week, last entries) shows on the expanded window class only. */
   protected readonly wide = computed(() => this.layout.windowClass() === 'expanded');
   protected readonly effect = signal<ShownEffect | null>(null);
@@ -51,8 +53,9 @@ export class TodayComponent {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private opener: HTMLElement | null = null;
 
-  /** Only a confirmed save of today's Entry earns the Happy effect (never a past Day). */
+  /** Only a confirmed save of today's Entry earns the Happy effect (never a past Day); every confirmed save is announced. */
   protected showEffect(entry: Entry): void {
+    this.announcer.say(this.t().announceSaved);
     const value = entry.values[PRIMARY.key];
     if (value === undefined || entry.day !== this.clock.today()) return;
     if (!this.effect()) {

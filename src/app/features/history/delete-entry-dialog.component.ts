@@ -15,6 +15,7 @@ import {
 import { EntryStore } from '../../core/data/entry.store';
 import { DraftStore } from '../../core/state/draft.store';
 import { I18n } from '../../shared/i18n';
+import { LiveAnnouncer } from '../../shared/live-announcer';
 
 /**
  * The Delete confirmation (FR-13): an M3 alert dialog over a scrim. Cancel is the default focus;
@@ -32,6 +33,7 @@ export class DeleteEntryDialogComponent {
   protected readonly t = inject(I18n).t;
   private readonly store = inject(EntryStore);
   private readonly drafts = inject(DraftStore);
+  private readonly announcer = inject(LiveAnnouncer);
 
   private destroyed = false;
   private readonly injector = inject(Injector);
@@ -68,8 +70,12 @@ export class DeleteEntryDialogComponent {
     const day = this.day();
     const result = await this.store.remove(day);
     if (this.destroyed) {
-      // Left while the request was in flight: keep the store consistent, touch nothing else.
-      if (result.ok) this.drafts.drop(day);
+      // Left while the request was in flight: keep the store consistent and still announce the outcome,
+      // because the parent no longer receives the deleted output.
+      if (result.ok) {
+        this.drafts.drop(day);
+        this.announcer.say(this.t().announceDeleted);
+      }
       return;
     }
     this.deleting.set(false);

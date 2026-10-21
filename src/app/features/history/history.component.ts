@@ -10,6 +10,7 @@ import { Entry } from '../../domain/entry';
 import { HistoryRow, buildHistoryRows } from '../../domain/history';
 import { Cell, entryCells } from '../../shared/entry-cells';
 import { I18n } from '../../shared/i18n';
+import { LiveAnnouncer } from '../../shared/live-announcer';
 import { MoodFaceComponent } from '../../shared/mood-face.component';
 import { DeleteEntryDialogComponent } from './delete-entry-dialog.component';
 
@@ -38,6 +39,7 @@ export class HistoryComponent {
   private readonly document = inject(DOCUMENT);
   private readonly injector = inject(Injector);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly announcer = inject(LiveAnnouncer);
   protected readonly pencil = PENCIL;
   protected readonly dots = DOTS;
   /** The Day whose Edit action is revealed; one row at a time. */
@@ -83,6 +85,12 @@ export class HistoryComponent {
   protected askDelete(day: string): void {
     this.revealed.set(null);
     this.deleting.set(day);
+  }
+
+  /** The dialog's Delete succeeded: announce it, then close like a cancel. */
+  protected onDeleted(): void {
+    this.announcer.say(this.t().announceDeleted);
+    this.closeDelete();
   }
 
   protected closeDelete(): void {

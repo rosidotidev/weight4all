@@ -6,6 +6,7 @@ import { DraftStore } from './core/state/draft.store';
 import { SessionScope } from './core/data/session-scope';
 import { RouterOutlet } from '@angular/router';
 import { I18n } from './shared/i18n';
+import { LiveAnnouncer } from './shared/live-announcer';
 
 @Component({
   imports: [RouterOutlet],
@@ -15,6 +16,9 @@ import { I18n } from './shared/i18n';
   templateUrl: './app.html',
 })
 export class App {
+  /** The one polite live region in the page (rendered in app.html), for save and delete outcomes. */
+  protected readonly announcer = inject(LiveAnnouncer);
+
   constructor() {
     const root = inject(DOCUMENT).documentElement;
     const i18n = inject(I18n);

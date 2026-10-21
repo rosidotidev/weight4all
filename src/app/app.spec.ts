@@ -6,6 +6,7 @@ import { PreferencesStore } from './core/data/preferences.store';
 import { DraftStore } from './core/state/draft.store';
 import { App } from './app';
 import { I18n } from './shared/i18n';
+import { LiveAnnouncer } from './shared/live-announcer';
 
 @Component({
   selector: 'w4a-test-host',
@@ -99,6 +100,21 @@ describe('App', () => {
     expect(el.querySelector('#saved')!.textContent).toBe('Salvato!');
     expect(el.querySelector<HTMLInputElement>('#field')).toBe(input);
     expect(input.value).toBe('72.5');
+  });
+
+  it('renders one polite status region that shows what is announced', () => {
+    vi.useFakeTimers();
+    try {
+      const fixture = TestBed.createComponent(App);
+      const region = () => fixture.nativeElement.querySelector('[role="status"][aria-live="polite"]') as HTMLElement;
+      expect(region()).not.toBeNull();
+      TestBed.inject(LiveAnnouncer).say('Saved');
+      vi.advanceTimersByTime(100);
+      fixture.detectChanges();
+      expect(region().textContent?.trim()).toBe('Saved');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('instantiates EntryStore at startup so it registers with SessionScope', () => {

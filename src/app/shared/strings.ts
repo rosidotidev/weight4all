@@ -13,6 +13,8 @@ export type Dictionary = Record<
 export const strings = {
   appName: { en: 'Weight4All', it: 'Weight4All' },
   saved: { en: 'Saved!', it: 'Salvato!' },
+  announceSaved: { en: 'Saved', it: 'Salvato' },
+  announceDeleted: { en: 'Deleted', it: 'Eliminato' },
   effectYesterday: { en: 'vs yesterday', it: 'rispetto a ieri' },
   effectSince: {
     en: (p: { date: string }) => `vs ${p.date}`,

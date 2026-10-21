@@ -11,6 +11,7 @@ import { LayoutService } from '../../core/state/layout.service';
 import { WindowClass } from '../../domain/window-class';
 import { Entry } from '../../domain/entry';
 import { Language } from '../../domain/language';
+import { LiveAnnouncer } from '../../shared/live-announcer';
 import { HistoryDayComponent } from './history-day.component';
 
 const TODAY = '2026-10-20';
@@ -164,7 +165,33 @@ describe('HistoryDayComponent', () => {
     expect(navigate).toHaveBeenCalledWith(['/history']);
   });
 
-  it('a failed save keeps the dialog and the typed values', async () => {
+  it('announces Saved after a confirmed save, even for a past Day', async () => {
+    const fixture = setup('2026-10-14');
+    const say = vi.spyOn(TestBed.inject(LiveAnnouncer), 'say');
+    await type(fixture, '70.2');
+    await submit(fixture);
+    expect(say).toHaveBeenCalledWith('Saved');
+  });
+
+  it('a failed save announces nothing', async () => {
+    save.mockResolvedValue({ ok: false, code: 'network' });
+    const fixture = setup('2026-10-14');
+    const say = vi.spyOn(TestBed.inject(LiveAnnouncer), 'say');
+    await type(fixture, '70.2');
+    await submit(fixture);
+    expect(say).not.toHaveBeenCalled();
+  });
+
+  it('announces Saved in Italian when the Language is Italian', async () => {
+    language.set('it');
+    const fixture = setup('2026-10-14');
+    const say = vi.spyOn(TestBed.inject(LiveAnnouncer), 'say');
+    await type(fixture, '70.2');
+    await submit(fixture);
+    expect(say).toHaveBeenCalledWith('Salvato');
+  });
+
+  it('a failed save keeps the typed values in place', async () => {
     save.mockResolvedValue({ ok: false, code: 'network' });
     const fixture = setup('2026-10-14');
     await type(fixture, '70.2');
@@ -247,6 +274,16 @@ describe('HistoryDayComponent', () => {
       fixture.detectChanges();
       expect(dialog(fixture.el)).toBeNull();
       expect(navigate).not.toHaveBeenCalled();
+    });
+
+    it('a confirmed delete announces Deleted', async () => {
+      const fixture = setup('2026-10-14');
+      const say = vi.spyOn(TestBed.inject(LiveAnnouncer), 'say');
+      deleteButton(fixture.el)!.click();
+      fixture.detectChanges();
+      fixture.el.querySelector<HTMLButtonElement>('button.confirm')!.click();
+      await fixture.whenStable();
+      expect(say).toHaveBeenCalledWith('Deleted');
     });
 
     it('a confirmed delete removes the Entry and closes to History', async () => {

@@ -8,6 +8,7 @@ import { WindowClass } from '../../domain/window-class';
 import { addDays, dayKey } from '../../domain/day';
 import { Entry } from '../../domain/entry';
 import { Language } from '../../domain/language';
+import { LiveAnnouncer } from '../../shared/live-announcer';
 import { TodayComponent } from './today.component';
 
 describe('TodayComponent', () => {
@@ -270,12 +271,21 @@ describe('TodayComponent', () => {
       expect(text(el, '.welcome')).toBe('Welcome! Your first log is in.');
     });
 
+    it('announces Saved after a confirmed save, in the current Language', async () => {
+      const say = vi.spyOn(TestBed.inject(LiveAnnouncer), 'say');
+      entries.set(Object.fromEntries([entry(ago(1), 72.7)]));
+      await saveWeight('72.4');
+      expect(say).toHaveBeenCalledWith('Saved');
+    });
+
     it('shows nothing when the save fails', async () => {
+      const say = vi.spyOn(TestBed.inject(LiveAnnouncer), 'say');
       save.mockResolvedValue({ ok: false, code: 'network' });
       entries.set(Object.fromEntries([entry(ago(1), 72.7)]));
       const { el } = await saveWeight('72.4');
       expect(card(el)).toBeNull();
       expect(el.textContent).toContain("Couldn't save");
+      expect(say).not.toHaveBeenCalled();
     });
 
     it('shows nothing while the save is in flight', async () => {
