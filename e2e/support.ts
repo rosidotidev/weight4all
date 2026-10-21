@@ -65,6 +65,40 @@ export async function seedEntries(uid: string, days: Record<string, Record<strin
   }
 }
 
+/** The Firestore batch limit per request. */
+const BATCH_LIMIT = 500;
+
+/**
+ * Writes Entries for a user with the Firestore `:batchWrite` endpoint, in batches of at most 500 writes.
+ * Same shape as `seedEntries`: `days` maps a Day key to its values (Dimension key to number).
+ */
+export async function seedEntriesBatch(uid: string, days: Record<string, Record<string, number>>): Promise<void> {
+  const database = `projects/${PROJECT}/databases/(default)`;
+  const writes = Object.entries(days).map(([day, values]) => {
+    const fields: Record<string, { doubleValue: number }> = {};
+    for (const [key, value] of Object.entries(values)) fields[key] = { doubleValue: value };
+    return { update: { name: `${database}/documents/users/${uid}/entries/${day}`, fields } };
+  });
+  for (let start = 0; start < writes.length; start += BATCH_LIMIT) {
+    const batch = writes.slice(start, start + BATCH_LIMIT);
+    const response = await emulatorFetch(
+      `${FIRESTORE}/v1/projects/${PROJECT}/databases/(default)/documents:batchWrite`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...ADMIN },
+        body: JSON.stringify({ writes: batch }),
+      },
+      'Firestore',
+      8080,
+    );
+    expect(response.ok, `batchWrite of ${batch.length} Entries`).toBe(true);
+    const body = (await response.json()) as { status?: { code?: number; message?: string }[] };
+    // batchWrite is not atomic: each write reports its own status, so every one is checked.
+    const failed = (body.status ?? []).filter((status) => (status.code ?? 0) !== 0);
+    expect(failed, `batchWrite statuses of ${batch.length} Entries`).toEqual([]);
+  }
+}
+
 /** Signs in through the login form, the same way a user does. */
 export async function signIn(page: Page, account: TestAccount): Promise<void> {
   await page.goto('/login');
