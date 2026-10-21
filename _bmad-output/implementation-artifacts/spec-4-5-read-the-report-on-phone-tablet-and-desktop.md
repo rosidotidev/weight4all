@@ -2,7 +2,7 @@
 title: 'Story 4.5: Read the Report on phone, tablet and desktop'
 type: 'feature'
 created: '2026-10-21'
-status: 'review'
+status: 'done'
 baseline_commit: '4541a4f'
 route: 'dispatch'
 review_loop_iteration: 0
