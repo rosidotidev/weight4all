@@ -7,12 +7,25 @@ import {
   signal,
   viewChildren,
 } from '@angular/core';
+import {
+  CategoryScale,
+  Legend,
+  LineController,
+  LineElement,
+  LinearScale,
+  PointElement,
+  Tooltip,
+} from 'chart.js';
+import { provideCharts } from 'ng2-charts';
 import { EntryStore } from '../../core/data/entry.store';
 import { ClockService } from '../../core/state/clock.service';
-import { RangeId, resolveRange } from '../../domain/day';
+import { RangeId, enumerateDays, formatDay, resolveRange } from '../../domain/day';
 import { DIMENSIONS } from '../../domain/dimensions';
 import { dimensionStatistics, formatStat } from '../../domain/stats';
+import { AxisBounds, SeriesPoint, axisBounds, buildSeries, countValues } from '../../domain/series';
 import { I18n } from '../../shared/i18n';
+import { MarkerStyle, markerFor } from './chart-config';
+import { DimensionChartComponent } from './dimension-chart.component';
 
 type RangeLabelKey = 'rangeDays7' | 'rangeDays30' | 'rangeDays90' | 'rangeYear' | 'rangeAll';
 
@@ -27,7 +40,7 @@ const RANGE_CHIPS: readonly { readonly id: RangeId; readonly labelKey: RangeLabe
 
 const RANGE_DAYS: Record<Exclude<RangeId, 'all'>, number> = { '7d': 7, '30d': 30, '90d': 90, '1y': 365 };
 
-/** Marker shapes by registry position: circle for Weight, square for Mood, triangle for Sleep. */
+/** Statistics card markers by registry position: circle for Weight, square for Mood, triangle for Sleep. */
 const MARKERS = ['circle', 'square', 'triangle'] as const;
 
 interface Chip {
@@ -51,10 +64,31 @@ interface StatCard {
   readonly cells: readonly Cell[];
 }
 
-/** Report: the Range chips and one Statistics card per Dimension, from Real entries in the Range. */
+/** One per-Dimension chart over the Range; `hasValue` false shows the empty text instead of a canvas. */
+interface ChartCard {
+  readonly key: string;
+  readonly name: string;
+  readonly axisTitle: string;
+  readonly token: string;
+  readonly marker: MarkerStyle;
+  readonly series: readonly SeriesPoint[];
+  readonly labels: readonly string[];
+  readonly bounds: AxisBounds | null;
+  readonly ariaLabel: string;
+  readonly hasValue: boolean;
+}
+
+/** Report: the Range chips, one chart per Dimension and one Statistics card per Dimension, from Real entries in the Range. */
 @Component({
   selector: 'w4a-report',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [DimensionChartComponent],
+  // Chart.js is registered here, so it loads with the Report route and not with the app shell.
+  providers: [
+    provideCharts({
+      registerables: [CategoryScale, LinearScale, LineController, LineElement, PointElement, Tooltip, Legend],
+    }),
+  ],
   templateUrl: './report.component.html',
   styleUrl: './report.component.scss',
 })
@@ -85,6 +119,31 @@ export class ReportComponent {
     const t = this.t();
     const range = this.range();
     return range === 'all' ? t.statAllTime : t.statLastDays({ count: String(RANGE_DAYS[range]) });
+  });
+
+  /** One series per registry Dimension over the Range; the x labels are the Days of the Range. */
+  protected readonly charts = computed<ChartCard[]>(() => {
+    const t = this.t();
+    const locale = this.i18n.locale();
+    const entries = this.entries();
+    const { from, to } = this.period();
+    const labels = enumerateDays(from, to).map((day) => formatDay(day, locale, false));
+    return DIMENSIONS.map((dimension, index) => {
+      const series = buildSeries(entries, from, to, dimension.key);
+      const name = t[dimension.labelKey];
+      return {
+        key: dimension.key,
+        name,
+        axisTitle: dimension.unit || name,
+        token: dimension.chartToken,
+        marker: markerFor(index),
+        series,
+        labels,
+        bounds: axisBounds(dimension, series),
+        ariaLabel: t.reportChartAriaLabel({ name }),
+        hasValue: countValues(series) > 0,
+      };
+    });
   });
 
   protected readonly cards = computed<StatCard[]>(() => {

@@ -299,6 +299,11 @@ export const strings = {
   statMax: { en: 'Max', it: 'Max' },
   statChange: { en: 'Change', it: 'Variazione' },
   statNoData: { en: 'No data', it: 'Nessun dato' },
+  reportChartNoData: { en: 'No data in this Range', it: 'Nessun dato in questo intervallo' },
+  reportChartAriaLabel: {
+    en: (p: { name: string }) => `${p.name} chart`,
+    it: (p: { name: string }) => `Grafico di ${p.name}`,
+  },
 } satisfies Dictionary;
 
 export type StringKey = keyof typeof strings;

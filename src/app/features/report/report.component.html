@@ -18,6 +18,27 @@
     </button>
   }
 </div>
+<div class="charts">
+  @for (chart of charts(); track chart.key) {
+    <section class="chart-card">
+      <h2 class="chart-name">{{ chart.name }}</h2>
+      @if (chart.hasValue) {
+        <w4a-dimension-chart
+          [label]="chart.name"
+          [axisTitle]="chart.axisTitle"
+          [token]="chart.token"
+          [marker]="chart.marker"
+          [series]="chart.series"
+          [labels]="chart.labels"
+          [bounds]="chart.bounds"
+          [ariaLabel]="chart.ariaLabel"
+        />
+      } @else {
+        <p class="chart-empty">{{ t().reportChartNoData }}</p>
+      }
+    </section>
+  }
+</div>
 <div class="cards">
   @for (card of cards(); track card.key) {
     <section class="card" [attr.aria-label]="card.name">
