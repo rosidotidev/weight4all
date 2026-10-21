@@ -10,6 +10,7 @@
     "test": "ng test --watch=false && npm run test:lint",
     "emulators": "node scripts/emulators.mjs",
     "test:rules": "node scripts/test-rules.mjs",
+    "e2e": "playwright test",
     "check": "npm run lint && npm run test && npm run test:rules",
     "deploy": "npm run check && firebase deploy",
     "test:lint": "vitest run --config tests/lint/vitest.config.mts"
