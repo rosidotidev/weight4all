@@ -92,3 +92,12 @@ Focus and announcement are kept global on purpose: one focus rule and one live r
 - Tests added: `live-announcer.spec.ts` (empty start, delayed write, repeat, latest wins); Today spec (Saved after a confirmed save, nothing on failure); Entry edit spec (Saved on confirmed save, nothing on failure, Deleted on confirmed delete); History spec (Deleted after a confirmed delete, nothing on Cancel).
 - Verification run: `npm run lint` clean; `npm run test:lint` 146 passed; `npx ng test --watch=false` 742 passed in 47 files; `npm run build` succeeds (the existing initial-bundle budget warning remains).
 - Not run: the 200% zoom and 360 px checks, and a browser Tab walk through Today and History. Both need a signed-in session, so the focus ring and reflow are verified by rule only, not in a browser.
+
+## Browser Check Results
+
+Run in Chrome, signed in as the test account, against `localhost:4200`:
+- Focus ring: Tab on Today shows the 2 px primary outline on the Report drawer item. Checked on one control only; a full Tab sweep of Today and History is still to do.
+- 360 px (frame): single column, chips wrap, no horizontal scroll (scrollWidth 360).
+- 768 px (frame): chart and Statistics side by side, three charts in a row below, no horizontal scroll.
+- 200% zoom: checked as a 768 px CSS viewport, because `zoom` on the root element does not change the media-query width. Same result as 768 px.
+- Known deviations (recorded in `deferred-work.md`): axis titles overlap tick labels on the combined chart at 360 and 768 px.

@@ -80,3 +80,12 @@
 - source_spec: `_bmad-output/implementation-artifacts/spec-2-3-never-lose-typed-values-when-a-save-fails.md`
   summary: Track a timed-out delete in `EntryStore.remove` and clear the timeout mark there, as `save` does (Story 2.9).
   evidence: `remove` ignores the timed-out Day set, so a delete that timed out can still commit and a later write for that Day is not re-read first (unverified severity: medium; Story 2.9 owns delete failure).
+- source_spec: `spec-4-3-compare-the-three-dimensions-on-one-chart.md`
+  summary: On the combined Report chart at 360 px and 768 px, the "kg" axis title overlaps the "87,00" tick label and the "Umore" axis title overlaps the right-hand ticks.
+  evidence: Browser check in this session (Report inside a 360 px and a 768 px frame, signed in as the test account). Not fixed here: owned by the chart stories.
+- source_spec: `spec-4-2-see-each-dimension-on-its-own-chart-with-dashed-gaps.md`
+  summary: The Mood axis on the combined chart is drawn at 0 to 1 with no data when the Range has only Weight, so empty axes show next to the Weight line.
+  evidence: Browser check, 1280 px, 30 d Range with only Weight entries. The 4.3 spec allows datasets with no bounds; a reader may still find the empty axes confusing.
+- source_spec: `spec-5-1-operate-the-whole-app-with-keyboard-and-screen-reader.md`
+  summary: The Today week card says "1 giorni su 7 registrati" (plural with a singular count).
+  evidence: Browser check, Today at 1280 px. The copy comes from the Today stories, not from 5.1.
