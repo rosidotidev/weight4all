@@ -51,9 +51,6 @@ const RANGE_CHIPS: readonly { readonly id: RangeId; readonly labelKey: RangeLabe
 
 const RANGE_DAYS: Record<Exclude<RangeId, 'all'>, number> = { '7d': 7, '30d': 30, '90d': 90, '1y': 365 };
 
-/** Statistics card markers by registry position: circle for Weight, square for Mood, triangle for Sleep. */
-const MARKERS = ['circle', 'square', 'triangle'] as const;
-
 interface Chip {
   readonly id: RangeId;
   readonly label: string;
@@ -70,7 +67,7 @@ interface StatCard {
   readonly key: string;
   readonly name: string;
   readonly token: string;
-  readonly marker: (typeof MARKERS)[number];
+  readonly marker: MarkerStyle;
   readonly caption: string;
   readonly cells: readonly Cell[];
 }
@@ -115,6 +112,9 @@ export class ReportComponent {
   private readonly clock = inject(ClockService);
   private readonly chipButtons = viewChildren<ElementRef<HTMLButtonElement>>('chip');
 
+  /** Entries are loaded: the charts and Statistics show, and stay on screen while a retry runs. */
+  protected readonly hasEntries = computed(() => Object.keys(this.entries()).length > 0);
+
   /** No Entries at all, once loaded: the message replaces the charts (Story 4.4). */
   protected readonly isEmpty = computed(() =>
     isEmptyReport(this.store.status(), Object.keys(this.entries()).length),
@@ -128,7 +128,10 @@ export class ReportComponent {
 
   /** The earliest Day with an Entry, or `null` when there are none; `all` starts there. */
   private readonly firstDay = computed(() => {
-    const days = Object.keys(this.entries()).sort();
+    const today = this.clock.today();
+    const days = Object.keys(this.entries())
+      .filter((day) => day <= today)
+      .sort();
     return days.length > 0 ? days[0] : null;
   });
 
@@ -184,7 +187,7 @@ export class ReportComponent {
   /** The combined chart's text alternative: one column per Dimension, the same cells as its tables. */
   protected readonly combinedColumns = computed<TableColumn[]>(() => this.charts().map((chart) => chart.column));
 
-  /** The combined chart's lines: the same series and bounds as each Dimension's own chart. */
+  /** The combined chart's lines: the same series and bounds as each Dimension's own chart, one per Dimension in order. */
   protected readonly combinedLines = computed<CombinedLine[]>(() =>
     this.charts().map((chart) => ({
       legend: chart.legend,
@@ -210,7 +213,7 @@ export class ReportComponent {
         key: dimension.key,
         name: t[dimension.labelKey],
         token: dimension.chartToken,
-        marker: MARKERS[index % MARKERS.length],
+        marker: markerFor(index),
         caption,
         cells: [
           { key: 'average', label: t.statAverage, text: text(stats.average) },
@@ -222,13 +225,14 @@ export class ReportComponent {
     });
   });
 
-  /** Arrow keys move the selection within the radio group, as the ARIA radio pattern expects. */
+  /** Arrow keys move the selection within the radio group, with wrap; Home and End jump to the ends. */
   protected onChipKeydown(event: KeyboardEvent, index: number): void {
     const forward = event.key === 'ArrowRight' || event.key === 'ArrowDown';
     const backward = event.key === 'ArrowLeft' || event.key === 'ArrowUp';
-    if (!forward && !backward) return;
+    const jump = event.key === 'Home' ? 0 : event.key === 'End' ? RANGE_CHIPS.length - 1 : null;
+    if (!forward && !backward && jump === null) return;
     event.preventDefault();
-    const next = (index + (forward ? 1 : -1) + RANGE_CHIPS.length) % RANGE_CHIPS.length;
+    const next = jump ?? (index + (forward ? 1 : -1) + RANGE_CHIPS.length) % RANGE_CHIPS.length;
     this.range.set(RANGE_CHIPS[next].id);
     this.chipButtons()[next].nativeElement.focus();
   }

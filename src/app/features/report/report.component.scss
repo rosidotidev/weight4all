@@ -126,7 +126,7 @@
 }
 // Medium (600 px, MEDIUM_MIN_WIDTH): the Statistics sit beside the combined chart (3 : 2), and the three
 // per-Dimension charts run in a row below. Expanded (840 px, EXPANDED_MIN_WIDTH) gives the combined chart two
-// thirds. A report without data (`.bare`) stays one column.
+// thirds. A report without Entries (`.bare`) stays one column: its Statistics show "No data".
 @media (min-width: 600px) {
   .layout:not(.bare) {
     grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
@@ -187,7 +187,7 @@
 .marker[data-shape='circle'] {
   border-radius: var(--w4a-rounded-full);
 }
-.marker[data-shape='square'] {
+.marker[data-shape='rect'] {
   border-radius: 2px;
 }
 .marker[data-shape='triangle'] {

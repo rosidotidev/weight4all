@@ -52,6 +52,12 @@ describe('chartDataset', () => {
     expect(borderDash({ p0DataIndex: 0, p1DataIndex: 3 })).toEqual([...GAP_DASH]);
   });
 
+  it('reads only p1DataIndex: a bridged start point does not dash a solid segment', () => {
+    const borderDash = borderDashOf(chartDataset(gapSeries(), style));
+    // Segment from Day 4 (p0, bridged) to Day 1 (p1, not bridged) stays solid.
+    expect(borderDash({ p0DataIndex: 3, p1DataIndex: 0 })).toBeUndefined();
+  });
+
   it('leaves a segment solid when its end point is not bridged', () => {
     const borderDash = borderDashOf(chartDataset(gapSeries(), style));
     expect(borderDash({ p0DataIndex: 0, p1DataIndex: 0 })).toBeUndefined();

@@ -19,16 +19,16 @@
   }
 </div>
 
-@if (store.status() === 'loading') {
-  <p class="visually-hidden" role="status" aria-live="polite">{{ t().reportLoading }}</p>
-} @else {
-  @if (store.status() === 'error') {
-    <div class="load-error">
-      <p role="alert">{{ t().reportLoadError }}</p>
-      <button type="button" (click)="store.retry()">{{ t().reportRetry }}</button>
-    </div>
-  }
+@if (store.status() === 'error') {
+  <div class="load-error">
+    <p role="alert">{{ t().reportLoadError }}</p>
+    <button type="button" (click)="store.retry()">{{ t().reportRetry }}</button>
+  </div>
+}
 
+@if (store.status() === 'loading' && !hasEntries()) {
+  <p class="visually-hidden" role="status" aria-live="polite">{{ t().reportLoading }}</p>
+} @else if (hasEntries() || isEmpty()) {
   @if (isEmpty()) {
     <p class="empty">
       {{ t().reportEmpty }}
@@ -36,9 +36,9 @@
     </p>
   }
 
-  <div class="layout" [class.bare]="isEmpty()">
-    @if (!isEmpty()) {
-      <section class="chart-card combined">
+  <div class="layout" [class.bare]="!hasEntries()">
+    @if (hasEntries()) {
+      <section class="chart-card combined" [attr.aria-label]="t().reportCombinedAriaLabel">
         @if (rangeHasData()) {
           <w4a-combined-chart
             [lines]="combinedLines()"

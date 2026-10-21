@@ -37,10 +37,12 @@ describe('change', () => {
     expect(change([7])).toBe(0);
   });
 
-  it('is the last value minus the first, exact to one decimal', () => {
+  it('is the last value minus the first, without rounding to tenths first', () => {
     expect(change([72.7, 72.4])).toBe(-0.3);
     expect(change([7, 8.5])).toBe(1.5);
     expect(change([6.5, 7, 7.5])).toBe(1);
+    // A move of 0.02 is not turned into a tenth before formatStat rounds it.
+    expect(formatStat(change([7.04, 7.06])!, 'en-GB', '', true)).toBe('0.0');
   });
 
   it('is never negative zero', () => {
@@ -54,6 +56,11 @@ describe('formatStat', () => {
     expect(formatStat(72.6, 'it-IT')).toBe('72,6');
     expect(formatStat(7, 'en-GB')).toBe('7.0');
     expect(formatStat(7.25, 'en-GB', 'h')).toBe('7.3 h');
+  });
+
+  it('rounds a negative and a positive half-tenth the same way', () => {
+    expect(formatStat(-0.25, 'en-GB', '', true)).toBe('−0.3');
+    expect(formatStat(0.25, 'en-GB', '', true)).toBe('+0.3');
   });
 
   it('writes a negative value with U+2212 and a positive change with +', () => {
