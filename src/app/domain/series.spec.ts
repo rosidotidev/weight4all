@@ -1,6 +1,20 @@
 import { DIMENSIONS } from './dimensions';
 import { Entry } from './entry';
-import { axisBounds, buildSeries, countValues, isEmptyReport } from './series';
+import { axisBounds, buildSeries, countValues, isEmptyReport, tableCells } from './series';
+
+describe('tableCells', () => {
+  it('lists every Day, the formatted value or the empty text for a Day without one', () => {
+    const series = buildSeries(
+      entries([entry('2026-10-01', { weight: 72.44 }), entry('2026-10-03', { weight: 71 })]),
+      '2026-10-01',
+      '2026-10-03',
+      'weight',
+    );
+    const cells = tableCells(series, (value) => `v${value}`, '—');
+    expect(cells).toEqual(['v72.44', '—', 'v71']);
+    expect(cells).toHaveLength(3);
+  });
+});
 
 describe('isEmptyReport', () => {
   it('is true only when the Entries are loaded and there are none', () => {

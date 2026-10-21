@@ -1,0 +1,37 @@
+<button
+  type="button"
+  class="toggle"
+  [attr.aria-expanded]="open()"
+  [attr.aria-controls]="id"
+  (click)="toggle()"
+>
+  {{ open() ? t().reportHideTable : t().reportShowTable }}
+</button>
+@if (open()) {
+  <div class="scroll" [attr.id]="id" tabindex="0" role="region" [attr.aria-label]="caption()">
+    <table>
+      <caption class="visually-hidden">{{ caption() }}</caption>
+      <thead>
+        <tr>
+          <th scope="col">{{ t().reportTableDay }}</th>
+          @for (column of columns(); track $index) {
+            <th scope="col">{{ column.header }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of rows(); track $index) {
+          <tr>
+            @for (cell of row; track $index) {
+              @if ($index === 0) {
+                <th scope="row">{{ cell }}</th>
+              } @else {
+                <td>{{ cell }}</td>
+              }
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

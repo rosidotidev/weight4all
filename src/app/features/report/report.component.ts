@@ -30,10 +30,12 @@ import {
   buildSeries,
   countValues,
   isEmptyReport,
+  tableCells,
 } from '../../domain/series';
 import { I18n } from '../../shared/i18n';
 import { MarkerStyle, legendLabel, markerFor } from './chart-config';
 import { CombinedChartComponent, CombinedLine } from './combined-chart.component';
+import { DataTableComponent, TableColumn } from './data-table.component';
 import { DimensionChartComponent } from './dimension-chart.component';
 
 type RangeLabelKey = 'rangeDays7' | 'rangeDays30' | 'rangeDays90' | 'rangeYear' | 'rangeAll';
@@ -86,13 +88,16 @@ interface ChartCard {
   readonly bounds: AxisBounds | null;
   readonly ariaLabel: string;
   readonly hasValue: boolean;
+  /** One formatted cell per Day for the text alternative. */
+  readonly cells: readonly string[];
+  readonly column: TableColumn;
 }
 
 /** Report: the Range chips, one chart per Dimension and one Statistics card per Dimension, from Real entries in the Range. */
 @Component({
   selector: 'w4a-report',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CombinedChartComponent, DimensionChartComponent, RouterLink],
+  imports: [CombinedChartComponent, DataTableComponent, DimensionChartComponent, RouterLink],
   // Chart.js is registered here, so it loads with the Report route and not with the app shell.
   providers: [
     provideCharts({
@@ -150,13 +155,17 @@ export class ReportComponent {
   /** One series per registry Dimension over the Range; the combined and the per-Dimension charts share it. */
   protected readonly charts = computed<ChartCard[]>(() => {
     const t = this.t();
+    const locale = this.i18n.locale();
     const entries = this.entries();
     const { from, to } = this.period();
     const labels = this.dayLabels();
     return DIMENSIONS.map((dimension, index) => {
       const series = buildSeries(entries, from, to, dimension.key);
       const name = t[dimension.labelKey];
+      const cells = tableCells(series, (value) => formatStat(value, locale, dimension.unit), t.reportTableNoValue);
       return {
+        cells,
+        column: { header: name, cells },
         key: dimension.key,
         name,
         legend: legendLabel(name, dimension),
@@ -171,6 +180,9 @@ export class ReportComponent {
       };
     });
   });
+
+  /** The combined chart's text alternative: one column per Dimension, the same cells as its tables. */
+  protected readonly combinedColumns = computed<TableColumn[]>(() => this.charts().map((chart) => chart.column));
 
   /** The combined chart's lines: the same series and bounds as each Dimension's own chart. */
   protected readonly combinedLines = computed<CombinedLine[]>(() =>

@@ -34,66 +34,81 @@
       {{ t().reportEmpty }}
       <a routerLink="/today">{{ t().reportEmptyLink }}</a>
     </p>
-  } @else {
-    <section class="chart-card combined">
-      @if (rangeHasData()) {
-        <w4a-combined-chart
-          [lines]="combinedLines()"
-          [labels]="dayLabels()"
-          [ariaLabel]="t().reportCombinedAriaLabel"
-        />
-        <p class="footnote">{{ t().chartFootnote }}</p>
-      } @else {
-        <p class="chart-empty">{{ t().reportChartNoData }}</p>
-      }
-    </section>
-    <div class="charts">
-      @for (chart of charts(); track chart.key) {
-        <section class="chart-card">
-          <h2 class="chart-name">{{ chart.name }}</h2>
-          @if (chart.hasValue) {
-            <w4a-dimension-chart
-              [label]="chart.name"
-              [axisTitle]="chart.axisTitle"
-              [token]="chart.token"
-              [marker]="chart.marker"
-              [series]="chart.series"
-              [labels]="chart.labels"
-              [bounds]="chart.bounds"
-              [ariaLabel]="chart.ariaLabel"
-            />
-          } @else {
-            <p class="chart-empty">{{ t().reportChartNoData }}</p>
-          }
+  }
+
+  <div class="layout" [class.bare]="isEmpty()">
+    @if (!isEmpty()) {
+      <section class="chart-card combined">
+        @if (rangeHasData()) {
+          <w4a-combined-chart
+            [lines]="combinedLines()"
+            [labels]="dayLabels()"
+            [ariaLabel]="t().reportCombinedAriaLabel"
+          />
+          <p class="footnote">{{ t().chartFootnote }}</p>
+          <w4a-data-table
+            [caption]="t().reportCombinedAriaLabel"
+            [days]="dayLabels()"
+            [columns]="combinedColumns()"
+          />
+        } @else {
+          <p class="chart-empty">{{ t().reportChartNoData }}</p>
+        }
+      </section>
+
+      <div class="charts">
+        @for (chart of charts(); track chart.key) {
+          <section class="chart-card">
+            <h2 class="chart-name">{{ chart.name }}</h2>
+            @if (chart.hasValue) {
+              <w4a-dimension-chart
+                [label]="chart.name"
+                [axisTitle]="chart.axisTitle"
+                [token]="chart.token"
+                [marker]="chart.marker"
+                [series]="chart.series"
+                [labels]="chart.labels"
+                [bounds]="chart.bounds"
+                [ariaLabel]="chart.ariaLabel"
+              />
+              <w4a-data-table
+                [caption]="chart.ariaLabel"
+                [days]="chart.labels"
+                [columns]="[chart.column]"
+              />
+            } @else {
+              <p class="chart-empty">{{ t().reportChartNoData }}</p>
+            }
+          </section>
+        }
+      </div>
+    }
+
+    <div class="cards">
+      @for (card of cards(); track card.key) {
+        <section class="card" [attr.aria-label]="card.name">
+          <div class="head">
+            <h2 class="name">
+              <span
+                class="marker"
+                aria-hidden="true"
+                [attr.data-shape]="card.marker"
+                [style.background-color]="'var(' + card.token + ')'"
+              ></span>
+              {{ card.name }}
+            </h2>
+            <span class="caption">{{ card.caption }}</span>
+          </div>
+          <dl class="cells">
+            @for (cell of card.cells; track cell.key) {
+              <div class="cell">
+                <dt class="label">{{ cell.label }}</dt>
+                <dd class="value" [class.none]="cell.text === null">{{ cell.text ?? t().statNoData }}</dd>
+              </div>
+            }
+          </dl>
         </section>
       }
     </div>
-  }
-
-  <div class="cards">
-    @for (card of cards(); track card.key) {
-      <section class="card" [attr.aria-label]="card.name">
-        <div class="head">
-          <h2 class="name">
-            <span
-              class="marker"
-              aria-hidden="true"
-              [attr.data-shape]="card.marker"
-              [style.background-color]="'var(' + card.token + ')'"
-            ></span>
-            {{ card.name }}
-          </h2>
-          <span class="caption">{{ card.caption }}</span>
-        </div>
-        <dl class="cells">
-          @for (cell of card.cells; track cell.key) {
-            <div class="cell">
-              <dt class="label">{{ cell.label }}</dt>
-              <dd class="value" [class.none]="cell.text === null">{{ cell.text ?? t().statNoData }}</dd>
-            </div>
-          }
-        </dl>
-      </section>
-    }
   </div>
 }

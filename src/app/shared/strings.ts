@@ -312,6 +312,10 @@ export const strings = {
     it: 'Non è stato possibile caricare le registrazioni.',
   },
   reportRetry: { en: 'Try again', it: 'Riprova' },
+  reportShowTable: { en: 'Show data as table', it: 'Mostra i dati in tabella' },
+  reportHideTable: { en: 'Hide table', it: 'Nascondi tabella' },
+  reportTableDay: { en: 'Day', it: 'Giorno' },
+  reportTableNoValue: { en: '—', it: '—' },
   chartFootnote: {
     en: 'Each line uses its own scale. Dashed = days without an entry.',
     it: 'Ogni linea ha la sua scala. Tratteggio = giorni senza registrazione.',

@@ -37,6 +37,15 @@ export function isEmptyReport(status: 'loading' | 'ready' | 'error', entryCount:
   return status === 'ready' && entryCount === 0;
 }
 
+/** One text per Day of the series for a table: the formatted value, or `emptyText` for a Day without one. */
+export function tableCells(
+  series: readonly SeriesPoint[],
+  format: (value: number) => string,
+  emptyText: string,
+): string[] {
+  return series.map((point) => (point.value === null ? emptyText : format(point.value)));
+}
+
 /** The number of Days with a Real value. */
 export function countValues(series: readonly SeriesPoint[]): number {
   return series.reduce((count, point) => (point.value === null ? count : count + 1), 0);

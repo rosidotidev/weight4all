@@ -54,7 +54,7 @@
 .charts {
   display: grid;
   gap: var(--w4a-card-gap);
-  margin-bottom: var(--w4a-space-4);
+  min-width: 0;
 }
 .chart-card {
   min-width: 0;
@@ -106,7 +106,7 @@
   }
 }
 .combined {
-  margin-bottom: var(--w4a-space-4);
+  min-width: 0;
 }
 .footnote {
   margin: var(--w4a-space-2) 0 0;
@@ -118,15 +118,41 @@
   color: var(--w4a-on-surface-variant);
   font-size: var(--w4a-type-body-size);
 }
+.layout,
 .cards {
   display: grid;
   gap: var(--w4a-card-gap);
+  min-width: 0;
 }
-// Three Statistics cards sit in a row from the medium window class (600 px, MEDIUM_MIN_WIDTH).
+// Medium (600 px, MEDIUM_MIN_WIDTH): the Statistics sit beside the combined chart (3 : 2), and the three
+// per-Dimension charts run in a row below. Expanded (840 px, EXPANDED_MIN_WIDTH) gives the combined chart two
+// thirds. A report without data (`.bare`) stays one column.
 @media (min-width: 600px) {
-  .cards {
+  .layout:not(.bare) {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    column-gap: var(--w4a-space-4);
+  }
+  .layout:not(.bare) .combined {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .layout:not(.bare) .cards {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .layout:not(.bare) .charts {
+    grid-column: 1 / -1;
+    grid-row: 2;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--w4a-space-4);
+  }
+  // Beside the chart the Statistics are narrower, so each card shows its four values as two by two.
+  .layout:not(.bare) .cells {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 840px) {
+  .layout:not(.bare) {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   }
 }
 .card {
