@@ -111,6 +111,21 @@ describe('readToken', () => {
 });
 
 describe('lineOptions', () => {
+  it('hides an axis that is not visible and an axis with no title', () => {
+    const options = lineOptions(
+      [
+        { id: 'y0', title: '', bounds: { min: 69.8, max: 72.2 }, position: 'left', gridlines: true },
+        { id: 'y1', title: 'h', bounds: null, position: 'right', gridlines: false, visible: false },
+      ],
+      { text: 'text-color', grid: 'grid-color' },
+      true,
+    );
+    const scales = options.scales as Record<string, { display: boolean; title: { display: boolean } }>;
+    expect(scales['y0'].display).toBe(true);
+    expect(scales['y0'].title.display).toBe(false);
+    expect(scales['y1'].display).toBe(false);
+  });
+
   it('turns animation off and lets the chart fill its container', () => {
     const options = lineOptions([], { text: 'text-color', grid: 'grid-color' }, false);
     expect(options.animation).toBe(false);

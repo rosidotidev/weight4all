@@ -276,7 +276,8 @@ export const strings = {
   },
   weekLogged: {
     en: (p: { count: string }) => `${p.count} of 7 days logged`,
-    it: (p: { count: string }) => `${p.count} giorni su 7 registrati`,
+    it: (p: { count: string }) =>
+      p.count === '1' ? '1 giorno su 7 registrati' : `${p.count} giorni su 7 registrati`,
   },
   weekAverage: {
     en: (p: { label: string }) => `Avg ${p.label.toLowerCase()}`,

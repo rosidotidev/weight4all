@@ -58,8 +58,11 @@ export class CombinedChartComponent {
       options: lineOptions(
         lines.map((line, index) => ({
           id: axisId(index),
-          title: line.axisTitle,
+          // Each legend entry already carries its unit; axis titles overlapped the ticks on narrow screens.
+          title: '',
           bounds: line.bounds,
+          // A Dimension with no value in the Range keeps its legend entry but draws no axis.
+          visible: line.bounds !== null,
           position: index === 0 ? ('left' as const) : ('right' as const),
           gridlines: index === 0,
         })),

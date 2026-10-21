@@ -77,6 +77,8 @@ export interface AxisSpec {
   readonly position: 'left' | 'right';
   /** Gridlines only for the first axis, so the combined chart is not drawn twice. */
   readonly gridlines: boolean;
+  /** Omitted or true draws the axis; false keeps the Dataset and its legend entry without an axis. */
+  readonly visible?: boolean;
 }
 
 export interface ChartPalette {
@@ -90,7 +92,8 @@ export interface ChartPalette {
 export function lineOptions(axes: readonly AxisSpec[], palette: ChartPalette, legend: boolean): ChartOptions<'line'> {
   const scales: Record<string, unknown> = {
     x: {
-      ticks: { color: palette.text, autoSkip: true, maxRotation: 0 },
+      // Few enough labels that neighbouring dates never touch on a phone.
+      ticks: { color: palette.text, autoSkip: true, maxRotation: 0, maxTicksLimit: 4 },
       grid: { display: false },
     },
   };
@@ -100,7 +103,8 @@ export function lineOptions(axes: readonly AxisSpec[], palette: ChartPalette, le
       position: axis.position,
       min: axis.bounds?.min,
       max: axis.bounds?.max,
-      title: { display: true, text: axis.title, color: palette.text },
+      display: axis.visible ?? true,
+      title: { display: axis.title !== '', text: axis.title, color: palette.text },
       ticks: { color: palette.text },
       grid: { display: axis.gridlines, color: palette.grid },
     };

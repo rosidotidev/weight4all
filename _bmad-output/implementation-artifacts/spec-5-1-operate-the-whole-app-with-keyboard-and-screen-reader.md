@@ -2,7 +2,7 @@
 title: 'Story 5.1: Operate the whole app with keyboard and screen reader'
 type: 'feature'
 created: '2026-10-21'
-status: 'in-review'
+status: 'done'
 baseline_commit: '54b1f15'
 route: 'dispatch'
 review_loop_iteration: 0
@@ -101,3 +101,10 @@ Run in Chrome, signed in as the test account, against `localhost:4200`:
 - 768 px (frame): chart and Statistics side by side, three charts in a row below, no horizontal scroll.
 - 200% zoom: checked as a 768 px CSS viewport, because `zoom` on the root element does not change the media-query width. Same result as 768 px.
 - Known deviations (recorded in `deferred-work.md`): axis titles overlap tick labels on the combined chart at 360 and 768 px.
+
+## Follow-up: Tab sweep and browser fixes
+
+- Tab sweep (Chrome, signed in): Oggi has 20 keyboard-reachable controls and Storico has 7; all show the solid focus ring with `:focus-visible`. The row "Modifica" action is visually hidden until a swipe and is not in the tab order; keyboard users reach Modifica and Elimina through the row "più" menu, where both items show the focus ring.
+- Fixed: combined Report chart axis titles (overlapping ticks at 360 and 768 px) and x-axis label crowding at 360 px. Each legend entry carries its unit, so the combined chart drops the axis titles and caps the x ticks.
+- Fixed: a Dimension with no value in the Range keeps its legend entry but its value axis is hidden (spec 4.3 requires three legend entries and no bounds).
+- Fixed: Today week card reads "1 giorno su 7 registrati" in Italian.
