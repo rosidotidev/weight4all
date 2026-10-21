@@ -24,7 +24,8 @@ import { DIMENSIONS } from '../../domain/dimensions';
 import { dimensionStatistics, formatStat } from '../../domain/stats';
 import { AxisBounds, SeriesPoint, axisBounds, buildSeries, countValues } from '../../domain/series';
 import { I18n } from '../../shared/i18n';
-import { MarkerStyle, markerFor } from './chart-config';
+import { MarkerStyle, legendLabel, markerFor } from './chart-config';
+import { CombinedChartComponent, CombinedLine } from './combined-chart.component';
 import { DimensionChartComponent } from './dimension-chart.component';
 
 type RangeLabelKey = 'rangeDays7' | 'rangeDays30' | 'rangeDays90' | 'rangeYear' | 'rangeAll';
@@ -68,6 +69,7 @@ interface StatCard {
 interface ChartCard {
   readonly key: string;
   readonly name: string;
+  readonly legend: string;
   readonly axisTitle: string;
   readonly token: string;
   readonly marker: MarkerStyle;
@@ -82,7 +84,7 @@ interface ChartCard {
 @Component({
   selector: 'w4a-report',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DimensionChartComponent],
+  imports: [CombinedChartComponent, DimensionChartComponent],
   // Chart.js is registered here, so it loads with the Report route and not with the app shell.
   providers: [
     provideCharts({
@@ -121,19 +123,26 @@ export class ReportComponent {
     return range === 'all' ? t.statAllTime : t.statLastDays({ count: String(RANGE_DAYS[range]) });
   });
 
-  /** One series per registry Dimension over the Range; the x labels are the Days of the Range. */
+  /** The x labels: one per Day of the Range, shared by every chart. */
+  protected readonly dayLabels = computed<string[]>(() => {
+    const locale = this.i18n.locale();
+    const { from, to } = this.period();
+    return enumerateDays(from, to).map((day) => formatDay(day, locale, false));
+  });
+
+  /** One series per registry Dimension over the Range; the combined and the per-Dimension charts share it. */
   protected readonly charts = computed<ChartCard[]>(() => {
     const t = this.t();
-    const locale = this.i18n.locale();
     const entries = this.entries();
     const { from, to } = this.period();
-    const labels = enumerateDays(from, to).map((day) => formatDay(day, locale, false));
+    const labels = this.dayLabels();
     return DIMENSIONS.map((dimension, index) => {
       const series = buildSeries(entries, from, to, dimension.key);
       const name = t[dimension.labelKey];
       return {
         key: dimension.key,
         name,
+        legend: legendLabel(name, dimension),
         axisTitle: dimension.unit || name,
         token: dimension.chartToken,
         marker: markerFor(index),
@@ -145,6 +154,18 @@ export class ReportComponent {
       };
     });
   });
+
+  /** The combined chart's lines: the same series and bounds as each Dimension's own chart. */
+  protected readonly combinedLines = computed<CombinedLine[]>(() =>
+    this.charts().map((chart) => ({
+      legend: chart.legend,
+      axisTitle: chart.axisTitle,
+      token: chart.token,
+      marker: chart.marker,
+      series: chart.series,
+      bounds: chart.bounds,
+    })),
+  );
 
   protected readonly cards = computed<StatCard[]>(() => {
     const t = this.t();

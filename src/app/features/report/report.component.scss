@@ -67,6 +67,14 @@
   font-size: var(--w4a-type-section-label-size);
   font-weight: 700;
 }
+.combined {
+  margin-bottom: var(--w4a-space-4);
+}
+.footnote {
+  margin: var(--w4a-space-2) 0 0;
+  color: var(--w4a-on-surface-variant);
+  font-size: var(--w4a-type-caption-size);
+}
 .chart-empty {
   margin: 0;
   color: var(--w4a-on-surface-variant);

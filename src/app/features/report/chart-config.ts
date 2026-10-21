@@ -1,5 +1,14 @@
 import type { ChartDataset, ChartOptions } from 'chart.js';
+import type { Dimension } from '../../domain/dimensions';
 import { AxisBounds, SeriesPoint } from '../../domain/series';
+
+/**
+ * A legend entry: the name with the unit in brackets ("Weight (kg)"); a Dimension without a unit
+ * shows its registry range instead ("Mood (1–10)").
+ */
+export function legendLabel(name: string, dimension: Pick<Dimension, 'unit' | 'min' | 'max'>): string {
+  return `${name} (${dimension.unit || `${dimension.min}–${dimension.max}`})`;
+}
 
 /** Marker by registry position (AD-3, UX-DR13): circle for Weight, square for Mood, triangle for Sleep. */
 export type MarkerStyle = 'circle' | 'rect' | 'triangle';

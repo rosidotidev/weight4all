@@ -300,6 +300,11 @@ export const strings = {
   statChange: { en: 'Change', it: 'Variazione' },
   statNoData: { en: 'No data', it: 'Nessun dato' },
   reportChartNoData: { en: 'No data in this Range', it: 'Nessun dato in questo intervallo' },
+  reportCombinedAriaLabel: { en: 'Weight, mood and sleep chart', it: 'Grafico di peso, umore e sonno' },
+  chartFootnote: {
+    en: 'Each line uses its own scale. Dashed = days without an entry.',
+    it: 'Ogni linea ha la sua scala. Tratteggio = giorni senza registrazione.',
+  },
   reportChartAriaLabel: {
     en: (p: { name: string }) => `${p.name} chart`,
     it: (p: { name: string }) => `Grafico di ${p.name}`,

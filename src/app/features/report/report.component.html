@@ -18,6 +18,14 @@
     </button>
   }
 </div>
+<section class="chart-card combined">
+  <w4a-combined-chart
+    [lines]="combinedLines()"
+    [labels]="dayLabels()"
+    [ariaLabel]="t().reportCombinedAriaLabel"
+  />
+  <p class="footnote">{{ t().chartFootnote }}</p>
+</section>
 <div class="charts">
   @for (chart of charts(); track chart.key) {
     <section class="chart-card">

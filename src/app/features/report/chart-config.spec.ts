@@ -1,6 +1,18 @@
 import { buildSeries, SeriesPoint } from '../../domain/series';
 import { Entry } from '../../domain/entry';
-import { chartDataset, GAP_DASH, lineOptions, readToken, segmentDash } from './chart-config';
+import { DIMENSIONS } from '../../domain/dimensions';
+import { chartDataset, GAP_DASH, legendLabel, lineOptions, readToken, segmentDash } from './chart-config';
+
+describe('legendLabel', () => {
+  it('shows the unit in brackets when the Dimension has one', () => {
+    expect(legendLabel('Weight', DIMENSIONS[0])).toBe('Weight (kg)');
+    expect(legendLabel('Sleep', DIMENSIONS[2])).toBe('Sleep (h)');
+  });
+
+  it('shows the registry range when the Dimension has no unit', () => {
+    expect(legendLabel('Mood', DIMENSIONS[1])).toBe('Mood (1–10)');
+  });
+});
 
 const entry = (day: string, values: Entry['values']): Entry => ({ day, values });
 const entries = (list: Entry[]) => Object.fromEntries(list.map((e) => [e.day, e]));
