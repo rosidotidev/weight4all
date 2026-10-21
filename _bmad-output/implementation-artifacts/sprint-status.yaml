@@ -77,7 +77,7 @@ development_status:
 
   epic-5: backlog
   5-1-operate-the-whole-app-with-keyboard-and-screen-reader: done
-  5-2-never-rely-on-color-alone: backlog
+  5-2-never-rely-on-color-alone: done
   5-3-verify-the-layout-on-three-screens-and-four-browsers-in-both: review
   5-4-meet-the-performance-budget: backlog
   5-5-pass-the-three-key-journeys-end-to-end: backlog
