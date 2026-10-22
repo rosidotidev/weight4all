@@ -20,3 +20,6 @@ __screenshots__/
 Thumbs.db
 /test-results
 /playwright-report
+
+# Valori reali di produzione (Firebase)
+src/environments/firebase.prod.values.ts

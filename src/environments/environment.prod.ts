@@ -1,13 +1,10 @@
-// Production environment. PLACEHOLDER VALUES: replace with the real Firebase project
-// config when the project is created (Story 5.6). No emulator fields: prod never connects to emulators.
+// Production environment: real Firebase project. Never connects to emulators.
+// `environment.prod.ts` replaces `environment.ts` in the production build (angular.json fileReplacements).
+// I valori Firebase arrivano da firebase.prod.values.ts (ignorato da git).
 import type { Environment } from './environment.model';
+import { prodFirebase } from './firebase.prod.values';
 
 export const environment: Environment = {
   name: 'prod',
-  firebase: {
-    apiKey: 'PLACEHOLDER_API_KEY',
-    authDomain: 'PLACEHOLDER_PROJECT_ID.firebaseapp.com',
-    projectId: 'PLACEHOLDER_PROJECT_ID',
-    appId: 'PLACEHOLDER_APP_ID',
-  },
+  firebase: prodFirebase,
 };

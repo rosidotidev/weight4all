@@ -65,6 +65,26 @@ export async function seedEntries(uid: string, days: Record<string, Record<strin
   }
 }
 
+/**
+ * Reads one Entry straight from the emulator with the admin token, to prove a save reached the server.
+ * Returns the Dimension values (absent fields are left out), or `null` when the Day has no document.
+ */
+export async function readEntry(uid: string, day: string): Promise<Record<string, number> | null> {
+  const url = `${FIRESTORE}/v1/projects/${PROJECT}/databases/(default)/documents/users/${uid}/entries/${day}`;
+  const response = await emulatorFetch(url, { method: 'GET', headers: ADMIN }, 'Firestore', 8080);
+  if (response.status === 404) return null;
+  expect(response.ok, `read entry ${day}`).toBe(true);
+  const body = (await response.json()) as {
+    fields?: Record<string, { doubleValue?: number; integerValue?: string }>;
+  };
+  const values: Record<string, number> = {};
+  for (const [key, field] of Object.entries(body.fields ?? {})) {
+    if (key === 'updatedAt') continue;
+    values[key] = field.doubleValue ?? Number(field.integerValue);
+  }
+  return values;
+}
+
 /** The Firestore batch limit per request. */
 const BATCH_LIMIT = 500;
 
