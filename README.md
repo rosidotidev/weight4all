@@ -32,6 +32,40 @@ Each account sees only its own data. Access and data shape are enforced by Fires
 
 ---
 
+## Planned UI
+
+The screens below are the mockups from the UX phase of the BMad planning. They show how the finished product should look and behave. The design rules are in [`DESIGN.md`](_bmad-output/planning-artifacts/ux-designs/ux-bmad612_home-2026-10-19/DESIGN.md) (look, colors, tokens) and [`EXPERIENCE.md`](_bmad-output/planning-artifacts/ux-designs/ux-bmad612_home-2026-10-19/EXPERIENCE.md) (behavior).
+
+### Today: logging the day (desktop)
+
+![Desktop Today screen](_bmad-output/planning-artifacts/ux-designs/ux-bmad612_home-2026-10-19/mockups/desktop-01-today.svg)
+
+### Report: the three values over time (desktop)
+
+![Desktop Report screen](_bmad-output/planning-artifacts/ux-designs/ux-bmad612_home-2026-10-19/mockups/desktop-02-report.svg)
+
+### Happy feedback after saving (phone)
+
+![Happy effect after saving](_bmad-output/planning-artifacts/ux-designs/ux-bmad612_home-2026-10-19/mockups/mock-02-happy-effect.svg)
+
+### All mockups
+
+| Screen | Device | File |
+| --- | --- | --- |
+| Today: logging the day | Desktop | [desktop-01-today.svg](_bmad-output/planning-artifacts/ux-designs/ux-bmad612_home-2026-10-19/mockups/desktop-01-today.svg) |
+| Report with charts | Desktop | [desktop-02-report.svg](_bmad-output/planning-artifacts/ux-designs/ux-bmad612_home-2026-10-19/mockups/desktop-02-report.svg) |
+| Today: logging the day | Tablet | [tablet-01-today.svg](_bmad-output/planning-artifacts/ux-designs/ux-bmad612_home-2026-10-19/mockups/tablet-01-today.svg) |
+| Report with charts | Tablet | [tablet-02-report.svg](_bmad-output/planning-artifacts/ux-designs/ux-bmad612_home-2026-10-19/mockups/tablet-02-report.svg) |
+| Today: logging the day | Phone | [mock-01-today.svg](_bmad-output/planning-artifacts/ux-designs/ux-bmad612_home-2026-10-19/mockups/mock-01-today.svg) |
+| Happy effect after saving | Phone | [mock-02-happy-effect.svg](_bmad-output/planning-artifacts/ux-designs/ux-bmad612_home-2026-10-19/mockups/mock-02-happy-effect.svg) |
+| History of entries | Phone | [mock-03-history.svg](_bmad-output/planning-artifacts/ux-designs/ux-bmad612_home-2026-10-19/mockups/mock-03-history.svg) |
+| Report with charts | Phone | [mock-04-report.svg](_bmad-output/planning-artifacts/ux-designs/ux-bmad612_home-2026-10-19/mockups/mock-04-report.svg) |
+| Settings: accent color, language, account | Phone | [mock-05-settings.svg](_bmad-output/planning-artifacts/ux-designs/ux-bmad612_home-2026-10-19/mockups/mock-05-settings.svg) |
+
+A browsable version with all the mockups is in [`mockups/index.html`](_bmad-output/planning-artifacts/ux-designs/ux-bmad612_home-2026-10-19/mockups/index.html). Open it in a browser.
+
+---
+
 ## How BMad was used
 
 The project follows the BMad **full path**: analysis, planning, architecture, epics and stories, a build loop per epic, then a retrospective. BMad version installed in this repo: **6.12.4** (modules `core`, `bmm`, `bmb`).
