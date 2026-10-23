@@ -1,6 +1,6 @@
 @echo off
 rem Starts the Weight4All app (dev server) and opens it in the browser.
-rem Start start-emulators.bat first so login and registration work.
+rem Start start-emulators.bat first so login works.
 cd /d "%~dp0"
 title Weight4All - app
 

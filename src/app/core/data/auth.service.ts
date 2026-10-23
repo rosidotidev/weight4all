@@ -1,6 +1,5 @@
 import { Injectable, signal } from '@angular/core';
 import {
-  createUserWithEmailAndPassword,
   onAuthStateChanged,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
@@ -11,8 +10,6 @@ import { auth } from './firebase';
 /** Closed set of auth failures; raw Firebase text never leaves this file (AD-9). */
 export type AuthErrorCode =
   | 'invalid-credentials'
-  | 'email-in-use'
-  | 'weak-password'
   | 'invalid-email'
   | 'network'
   | 'unknown';
@@ -41,10 +38,6 @@ export function toAuthErrorCode(error: unknown): AuthErrorCode {
     case 'auth/user-not-found':
     case 'auth/invalid-login-credentials':
       return 'invalid-credentials';
-    case 'auth/email-already-in-use':
-      return 'email-in-use';
-    case 'auth/weak-password':
-      return 'weak-password';
     case 'auth/invalid-email':
       return 'invalid-email';
     case 'auth/network-request-failed':
@@ -75,18 +68,6 @@ export class AuthService {
         this._session.set({ status: 'signedOut' });
       },
     );
-  }
-
-  /** Creates the Account and signs the user in. */
-  async register(email: string, password: string): Promise<AuthResult> {
-    try {
-      const credential = await createUserWithEmailAndPassword(auth, email, password);
-      this._email.set(credential.user.email ?? null);
-      this._session.set({ status: 'signedIn', uid: credential.user.uid });
-      return { ok: true };
-    } catch (error) {
-      return { ok: false, code: toAuthErrorCode(error) };
-    }
   }
 
   async login(email: string, password: string): Promise<AuthResult> {

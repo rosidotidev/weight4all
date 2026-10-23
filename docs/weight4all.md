@@ -61,7 +61,7 @@ The project is split into **a planning phase + 5 features**. Each feature is **o
 | Step | Name | What it delivers | Depends on | Instructions |
 |---|---|---|---|---|
 | — | **Planning** | Brief, PRD, UX (`DESIGN.md` + `EXPERIENCE.md`), architecture, epics & stories, sprint status | — | [planning.md](planning.md) |
-| F0 | **Foundations and adaptive shell** (Epic 1, 10 stories) | Project and quality gate, Firebase with security rules, IT/EN dictionary, M3 theme, register/login/reset, four-tab adaptive shell, Language and accent | Planning | [features/feature-00-fondazioni.md](features/feature-00-fondazioni.md) |
+| F0 | **Foundations and adaptive shell** (Epic 1, 10 stories) | Project and quality gate, Firebase with security rules, IT/EN dictionary, M3 theme, login/reset, four-tab adaptive shell, Language and accent | Planning | [features/feature-00-fondazioni.md](features/feature-00-fondazioni.md) |
 | F1 | **Daily weight entry** (Epic 2, 10 stories) | Weight by date, Happy effect, Missing-entry sign, History, edit/add/delete, "This week"; introduces the Entry, its store and its form | F0 | [features/feature-01-peso.md](features/feature-01-peso.md) |
 | F2 | **Emotional level and sleep hours** (Epic 3, 3 stories) | Mood 1–10 (faces) and sleep hours (slider, default 6.0 h) added to the daily entry | F1 | [features/feature-02-umore-sonno.md](features/feature-02-umore-sonno.md) |
 | F3 | **Report tab with charts** (Epic 4, 5 stories) | Range, Statistics, per-Dimension and combined charts, dashed gaps, adaptive view | F2 | [features/feature-03-report.md](features/feature-03-report.md) |

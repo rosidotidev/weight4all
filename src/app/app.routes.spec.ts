@@ -11,7 +11,6 @@ import { ReportComponent } from './features/report/report.component';
 import { ShellComponent } from './shell/shell.component';
 import { LoginComponent } from './features/auth/login.component';
 import { ResetComponent } from './features/auth/reset.component';
-import { RegisterComponent } from './features/auth/register.component';
 import { SettingsComponent } from './features/settings/settings.component';
 import { TodayComponent } from './features/today/today.component';
 
@@ -26,7 +25,7 @@ describe('routes', () => {
         provideRouter(routes),
         {
           provide: AuthService,
-          useValue: { session, email: signal<string | null>(null), register: vi.fn(), login: vi.fn(), logout: vi.fn(), sendPasswordReset: vi.fn() },
+          useValue: { session, email: signal<string | null>(null), login: vi.fn(), logout: vi.fn(), sendPasswordReset: vi.fn() },
         },
       ],
     });
@@ -59,9 +58,10 @@ describe('routes', () => {
     expect(renders(harness, LoginComponent)).toBe(true);
   });
 
-  it('signed out: /register renders RegisterComponent', async () => {
+  it('signed out: the old /register link lands on /login', async () => {
     const harness = await open('/register');
-    expect(renders(harness, RegisterComponent)).toBe(true);
+    expect(renders(harness, LoginComponent)).toBe(true);
+    expect(TestBed.inject(Router).url).toBe('/login');
   });
 
   it('signed in: the empty path renders TodayComponent', async () => {
@@ -70,7 +70,7 @@ describe('routes', () => {
     expect(renders(harness, TodayComponent)).toBe(true);
   });
 
-  it.each(['/login', '/register'])('signed in: %s redirects to /today', async (url) => {
+  it.each(['/login', '/register'])('signed in: %s lands on /today', async (url) => {
     session.set({ status: 'signedIn', uid: 'u1' });
     const harness = await open(url);
     expect(renders(harness, TodayComponent)).toBe(true);
@@ -184,7 +184,7 @@ describe('routes', () => {
     expect(activeTabs(harness)).toEqual(['/report']);
   });
 
-  it.each(['/login', '/register', '/reset'])('%s renders outside the shell', async (url) => {
+  it.each(['/login', '/reset'])('%s renders outside the shell', async (url) => {
     const harness = await open(url);
     expect(renders(harness, ShellComponent)).toBe(false);
   });

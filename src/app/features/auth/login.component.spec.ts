@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
+import { PreferencesStore } from '../../core/data/preferences.store';
 import { SessionScope } from '../../core/data/session-scope';
 import { AuthResult, AuthService } from '../../core/data/auth.service';
 import { LoginComponent } from './login.component';
@@ -156,10 +157,31 @@ describe('LoginComponent', () => {
     expect(login).toHaveBeenCalledWith('a@b.it', 'secret1');
   });
 
-  it('links to /register', async () => {
+  it('has no create-account link or text', async () => {
     const { el } = await setup();
     const hrefs = Array.from(el.querySelectorAll('a')).map((a) => a.getAttribute('href'));
-    expect(hrefs).toContain('/register');
+    expect(hrefs).toEqual(['/reset']);
+    expect(el.textContent).not.toMatch(/create an account|new here/i);
+  });
+
+  it('shows the brand, the tagline and a decorative illustration', async () => {
+    const { el } = await setup();
+    expect(el.querySelector('.wordmark')!.textContent!.trim()).toBe('Weight4All');
+    expect(el.querySelector('.tagline')!.textContent!.trim()).toBe('Your kind daily check-in.');
+    const art = el.querySelector('svg.art')!;
+    expect(art.getAttribute('aria-hidden')).toBe('true');
+    expect(el.querySelector('h1')!.textContent!.trim()).toBe('Welcome back');
+  });
+
+  it('shows the brand and tagline in Italian', async () => {
+    TestBed.inject(PreferencesStore).setLanguage('it');
+    const { fixture, el } = await setup();
+    await fixture.whenStable();
+    expect(el.querySelector('.wordmark')!.textContent!.trim()).toBe('Weight4All');
+    expect(el.querySelector('.tagline')!.textContent!.trim()).toBe(
+      'Il tuo check-in quotidiano, senza giudizi.',
+    );
+    expect(el.querySelector('h1')!.textContent!.trim()).toBe('Bentornato');
   });
 
   it('links to /reset', async () => {

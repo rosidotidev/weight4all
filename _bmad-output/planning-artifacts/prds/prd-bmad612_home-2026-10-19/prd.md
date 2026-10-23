@@ -89,19 +89,17 @@ The product has a second purpose: it is the real project through which Bob learn
 
 ### 4.1 F0 — Foundations and adaptive shell
 
-**Description:** Everything the other features stand on: registration and login with Firebase Authentication, per-Account data separation, the adaptive layout with the four Tabs, and the Settings tab, where the Accent palette and the Language (Italian or English) are chosen. After login, Bob lands on the Today tab. The layout adapts to phone, tablet and desktop. Realizes UJ-1, UJ-2, UJ-3.
+**Description:** Everything the other features stand on: login with Firebase Authentication (Accounts are created by the owner in the backend), per-Account data separation, the adaptive layout with the four Tabs, and the Settings tab, where the Accent palette and the Language (Italian or English) are chosen. After login, Bob lands on the Today tab. The layout adapts to phone, tablet and desktop. Realizes UJ-1, UJ-2, UJ-3.
 
 **Functional Requirements:**
 
-#### FR-1: Register with email and password
+#### FR-1: Register with email and password — REMOVED (2026-10-23)
 
-A visitor can create an Account with an email address and a password.
+~~A visitor can create an Account with an email address and a password.~~
 
-**Consequences (testable):**
-- A new Account is created for a valid, unused email and a password meeting the Firebase minimum.
-- An email already in use, an invalid email or a too-short password is rejected with a clear message and no Account is created.
+Removed: the app has no self sign-up. The owner creates Accounts himself in the Firebase backend. An old `/register` address lands on the login screen (or on Today when signed in).
 
-**Out of Scope:** email verification `[ASSUMPTION]`; social login; any other sign-in method.
+**Out of Scope:** self sign-up; email verification; social login; any other sign-in method.
 
 #### FR-2: Log in, stay logged in, log out
 
@@ -404,7 +402,7 @@ The app loads quickly and stays responsive with a long history.
 
 ### 6.1 In Scope
 
-- Email/password registration, login, logout, password reset (F0)
+- Email/password login, logout, password reset (F0); Accounts are created in the backend, not in the app
 - Adaptive shell with Today, History, Report and Settings tabs; Accent palette and Italian/English Language chosen in Settings (F0)
 - Daily Entry: Weight required; Mood level and Sleep hours optional (F1, F2)
 - Edit and delete any Entry; add past Entries; History (F1)
@@ -470,7 +468,7 @@ Modern, happy and colorful, not gaudy. The user picks accent colors from a small
 
 - §2.3 — The three journeys are drafted from the brief, not narrated by Bob.
 - §3 Glossary / FR-16 — Sleep hours: 0–24 in half-hour steps; the control starts at 6.0 h for any Day without an Entry and can be emptied with a clear control.
-- FR-1 — No email verification.
+- FR-1 — Removed 2026-10-23: no self sign-up; Accounts are created in the backend.
 - FR-3 — Password reset is included.
 - FR-5 — Bottom bar on phone, side or top bar on larger screens.
 - FR-6 — Palette of about 5–8 colors; each Dimension keeps its own chart color whatever the accent.

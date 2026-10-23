@@ -98,3 +98,6 @@
 - source_spec: `spec-gentler-mood-faces-with-colour-scale.md`
   summary: The mockups (`mock-01-today.svg`, `mock-03-history.svg`, tablet and desktop Today) still show the old yellow faces with deep mouths; DESIGN.md is now the reference for mood faces.
   evidence: Review finding; the faces changed deliberately on 2026-10-23 (gentle mouths, periwinkle-to-gold scale) and the SVG mockups were not redrawn.
+- source_spec: `_bmad-output/implementation-artifacts/spec-login-without-sign-up-and-branding.md`
+  summary: Check white text contrast on the celebration gradient (login hero tagline, Happy effect) for every accent palette.
+  evidence: maybe-false; `--w4a-celebration-*` derive from the accent via color-mix, and the lightest stop with the orange or teal accent may sit near 4.5:1 for 15 px text. A per-accent contrast check in tests/lint/theme.spec.ts would settle it.

@@ -16,8 +16,6 @@ const EMAIL_SHAPE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const MESSAGE_KEYS: Record<AuthErrorCode, StringKey> = {
   'invalid-credentials': 'authErrorInvalidCredentials',
-  'email-in-use': 'authErrorEmailInUse',
-  'weak-password': 'authErrorWeakPassword',
   'invalid-email': 'authErrorInvalidEmail',
   network: 'authErrorNetwork',
   unknown: 'authErrorUnknown',

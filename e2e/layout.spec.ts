@@ -59,3 +59,35 @@ for (const language of ['en', 'it'] as const) {
     }
   });
 }
+
+/** Horizontal overflow of the page and of the login layout, which clips its own overflow (`.login` has overflow-x hidden). */
+async function loginOverflowPx(page: import('@playwright/test').Page): Promise<number> {
+  return page.evaluate(() => {
+    const doc = document.documentElement.scrollWidth - document.documentElement.clientWidth;
+    const login = document.querySelector<HTMLElement>('.login');
+    const inner = login ? login.scrollWidth - login.clientWidth : 0;
+    return Math.max(doc, inner);
+  });
+}
+
+for (const language of ['en', 'it'] as const) {
+  test(`signed out, /login fits at 360, 768 and 1280 px in ${language}`, async ({ browser }) => {
+    const context = await browser.newContext();
+    try {
+      const page = await context.newPage();
+      await setLanguage(page, language);
+
+      for (const width of WIDTHS) {
+        await page.setViewportSize({ width, height: 800 });
+        await page.goto('/login');
+        await expect(page, `/login reached at ${width} px in ${language}`).toHaveURL(/\/login$/);
+        await expect(page.locator('.hero'), `hero at ${width} px in ${language}`).toBeVisible();
+        await expect(page.locator('.card'), `card at ${width} px in ${language}`).toBeVisible();
+        expect(await loginOverflowPx(page), `overflow of /login at ${width} px in ${language}`).toBeLessThanOrEqual(1);
+        expect(await page.evaluate(() => document.documentElement.lang), 'html lang').toBe(language);
+      }
+    } finally {
+      await context.close();
+    }
+  });
+}

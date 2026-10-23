@@ -114,9 +114,9 @@ graph TD
 
 ### AD-9 — One session lifecycle [ADOPTED]
 
-- **Binds:** F0, FR-1, FR-2, FR-3, FR-4
+- **Binds:** F0, FR-2, FR-3, FR-4
 - **Prevents:** a login redirect on every reload; data visible after logout; reads or writes in flight leaking one Account's data into the next, including a direct switch of user.
-- **Rule:** `AuthService` exposes a tri-state session signal: `unknown` (Firebase not yet resolved), `signedOut`, `signedIn(uid)`. One route guard waits out `unknown`, then protects every route except login, register and password reset. `SessionScope` is the only code that starts and resets stores. On every session change, including one signed-in user replaced by another, it increments `sessionEpoch`, resets `EntryStore`, `PreferencesStore` and `DraftStore` to empty, and, when `signedIn`, loads the stores. Every read, write and re-read is tagged with its `sessionEpoch` and discarded if it differs. Auth failures return `auth-error(code)` with `code` in `invalid-credentials | email-in-use | weak-password | invalid-email | network | unknown`, mapped to `strings.ts`. Password-reset responses never reveal whether an address is registered (AD-11).
+- **Rule:** `AuthService` exposes a tri-state session signal: `unknown` (Firebase not yet resolved), `signedOut`, `signedIn(uid)`. One route guard waits out `unknown`, then protects every route except login and password reset. `SessionScope` is the only code that starts and resets stores. On every session change, including one signed-in user replaced by another, it increments `sessionEpoch`, resets `EntryStore`, `PreferencesStore` and `DraftStore` to empty, and, when `signedIn`, loads the stores. Every read, write and re-read is tagged with its `sessionEpoch` and discarded if it differs. Auth failures return `auth-error(code)` with `code` in `invalid-credentials | invalid-email | network | unknown`, mapped to `strings.ts`. Password-reset responses never reveal whether an address is registered (AD-11).
 
 ### AD-10 — Theme tokens and accent
 
@@ -161,7 +161,7 @@ graph TD
 | Naming | Files `kebab-case`, one standalone component per file `name.component.ts`; services `name.service.ts` or `name.store.ts`; selectors prefixed `w4a-`; the only identifiers shared across layers are day keys and Dimension keys. |
 | Components | Standalone only, `OnPush`, state in signals; no NgModules; code is written zoneless-compatible. RxJS only where an API forces it. |
 | Layout | `LayoutService` exposes one `windowClass` signal (`compact`, `medium`, `expanded`) that drives every adaptive decision; no component measures the window itself. |
-| Routes | One route table in `shell`: `/login`, `/register`, `/reset`, `/today`, `/history`, `/history/:dayKey`, `/report`, `/settings`. A guard on `/history/:dayKey` redirects to `/history` when the key is malformed or later than `today`. |
+| Routes | One route table in `shell`: `/login`, `/reset`, `/today`, `/history`, `/history/:dayKey`, `/report`, `/settings`. A guard on `/history/:dayKey` redirects to `/history` when the key is malformed or later than `today`. |
 | Data & formats | Day key `YYYY-MM-DD`; Entry values in display units; timestamps are Firestore server timestamps. |
 | Errors | Store methods return `ok` or `error(code)` from the closed sets in AD-5 and AD-9; features map codes to `strings.ts`; raw Firebase text is never shown. |
 | State | Stores and `core/state` hold all cross-screen state; features hold only view state. |
@@ -237,7 +237,7 @@ weight4all/
 
 | Capability / Area | Lives in | Governed by |
 | --- | --- | --- |
-| F0 Register, login, reset, session (FR-1 to FR-4) | `features/auth`, `core/data/auth.service.ts`, `session-scope.ts`, `firestore.rules` | AD-1, AD-8, AD-9, AD-11 |
+| F0 Login, reset, session (FR-2 to FR-4; FR-1 removed, Accounts created in the backend) | `features/auth`, `core/data/auth.service.ts`, `session-scope.ts`, `firestore.rules` | AD-1, AD-8, AD-9, AD-11 |
 | F0 Shell and Tabs (FR-5) | `shell`, `core/state/layout.service.ts` | Paradigm, AD-15 |
 | F0 Accent and Language (FR-6, FR-28) | `features/settings`, `core/data/preferences.store.ts`, `shared/strings.ts` | AD-7, AD-10 |
 | F1 Today, Happy effect, Missing-entry sign (FR-7 to FR-10, FR-14) | `features/today`, `shared/entry-form`, `domain/happy-effect.ts` | AD-2, AD-4, AD-5, AD-12 |

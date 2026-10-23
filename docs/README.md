@@ -50,15 +50,16 @@ Do this in parallel whenever you like; nothing in local development depends on i
 2. **Create Firestore.** Build > Firestore Database > Create database. Choose **multi-region `eur3` (Europe)**: the location cannot be changed later. Start in production mode (the repository's `firestore.rules` replace the default rules on deploy).
 3. **Enable Authentication.** Build > Authentication > Get started > Sign-in method > enable **Email/Password** (leave "Email link" off).
 4. **Enable email-enumeration protection.** Authentication > Settings > User actions > turn on "Email enumeration protection". Required so password reset never reveals whether an address is registered.
-5. **Register the web app.** Project settings (gear) > General > "Your apps" > Web (`</>`). Register it (no Firebase Hosting setup in this wizard). Copy the `firebaseConfig` values.
-6. **Fill the prod environment.** Paste the values into `src/environments/environment.prod.ts`, replacing every `PLACEHOLDER_*`. These web config values are not secrets; access is protected by `firestore.rules` and Authentication.
-7. **Authorized domains.** Authentication > Settings > Authorized domains: the Hosting domains (`<project>.web.app`, `<project>.firebaseapp.com`) are added automatically. Add a custom domain here if you use one.
-8. **Log in and link the CLI** (once per machine):
+5. **Turn off self sign-up.** Authentication > Settings > User actions > turn off "Enable create (sign-up)". The app has no sign-up screen, and this also stops anyone creating an Account through the Auth REST API with the public web key. The owner adds Accounts in Authentication > Users > Add user.
+6. **Register the web app.** Project settings (gear) > General > "Your apps" > Web (`</>`). Register it (no Firebase Hosting setup in this wizard). Copy the `firebaseConfig` values.
+7. **Fill the prod environment.** Paste the values into `src/environments/environment.prod.ts`, replacing every `PLACEHOLDER_*`. These web config values are not secrets; access is protected by `firestore.rules` and Authentication.
+8. **Authorized domains.** Authentication > Settings > Authorized domains: the Hosting domains (`<project>.web.app`, `<project>.firebaseapp.com`) are added automatically. Add a custom domain here if you use one.
+9. **Log in and link the CLI** (once per machine):
    ```bash
    npx firebase login
    npx firebase use --add     # pick the project, alias "default"; creates .firebaserc
    ```
-9. **Hosting.** Build > Hosting > Get started (or `npx firebase init hosting` and choose the existing project; public dir `dist/weight4all/browser`, single-page app: yes). Story 5.6 adds the `hosting` section to `firebase.json` and wires `npm run deploy` (check, then rules, then Hosting).
+10. **Hosting.** Build > Hosting > Get started (or `npx firebase init hosting` and choose the existing project; public dir `dist/weight4all/browser`, single-page app: yes). Story 5.6 adds the `hosting` section to `firebase.json` and wires `npm run deploy` (check, then rules, then Hosting).
 
 ## 3. Release and rollback (Story 5.6)
 

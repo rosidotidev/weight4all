@@ -1,44 +1,71 @@
 <main class="login">
-  <h1 class="title">{{ t().loginTitle }}</h1>
-  <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
-    <div class="field">
-      <label for="login-email">{{ t().loginEmailLabel }}</label>
-      <input
-        #emailInput
-        id="login-email"
-        type="email"
-        autocomplete="email"
-        formControlName="email"
-        [attr.aria-invalid]="emailError() ? 'true' : null"
-        [attr.aria-describedby]="emailError() ? 'login-email-error' : null"
+  <section class="hero">
+    <p class="wordmark">
+      <span class="logo" aria-hidden="true"></span>
+      <span class="brand-name">{{ t().appName }}</span>
+    </p>
+    <p class="tagline">{{ t().loginTagline }}</p>
+    <!-- Decoration only: a weight trend, a dotted sleep line, a moon and a gentle mood face. -->
+    <svg class="art" viewBox="0 0 320 120" aria-hidden="true" focusable="false">
+      <path
+        class="trend"
+        d="M4 70 C40 60 60 80 100 66 S160 40 200 50 S270 30 316 34"
       />
-      <p id="login-email-error" class="error" aria-live="polite">
-        @if (emailError(); as code) {
+      <path class="trend-dotted" d="M4 96 C50 90 80 100 130 88 S220 92 316 80" />
+      <circle class="point-halo" cx="200" cy="50" r="12" />
+      <circle class="point" cx="200" cy="50" r="6" />
+      <path class="moon" d="M40 18 a12 12 0 1 0 12 16 a9 9 0 1 1 -12 -16z" />
+      <g
+        class="face"
+        transform="translate(262 -4) scale(0.9)"
+        [style.--w4a-face-fill]="face.fill"
+        [style.--w4a-face-stroke]="face.stroke"
+      >
+        <circle class="face-head" [attr.cx]="center" [attr.cy]="center" r="17" />
+        <circle class="face-feature" [attr.cx]="center - 6" [attr.cy]="center - 3.4" r="1.9" />
+        <circle class="face-feature" [attr.cx]="center + 6" [attr.cy]="center - 3.4" r="1.9" />
+        <path class="face-mouth" [attr.d]="mouth" />
+      </g>
+    </svg>
+  </section>
+  <div class="card">
+    <h1 class="title">{{ t().loginTitle }}</h1>
+    <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="field">
+        <label for="login-email">{{ t().loginEmailLabel }}</label>
+        <input
+          #emailInput
+          id="login-email"
+          type="email"
+          autocomplete="email"
+          formControlName="email"
+          [attr.aria-invalid]="emailError() ? 'true' : null"
+          [attr.aria-describedby]="emailError() ? 'login-email-error' : null"
+        />
+        <p id="login-email-error" class="error" aria-live="polite">
+          @if (emailError(); as code) {
+            {{ message(code) }}
+          }
+        </p>
+      </div>
+      <div class="field">
+        <label for="login-password">{{ t().loginPasswordLabel }}</label>
+        <input
+          id="login-password"
+          type="password"
+          autocomplete="current-password"
+          formControlName="password"
+        />
+      </div>
+      <p class="error form-error" aria-live="polite">
+        @if (formError(); as code) {
           {{ message(code) }}
         }
       </p>
-    </div>
-    <div class="field">
-      <label for="login-password">{{ t().loginPasswordLabel }}</label>
-      <input
-        id="login-password"
-        type="password"
-        autocomplete="current-password"
-        formControlName="password"
-      />
-    </div>
-    <p class="error form-error" aria-live="polite">
-      @if (formError(); as code) {
-        {{ message(code) }}
-      }
+      <button class="submit" type="submit" [disabled]="pending()">{{ t().loginSubmit }}</button>
+    </form>
+    <p class="alt">
+      <a routerLink="/reset">{{ t().loginForgotLink }}</a>
     </p>
-    <button class="submit" type="submit" [disabled]="pending()">{{ t().loginSubmit }}</button>
-  </form>
-  <p class="alt">
-    <a routerLink="/reset">{{ t().loginForgotLink }}</a>
-  </p>
-  <p class="alt">
-    {{ t().loginNoAccount }}
-    <a routerLink="/register">{{ t().loginRegisterLink }}</a>
-  </p>
+  </div>
 </main>

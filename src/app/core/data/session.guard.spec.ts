@@ -43,7 +43,7 @@ describe('sessionGuard', () => {
     expect(url(await pending)).toBe('/login');
   });
 
-  it.each(['login', 'register', 'reset'])('lets a signed-out user through to %s', async (p) => {
+  it.each(['login', 'reset'])('lets a signed-out user through to %s', async (p) => {
     session.set({ status: 'signedOut' });
     expect(await run(p)).toBe(true);
   });
@@ -53,8 +53,13 @@ describe('sessionGuard', () => {
     expect(await run('today')).toBe(true);
   });
 
-  it.each(['login', 'register'])('sends a signed-in user from %s to /today', async (p) => {
+  it('sends a signed-in user from login to /today', async () => {
     session.set({ status: 'signedIn', uid: 'u1' });
-    expect(url(await run(p))).toBe('/today');
+    expect(url(await run('login'))).toBe('/today');
+  });
+
+  it('no longer treats register as a public screen', async () => {
+    session.set({ status: 'signedOut' });
+    expect(url(await run('register'))).toBe('/login');
   });
 });

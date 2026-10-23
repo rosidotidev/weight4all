@@ -1,19 +1,177 @@
+// Layout A, violet hero (DESIGN.md "Login"): a celebration-gradient band with the brand and a
+// decorative illustration; the form card overlaps its bottom. From the expanded window class the
+// band becomes a left panel and the form a right column.
+
 :host {
   display: block;
+  min-height: 100dvh;
   font-family: var(--w4a-font-family);
   color: var(--w4a-on-surface);
+  background: var(--w4a-surface);
 }
 
 .login {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+.hero {
+  // Below expanded, the brand lines up with the card's text column (card max-width 480 px).
+  padding: 28px max(var(--w4a-space-5), calc((100% - 480px) / 2 + var(--w4a-space-5))) 72px;
+  color: var(--w4a-on-primary);
+  background: linear-gradient(
+    160deg,
+    var(--w4a-celebration-start),
+    var(--w4a-celebration-mid) 55%,
+    var(--w4a-celebration-end)
+  );
+}
+
+.wordmark {
+  display: flex;
+  align-items: center;
+  gap: var(--w4a-space-2);
+  margin: 0;
+  font-size: var(--w4a-type-app-bar-title-size);
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.logo {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--w4a-rounded-full);
+  background: radial-gradient(circle, var(--w4a-primary) 0 5px, var(--w4a-on-primary) 5.5px);
+}
+
+.tagline {
+  max-width: 300px;
+  margin: 10px 0 0;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.art {
+  display: block;
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+  margin-top: var(--w4a-space-4);
+  overflow: visible;
+}
+
+.trend,
+.trend-dotted {
+  fill: none;
+  stroke: var(--w4a-on-primary);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.trend {
+  stroke-opacity: 0.85;
+}
+
+.trend-dotted {
+  stroke-opacity: 0.4;
+  stroke-dasharray: 2 8;
+}
+
+.point {
+  fill: var(--w4a-on-primary);
+}
+
+.point-halo {
+  fill: var(--w4a-on-primary);
+  fill-opacity: 0.25;
+}
+
+.moon {
+  fill: var(--w4a-on-primary);
+  fill-opacity: 0.9;
+}
+
+.face-head {
+  fill: var(--w4a-face-fill);
+  stroke: var(--w4a-face-stroke);
+  stroke-width: 2.4;
+}
+
+.face-feature {
+  fill: var(--w4a-face-stroke);
+}
+
+.face-mouth {
+  fill: none;
+  stroke: var(--w4a-face-stroke);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+.card {
+  flex: 1 0 auto;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 480px;
+  margin: -48px auto 0;
+  padding: var(--w4a-space-6) var(--w4a-space-5);
+  background: var(--w4a-surface);
+  border-radius: var(--w4a-rounded-xxl) var(--w4a-rounded-xxl) 0 0;
 }
 
 .title {
   font-size: var(--w4a-type-app-bar-title-size);
   font-weight: var(--w4a-type-app-bar-title-weight);
-  margin: 0 0 24px;
+  margin: 0 0 var(--w4a-space-4);
+}
+
+// Expanded window class (840 px, domain/window-class.ts): brand panel left, form column right.
+@media (min-width: 840px) {
+  .login {
+    flex-direction: row;
+  }
+
+  .hero {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    padding: 48px;
+  }
+
+  .wordmark {
+    font-size: 28px;
+  }
+
+  .logo {
+    width: 26px;
+    height: 26px;
+  }
+
+  .tagline {
+    max-width: 340px;
+    font-size: 18px;
+  }
+
+  .art {
+    max-width: 420px;
+    margin-top: auto;
+    margin-bottom: var(--w4a-space-6);
+  }
+
+  .card {
+    flex: 0 0 440px;
+    max-width: none;
+    margin: 0;
+    padding: 72px 56px;
+    border-radius: 0;
+  }
+
+  .title {
+    margin-bottom: var(--w4a-space-5);
+  }
 }
 
 .form {
@@ -95,7 +253,8 @@
 }
 
 .alt {
-  margin: 24px 0 0;
+  margin: var(--w4a-space-3) 0 0;
+  text-align: center;
   font-size: var(--w4a-type-body-size);
 
   a {

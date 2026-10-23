@@ -220,6 +220,12 @@ components:
   account-card:
     background: '{colors.surface-container}'
     radius: '{rounded.xl}'
+  login-hero:
+    background: 'linear-gradient({colors.celebration-start}, {colors.celebration-mid}, {colors.celebration-end})'
+    foreground: '{colors.on-primary}'
+  login-card:
+    background: '{colors.surface}'
+    radius: '{rounded.xxl} {rounded.xxl} 0 0'
 ---
 
 ## Brand & Style
@@ -313,6 +319,7 @@ Visual specs only; behavior lives in EXPERIENCE.md.
 - **Combined chart card** — `{components.chart-card}`: legend with marker + label ("Weight (kg)", "Mood (1–10)", "Sleep (h)"), horizontal gridlines `{colors.surface-variant}`, three 2.5px round-capped lines each with its marker, dashed segments over gaps, date ticks, annotation "no entries · bridged" at gaps, footnote "Each line uses its own scale. Dashed = days without an entry."
 - **Statistics card** — `{components.stat-card}`, one per Dimension: marker + Dimension name, "last 30 days" at right, four columns Average, Min, Max, Change (caption label over `{typography.stat-value}` value, unit when meaningful).
 - **Settings groups** — heading `{typography.section-label}`; accent swatch row (six 38px circles in a `{colors.surface-container}` card; selected one has a 3px outer ring and a white check); segmented button English | Italiano (`{components.segmented-button}`, selected segment with check); Account card with initial avatar (`{colors.primary-container}`), "Signed in as" caption, email, divider, "Log out" in `{colors.primary}` bold.
+- **Login** — layout A, "violet hero" (no SVG mockup; the visual reference is [login-options.html](mockups/login-options.html), option A and its desktop frame, chosen 2026-10-23). Compact and medium: a `{components.login-hero}` band (160° gradient) holds a white logo dot with a primary center, the "Weight4All" wordmark (22px bold), the tagline "Your kind daily check-in." (15px, `{colors.on-primary}`) and a decorative, `aria-hidden` inline-SVG illustration: a soft white trend line with one highlighted point (white circle in a 25% white halo), a dotted white second line at 40%, a white moon, and one gentle mood face (level 9, its own fill and stroke tokens). The form ("Welcome back", Email, Password, Log in, "Forgot your password?" centered below) sits on a `{components.login-card}` that overlaps the bottom of the band by 48px and is at most 480px wide, centered; the band's content lines up with the card's text column. Expanded: the band becomes a full-height left brand panel (wordmark 28px, tagline 18px, illustration at the bottom) and the form a 440px right column on `{colors.surface}`. No create-account text or link: Accounts are created by the owner in the backend. Never a "lose weight" or before/after message.
 
 ## Do's and Don'ts
 

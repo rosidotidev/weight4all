@@ -4,7 +4,7 @@ import { CanActivateFn, Router } from '@angular/router';
 import { filter, firstValueFrom } from 'rxjs';
 import { AuthService, Session } from './auth.service';
 
-const PUBLIC_PATHS = ['login', 'register', 'reset'];
+const PUBLIC_PATHS = ['login', 'reset'];
 
 /** Waits out `unknown`, then keeps signed-out users on the public screens only (AD-9). */
 export const sessionGuard: CanActivateFn = async (route) => {

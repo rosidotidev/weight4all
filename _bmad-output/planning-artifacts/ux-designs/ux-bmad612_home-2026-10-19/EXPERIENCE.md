@@ -22,7 +22,7 @@ Four Tabs, reachable from every signed-in screen in one tap (FR-5). Today is the
 
 | Surface | Reached from | Purpose | Journey |
 |---|---|---|---|
-| Login / Register / Reset password | No session, any address | Enter the app (FR-1, 2, 3) | Precedes UJ-1 (entry state "logged in") `[NOTE FOR UX]` not mocked, no journey of its own |
+| Login / Reset password | No session, any address (an old `/register` link also lands on Login) | Enter the app (FR-2, 3); no self sign-up, Accounts are created by the owner in the backend | Precedes UJ-1 (entry state "logged in") `[NOTE FOR UX]` not mocked, no journey of its own; Login visual spec in DESIGN.md |
 | Today | Login, Tab | Log today's Entry; Missing-entry sign; on desktop also the "This week" summary card and last 5 Entries (FR-29) | UJ-1 |
 | Happy effect | After Save on Today | Feedback on the change in Weight | UJ-1 |
 | History | Tab | Browse all Entries, missing Days | UJ-2 |
@@ -37,7 +37,7 @@ Navigation pattern by window size: see Responsive & Platform. Modals stack one l
 
 | FR | Surface |
 |---|---|
-| FR-1 Register | Register screen |
+| FR-1 Register | Removed (2026-10-23): no surface; Accounts are created in the backend |
 | FR-2 Log in, stay logged in, log out | Login screen; Settings > Account > Log out |
 | FR-3 Reset password | Login screen link, Reset screen |
 | FR-4 Per-Account separation | No surface (server rules; architecture) |
@@ -66,7 +66,7 @@ Navigation pattern by window size: see Responsive & Platform. Modals stack one l
 | FR-27 Performance budget | No surface (budget; History and Report must honor it) |
 | FR-28 Interface Language | Settings > Language; applies everywhere |
 
-Closure check: every FR has a surface or is explicitly non-visual (FR-4, FR-26, FR-27). Every surface has a journey except Login/Register/Reset, flagged above rather than invented.
+Closure check: every FR has a surface or is explicitly non-visual (FR-4, FR-26, FR-27). Every surface has a journey except Login/Reset, flagged above rather than invented.
 
 ## Voice and Tone
 

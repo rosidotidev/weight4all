@@ -52,19 +52,14 @@ export const strings = {
   datepickerStartDate: { en: 'Start date', it: 'Data di inizio' },
   datepickerEndDate: { en: 'End date', it: 'Data di fine' },
   datepickerComparisonDate: { en: 'Comparison date', it: 'Data di confronto' },
-  registerTitle: { en: 'Create your account', it: 'Crea il tuo account' },
-  registerEmailLabel: { en: 'Email', it: 'Email' },
-  registerPasswordLabel: { en: 'Password', it: 'Password' },
-  registerPasswordHint: { en: 'At least 6 characters.', it: 'Almeno 6 caratteri.' },
-  registerSubmit: { en: 'Create account', it: 'Crea account' },
-  registerHaveAccount: { en: 'Already have an account?', it: 'Hai già un account?' },
-  registerLoginLink: { en: 'Log in', it: 'Accedi' },
+  loginTagline: {
+    en: 'Your kind daily check-in.',
+    it: 'Il tuo check-in quotidiano, senza giudizi.',
+  },
   loginTitle: { en: 'Welcome back', it: 'Bentornato' },
   loginEmailLabel: { en: 'Email', it: 'Email' },
   loginPasswordLabel: { en: 'Password', it: 'Password' },
   loginSubmit: { en: 'Log in', it: 'Accedi' },
-  loginNoAccount: { en: 'New here?', it: 'Sei nuovo?' },
-  loginRegisterLink: { en: 'Create an account', it: 'Crea un account' },
   loginForgotLink: { en: 'Forgot your password?', it: 'Hai dimenticato la password?' },
   resetTitle: { en: 'Reset your password', it: 'Reimposta la password' },
   resetEmailLabel: { en: 'Email', it: 'Email' },
@@ -105,14 +100,6 @@ export const strings = {
   authErrorInvalidCredentials: {
     en: 'That email and password do not match. Please try again.',
     it: 'Email e password non corrispondono. Riprova pure.',
-  },
-  authErrorEmailInUse: {
-    en: 'This email already has an account. You can log in instead.',
-    it: 'Questa email ha già un account. Puoi accedere invece.',
-  },
-  authErrorWeakPassword: {
-    en: 'Please choose a password with at least 6 characters.',
-    it: 'Scegli una password di almeno 6 caratteri.',
   },
   authErrorInvalidEmail: {
     en: 'That email address does not look right. Could you check it?',

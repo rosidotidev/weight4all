@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Login options</title>
+<style>
+  :root {
+    --primary: #5a46d6; --on-primary: #fff; --primary-container: #e4deff; --on-primary-container: #1b0a68;
+    --surface: #fffbff; --surface-container: #f3edf7; --surface-variant: #e7e0ec;
+    --on-surface: #1c1b1f; --on-surface-variant: #49454f; --outline: #7a757f;
+    --w: #2f5bd8; --m: #d9480f; --s: #0b8a7b;
+    --g1: #4a35c9; --g2: #6b47e0; --g3: #9b4fd0;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; font-family: Roboto, Arial, sans-serif; background: #ddd8e4; color: var(--on-surface); }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  p.note { margin: 0 0 16px; font-size: 13px; color: var(--on-surface-variant); }
+  .row { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+  .opt h2 { font-size: 15px; margin: 0 0 8px; }
+  .phone { width: 360px; height: 740px; background: var(--surface); border-radius: 28px; overflow: hidden; position: relative; box-shadow: 0 2px 10px rgba(0,0,0,.15); }
+  .desk { width: 960px; height: 560px; background: var(--surface); border-radius: 16px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,.15); display: flex; }
+
+  /* shared form */
+  .form { display: flex; flex-direction: column; gap: 14px; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: 14px; font-weight: 500; }
+  .field input { height: 48px; padding: 0 12px; font: inherit; border: 1px solid var(--outline); border-radius: 8px; background: var(--surface); }
+  .submit { height: 52px; border: 0; border-radius: 9999px; background: var(--primary); color: var(--on-primary); font: inherit; font-size: 16px; font-weight: 500; margin-top: 6px; }
+  .link { color: var(--primary); font-size: 14px; text-align: center; margin-top: 12px; }
+  .wordmark { display: flex; align-items: center; gap: 8px; font-size: 22px; font-weight: 700; letter-spacing: .2px; }
+  .dot { width: 18px; height: 18px; border-radius: 50%; background: var(--primary); position: relative; flex: none; }
+  .dot::after { content: ''; position: absolute; inset: 5px; border-radius: 50%; background: #fff; }
+  .light .dot { background: #fff; } .light .dot::after { background: var(--g2); }
+  .tag { font-size: 15px; line-height: 1.4; }
+
+  /* A: gradient hero */
+  .a-hero { height: 300px; background: linear-gradient(160deg, var(--g1), var(--g2) 55%, var(--g3)); color: #fff; padding: 28px 24px 0; position: relative; overflow: hidden; }
+  .a-hero .tag { opacity: .9; margin: 10px 0 0; max-width: 260px; }
+  .a-card { position: absolute; top: 250px; left: 16px; right: 16px; background: var(--surface); border-radius: 28px; padding: 24px 20px; }
+  .a-card h3 { margin: 0 0 16px; font-size: 22px; font-weight: 500; }
+
+  /* B: split */
+  .b-brand { background: var(--surface-container); padding: 24px 20px 18px; border-radius: 0 0 28px 28px; }
+  .b-brand .tag { color: var(--on-surface-variant); margin: 6px 0 12px; }
+  .b-body { padding: 20px 20px; }
+  .b-body h3 { margin: 0 0 14px; font-size: 22px; font-weight: 500; }
+  .chips { display: flex; gap: 8px; }
+  .chip { flex: 1; background: var(--surface); border-radius: 16px; padding: 8px 6px; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 12px; color: var(--on-surface-variant); }
+  .chip b { font-size: 15px; color: var(--on-surface); }
+
+  /* C: playful light */
+  .c { padding: 36px 24px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .c .tag { color: var(--on-surface-variant); margin: 8px 0 18px; max-width: 280px; }
+  .c .form { width: 100%; text-align: left; }
+  .bubbles { position: relative; width: 240px; height: 150px; margin: 4px 0 6px; }
+  .bubble { position: absolute; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+</style>
+</head>
+<body>
+<h1>Login: three options</h1>
+<p class="note">No "Create an account" link in any option. Brand = logo dot + "Weight4All" + a short line. Wellness shown with the app's own three Dimensions (weight, mood, sleep) in their chart colours, never with a "lose weight" message. Texts get Italian too.</p>
+
+<div class="row">
+<!-- ================= A ================= -->
+<div class="opt"><h2>A · Violet hero</h2>
+<div class="phone">
+  <div class="a-hero light">
+    <div class="wordmark"><span class="dot"></span>Weight4All</div>
+    <p class="tag">Weight, mood and sleep. One minute a day.</p>
+    <svg viewBox="0 0 320 120" width="320" height="120" style="position:absolute;left:20px;top:120px" aria-hidden="true">
+      <path d="M0 70 C40 60 60 80 100 66 S160 40 200 50 S270 30 320 34" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M0 96 C50 90 80 100 130 88 S220 92 320 80" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 8"/>
+      <circle cx="200" cy="50" r="6" fill="#fff"/><circle cx="200" cy="50" r="12" fill="rgba(255,255,255,.25)"/>
+      <g transform="translate(250 -2)"><circle cx="17" cy="17" r="15" fill="#FFD35C" stroke="#5C4300" stroke-width="2"/><circle cx="12" cy="14" r="1.8" fill="#5C4300"/><circle cx="22" cy="14" r="1.8" fill="#5C4300"/><path d="M11 21 Q17 26 23 21" fill="none" stroke="#5C4300" stroke-width="2" stroke-linecap="round"/></g>
+      <path d="M40 18 a12 12 0 1 0 12 16 a9 9 0 1 1 -12 -16z" fill="rgba(255,255,255,.9)"/>
+    </svg>
+  </div>
+  <div class="a-card">
+    <h3>Welcome back</h3>
+    <div class="form">
+      <div class="field"><label>Email</label><input></div>
+      <div class="field"><label>Password</label><input type="password"></div>
+      <button class="submit">Log in</button>
+    </div>
+    <div class="link">Forgot your password?</div>
+  </div>
+</div></div>
+
+<!-- ================= B ================= -->
+<div class="opt"><h2>B · Brand panel with today's numbers</h2>
+<div class="phone">
+  <div class="b-brand">
+    <div class="wordmark"><span class="dot"></span>Weight4All</div>
+    <p class="tag">Your kind daily check-in.</p>
+    <div class="chips">
+      <div class="chip"><svg width="14" height="14"><circle cx="7" cy="7" r="5" fill="#2F5BD8"/></svg><b>72.4 kg</b>weight</div>
+      <div class="chip"><svg width="22" height="22" viewBox="7 7 36 36"><circle cx="25" cy="25" r="17" fill="#F8E27A" stroke="#5C4300" stroke-width="2"/><circle cx="19" cy="21.6" r="1.9" fill="#5C4300"/><circle cx="31" cy="21.6" r="1.9" fill="#5C4300"/><path d="M17.9 31.5 Q25 37.4 32.1 31.5" fill="none" stroke="#5C4300" stroke-width="2" stroke-linecap="round"/></svg><b>8</b>mood</div>
+      <div class="chip"><svg width="14" height="14"><path d="M7 1 L13 13 L1 13 Z" fill="#0B8A7B"/></svg><b>7.5 h</b>sleep</div>
+    </div>
+  </div>
+  <div class="b-body">
+    <h3>Welcome back</h3>
+    <div class="form">
+      <div class="field"><label>Email</label><input></div>
+      <div class="field"><label>Password</label><input type="password"></div>
+      <button class="submit">Log in</button>
+    </div>
+    <div class="link">Forgot your password?</div>
+  </div>
+</div></div>
+
+<!-- ================= C ================= -->
+<div class="opt"><h2>C · Light and playful</h2>
+<div class="phone"><div class="c">
+  <div class="bubbles" aria-hidden="true">
+    <div class="bubble" style="width:92px;height:92px;left:74px;top:20px;background:#E4DEFF">
+      <svg width="58" height="58" viewBox="7 7 36 36"><circle cx="25" cy="25" r="17" fill="#FFD35C" stroke="#5C4300" stroke-width="2"/><circle cx="19" cy="21.6" r="1.9" fill="#5C4300"/><circle cx="31" cy="21.6" r="1.9" fill="#5C4300"/><path d="M17.9 31.5 Q25 38.2 32.1 31.5" fill="none" stroke="#5C4300" stroke-width="2" stroke-linecap="round"/></svg></div>
+    <div class="bubble" style="width:62px;height:62px;left:6px;top:64px;background:#dfe7fb">
+      <svg width="40" height="28" viewBox="0 0 40 28"><path d="M2 20 L12 12 L22 16 L38 4" fill="none" stroke="#2F5BD8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="38" cy="4" r="3.5" fill="#2F5BD8" stroke="#fff" stroke-width="1.5"/></svg></div>
+    <div class="bubble" style="width:62px;height:62px;left:172px;top:70px;background:#d6efea">
+      <svg width="30" height="30" viewBox="0 0 24 24"><path d="M15 3 a9 9 0 1 0 6 13 a7 7 0 1 1 -6 -13z" fill="#0B8A7B"/></svg></div>
+  </div>
+  <div class="wordmark"><span class="dot"></span>Weight4All</div>
+  <p class="tag">Weight, mood and sleep, one minute a day. No judging, just your trend.</p>
+  <div class="form">
+    <div class="field"><label>Email</label><input></div>
+    <div class="field"><label>Password</label><input type="password"></div>
+    <button class="submit">Log in</button>
+  </div>
+  <div class="link">Forgot your password?</div>
+</div></div></div>
+</div>
+
+<h2 style="font-size:15px;margin:24px 0 8px">Desktop (shown for A; B and C use the same idea: brand on the left, form on the right)</h2>
+<div class="desk">
+  <div class="light" style="flex:1;background:linear-gradient(160deg,var(--g1),var(--g2) 55%,var(--g3));color:#fff;padding:48px;position:relative">
+    <div class="wordmark" style="font-size:28px"><span class="dot"></span>Weight4All</div>
+    <p class="tag" style="font-size:18px;opacity:.9;max-width:320px">Weight, mood and sleep. One minute a day.</p>
+    <svg viewBox="0 0 320 120" width="420" height="160" style="position:absolute;left:40px;bottom:60px" aria-hidden="true">
+      <path d="M0 70 C40 60 60 80 100 66 S160 40 200 50 S270 30 320 34" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M0 96 C50 90 80 100 130 88 S220 92 320 80" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 8"/>
+      <circle cx="200" cy="50" r="6" fill="#fff"/><circle cx="200" cy="50" r="12" fill="rgba(255,255,255,.25)"/>
+    </svg>
+  </div>
+  <div style="width:440px;padding:72px 56px">
+    <h3 style="margin:0 0 20px;font-size:24px;font-weight:500">Welcome back</h3>
+    <div class="form">
+      <div class="field"><label>Email</label><input></div>
+      <div class="field"><label>Password</label><input type="password"></div>
+      <button class="submit">Log in</button>
+    </div>
+    <div class="link">Forgot your password?</div>
+  </div>
+</div>
+</body>
+</html>

@@ -113,7 +113,7 @@ Each epic is one feature. The order is fixed, because each feature builds on the
 
 | Epic | Feature | Stories | Status |
 | --- | --- | --- | --- |
-| 1 | Foundations and adaptive shell: project, Firebase, languages, theme, sign-up, login, password reset, four tabs, accent color | 10 | In review |
+| 1 | Foundations and adaptive shell: project, Firebase, languages, theme, login, password reset, four tabs, accent color | 10 | In review |
 | 2 | Daily weight entry: save, quick adjust, history, edit, delete, "this week" | 10 | In review |
 | 3 | Mood and sleep: face scale and sleep slider | 3 | In review |
 | 4 | Report: range, statistics, per-value charts, combined chart, responsive layout | 5 | In review (4.5 done) |

@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const createUserWithEmailAndPassword = vi.fn();
 const signInWithEmailAndPassword = vi.fn();
 const signOut = vi.fn();
 const sendPasswordResetEmail = vi.fn();
@@ -10,7 +9,6 @@ vi.mock('firebase/app', () => ({ initializeApp: vi.fn(() => ({})) }));
 vi.mock('firebase/auth', () => ({
   getAuth: vi.fn(() => ({ auth: true })),
   connectAuthEmulator: vi.fn(),
-  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   sendPasswordResetEmail,
@@ -29,45 +27,6 @@ async function create() {
   const emit = onAuthStateChanged.mock.calls.at(-1)![1] as AuthListener;
   return { service, emit };
 }
-
-describe('AuthService.register', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    vi.resetModules();
-  });
-
-  it('returns ok when the Account is created and sets the session', async () => {
-    createUserWithEmailAndPassword.mockResolvedValue({ user: { uid: 'u1' } });
-    const { service } = await create();
-    const result = await service.register('a@b.it', 'secret1');
-    expect(result).toEqual({ ok: true });
-    expect(createUserWithEmailAndPassword).toHaveBeenCalledWith({ auth: true }, 'a@b.it', 'secret1');
-    expect(service.session()).toEqual({ status: 'signedIn', uid: 'u1' });
-  });
-
-  const cases: [string, string][] = [
-    ['auth/email-already-in-use', 'email-in-use'],
-    ['auth/weak-password', 'weak-password'],
-    ['auth/invalid-email', 'invalid-email'],
-    ['auth/network-request-failed', 'network'],
-    ['auth/something-else', 'unknown'],
-  ];
-  for (const [firebaseCode, code] of cases) {
-    it(`maps ${firebaseCode} to ${code} without raw text`, async () => {
-      createUserWithEmailAndPassword.mockRejectedValue({ code: firebaseCode, message: 'RAW TEXT' });
-      const { service } = await create();
-      const result = await service.register('a@b.it', 'secret1');
-      expect(result).toEqual({ ok: false, code });
-      expect(JSON.stringify(result)).not.toContain('RAW');
-    });
-  }
-
-  it('maps a non-Firebase error to unknown', async () => {
-    createUserWithEmailAndPassword.mockRejectedValue(new Error('boom'));
-    const { service } = await create();
-    expect(await service.register('a@b.it', 'secret1')).toEqual({ ok: false, code: 'unknown' });
-  });
-});
 
 describe('AuthService session', () => {
   beforeEach(() => {
@@ -123,6 +82,9 @@ describe('AuthService.login and logout', () => {
     ['auth/invalid-email', 'invalid-email'],
     ['auth/network-request-failed', 'network'],
     ['auth/too-many-requests', 'unknown'],
+    // Only sign-up produced these; with sign-up gone they fall back to unknown.
+    ['auth/email-already-in-use', 'unknown'],
+    ['auth/weak-password', 'unknown'],
   ];
   for (const [firebaseCode, code] of loginCases) {
     it(`login maps ${firebaseCode} to ${code} without raw text`, async () => {
@@ -134,6 +96,12 @@ describe('AuthService.login and logout', () => {
       expect(service.session()).toEqual({ status: 'unknown' });
     });
   }
+
+  it('login maps a non-Firebase error to unknown', async () => {
+    signInWithEmailAndPassword.mockRejectedValue(new Error('boom'));
+    const { service } = await create();
+    expect(await service.login('a@b.it', 'x')).toEqual({ ok: false, code: 'unknown' });
+  });
 
   it('logout signs out and sets signedOut', async () => {
     signOut.mockResolvedValue(undefined);
@@ -176,6 +144,9 @@ describe('AuthService.sendPasswordReset', () => {
     ['auth/invalid-email', 'invalid-email'],
     ['auth/network-request-failed', 'network'],
     ['auth/too-many-requests', 'unknown'],
+    // Only sign-up produced these; with sign-up gone they fall back to unknown.
+    ['auth/email-already-in-use', 'unknown'],
+    ['auth/weak-password', 'unknown'],
   ];
   for (const [firebaseCode, code] of resetCases) {
     it(`maps ${firebaseCode} to ${code} without raw text`, async () => {
@@ -209,14 +180,11 @@ describe('AuthService.email', () => {
     expect(service.email()).toBeNull();
   });
 
-  it('is set by login and register', async () => {
+  it('is set by login', async () => {
     signInWithEmailAndPassword.mockResolvedValue({ user: { uid: 'u1', email: 'l@b.it' } });
-    createUserWithEmailAndPassword.mockResolvedValue({ user: { uid: 'u2', email: 'r@b.it' } });
     const { service } = await create();
     await service.login('l@b.it', 'x');
     expect(service.email()).toBe('l@b.it');
-    await service.register('r@b.it', 'secret1');
-    expect(service.email()).toBe('r@b.it');
   });
 
   it('is cleared by logout and by a listener error', async () => {

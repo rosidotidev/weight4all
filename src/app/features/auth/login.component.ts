@@ -10,14 +10,16 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthErrorCode, AuthService } from '../../core/data/auth.service';
 import { I18n } from '../../shared/i18n';
+import { CENTER, faceColours, mouthPath } from '../../shared/mood-face.component';
 import { StringKey } from '../../shared/strings';
+
+/** The illustration's face: a gentle, sunny level, never a judgement. */
+const FACE_LEVEL = 9;
 
 const EMAIL_SHAPE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const MESSAGE_KEYS: Record<AuthErrorCode, StringKey> = {
   'invalid-credentials': 'authErrorInvalidCredentials',
-  'email-in-use': 'authErrorEmailInUse',
-  'weak-password': 'authErrorWeakPassword',
   'invalid-email': 'authErrorInvalidEmail',
   network: 'authErrorNetwork',
   unknown: 'authErrorUnknown',
@@ -34,6 +36,10 @@ export class LoginComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   protected readonly t = inject(I18n).t;
+
+  protected readonly center = CENTER;
+  protected readonly mouth = mouthPath(FACE_LEVEL);
+  protected readonly face = faceColours(FACE_LEVEL);
 
   protected readonly form = new FormGroup({
     email: new FormControl('', { nonNullable: true }),
