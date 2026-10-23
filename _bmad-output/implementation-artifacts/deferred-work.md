@@ -89,3 +89,9 @@
 - source_spec: `spec-5-1-operate-the-whole-app-with-keyboard-and-screen-reader.md`
   summary: The Today week card says "1 giorni su 7 registrati" (plural with a singular count).
   evidence: Browser check, Today at 1280 px. The copy comes from the Today stories, not from 5.1.
+- source_spec: `spec-history-value-columns-align.md`
+  summary: History row column widths (`COLUMN` in `history.component.ts`) fill a 360 px row exactly for today's three Dimensions; adding a Dimension or using a larger browser font size will squeeze every column and clip values.
+  evidence: Review finding. The widths are rem tracks summing to the 248 px row content at 360 px; unverified at 125–200 % root font size (would be medium if confirmed — check History at 360 px with a 20 px root font).
+- source_spec: `spec-history-value-columns-align.md`
+  summary: Today's "Last entries" list (`recent-entries.component.scss`) uses the same flex row as History did, so its values may not line up across rows either.
+  evidence: Same layout pattern seen while fixing History; not checked in the browser.

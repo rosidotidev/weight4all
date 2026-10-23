@@ -20,6 +20,7 @@
           >
             <a
               class="row entry"
+              [style.grid-template-columns]="rowColumns"
               [routerLink]="['/history', row.day]"
               [attr.aria-label]="t().historyOpenEntry({ date: dateOf(row), value: summary(row.entry) })"
               (click)="remember($event)"

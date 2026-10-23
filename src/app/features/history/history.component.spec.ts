@@ -6,6 +6,7 @@ import { EntryResult, EntryStatus, EntryStore } from '../../core/data/entry.stor
 import { PreferencesStore } from '../../core/data/preferences.store';
 import { ClockService } from '../../core/state/clock.service';
 import { addDays } from '../../domain/day';
+import { DIMENSIONS } from '../../domain/dimensions';
 import { Entry } from '../../domain/entry';
 import { Language } from '../../domain/language';
 import { HistoryComponent } from './history.component';
@@ -75,6 +76,17 @@ describe('HistoryComponent', () => {
     expect(rows.map((r) => r.querySelector('.date')?.textContent)).toEqual(['Mon 19 Oct', 'Sun 18 Oct']);
     expect(rows[0].querySelector('.value')?.textContent).toBe('72.4 kg');
     expect(el.querySelector('.heading')?.textContent).toContain('Entries · newest first');
+  });
+
+  it('gives every Entry row the same columns, whatever the digits, so values line up', async () => {
+    entries.set(byDay(entry('2026-10-18', 400), entry('2026-10-19', 72.4)));
+    const { el } = await setup();
+    const rows = Array.from(el.querySelectorAll<HTMLElement>('a.row.entry'));
+    expect(rows.length).toBe(2);
+    expect(rows[0].style.gridTemplateColumns).toBe(rows[1].style.gridTemplateColumns);
+    // One date track plus one per Dimension, and one child per track even when values are absent.
+    expect(rows[0].style.gridTemplateColumns.split('minmax').length - 1).toBe(1 + DIMENSIONS.length);
+    for (const row of rows) expect(row.children.length).toBe(1 + DIMENSIONS.length);
   });
 
   it('shows a dashed missing row with a + Add link to the Day', async () => {

@@ -6,6 +6,7 @@ import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { EntryStore } from '../../core/data/entry.store';
 import { ClockService } from '../../core/state/clock.service';
 import { formatDay } from '../../domain/day';
+import { DIMENSIONS, DimensionInput } from '../../domain/dimensions';
 import { Entry } from '../../domain/entry';
 import { HistoryRow, buildHistoryRows } from '../../domain/history';
 import { Cell, entryCells } from '../../shared/entry-cells';
@@ -20,6 +21,11 @@ const PENCIL =
 const DOTS = 'M12 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm0 6a2 2 0 1 0 0 4 2 2 0 0 0 0-4z';
 /** How far a touch drag must go to reveal or hide the Edit action. */
 const SWIPE_PX = 48;
+/**
+ * Row column width per input kind, fitted to the widest value ("400.0 kg", face plus "10", "23.5 h");
+ * with the 5rem date they fill a 360 px phone row exactly.
+ */
+const COLUMN: Record<DimensionInput, string> = { stepper: '4rem', faces: '3.25rem', slider: '2.5rem' };
 
 /** History: every Entry newest first with dashed rows for the Days in between, in a virtual list. */
 @Component({
@@ -52,6 +58,11 @@ export class HistoryComponent {
   protected readonly rows = computed(() => buildHistoryRows(this.store.entries(), this.clock.today()));
 
   protected readonly trackRow = (_: number, row: HistoryRow) => row.day;
+
+  /** The same columns on every row, so values line up down the list whatever their digits. */
+  protected readonly rowColumns = ['5rem', ...DIMENSIONS.map((dimension) => COLUMN[dimension.input])]
+    .map((width) => `minmax(0, ${width})`)
+    .join(' ');
 
   protected dateOf(row: HistoryRow): string {
     return formatDay(row.day, this.i18n.locale());
