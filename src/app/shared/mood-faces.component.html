@@ -14,7 +14,13 @@
       (keydown.arrowleft)="move($event, face.n, -1)"
       (keydown.arrowup)="move($event, face.n, -1)"
     >
-      <svg viewBox="0 0 50 50" aria-hidden="true" focusable="false">
+      <svg
+        viewBox="0 0 50 50"
+        aria-hidden="true"
+        focusable="false"
+        [style.--w4a-face-fill]="face.colours.fill"
+        [style.--w4a-face-stroke]="face.colours.stroke"
+      >
         @if (value() === face.n) {
           <circle class="ring" [attr.cx]="center" [attr.cy]="center" r="23.25" />
         }

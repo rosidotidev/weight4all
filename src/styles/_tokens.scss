@@ -27,9 +27,28 @@
   --w4a-on-banner-container: #4a3000;
   --w4a-banner-dot: #e08a00;
 
-  // Mood faces
-  --w4a-mood-face-fill: #ffd35c;
-  --w4a-mood-face-stroke: #5c4300;
+  // Mood faces: one fill per level, cool (1) to sunny (10), and a stroke for each band
+  // (1-4, 5-7, 8-10). Never derived from the accent; no red, so a low mood is not judged.
+  --w4a-mood-1-fill: #b9c3f0;
+  --w4a-mood-2-fill: #bccbee;
+  --w4a-mood-3-fill: #bfd6e6;
+  --w4a-mood-4-fill: #c3e0d6;
+  --w4a-mood-5-fill: #cce8c2;
+  --w4a-mood-6-fill: #dcebaa;
+  --w4a-mood-7-fill: #ecea93;
+  --w4a-mood-8-fill: #f8e27a;
+  --w4a-mood-9-fill: #ffd35c;
+  --w4a-mood-10-fill: #ffc23d;
+  --w4a-mood-1-stroke: #2f3a66;
+  --w4a-mood-2-stroke: #2f3a66;
+  --w4a-mood-3-stroke: #2f3a66;
+  --w4a-mood-4-stroke: #2f3a66;
+  --w4a-mood-5-stroke: #3d4a1e;
+  --w4a-mood-6-stroke: #3d4a1e;
+  --w4a-mood-7-stroke: #3d4a1e;
+  --w4a-mood-8-stroke: #5c4300;
+  --w4a-mood-9-stroke: #5c4300;
+  --w4a-mood-10-stroke: #5c4300;
 
   // Happy effect: confetti pieces (loss only) and the celebration gradient, derived from the accent
   // so the card follows it; each stop stays dark enough for white text (AA).

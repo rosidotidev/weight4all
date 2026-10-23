@@ -4,6 +4,7 @@ import { PreferencesStore } from '../core/data/preferences.store';
 import { LayoutService } from '../core/state/layout.service';
 import { Language } from '../domain/language';
 import { WindowClass } from '../domain/window-class';
+import { faceColours, mouthPath } from './mood-face.component';
 import { MoodFacesComponent } from './mood-faces.component';
 
 describe('MoodFacesComponent', () => {
@@ -51,6 +52,18 @@ describe('MoodFacesComponent', () => {
       'false', 'false', 'false', 'false', 'false', 'false', 'true', 'false', 'false', 'false',
     ]);
     expect(el.querySelectorAll('.ring')).toHaveLength(1);
+  });
+
+  it('draws each face with the same mouth and colours as the row face of that level', async () => {
+    const { el } = await setup(5);
+    const svgs = Array.from(el.querySelectorAll<SVGSVGElement>('[role="radio"] svg'));
+    expect(svgs).toHaveLength(10);
+    svgs.forEach((svg, i) => {
+      const n = i + 1;
+      expect(svg.querySelector('.mouth')!.getAttribute('d')).toBe(mouthPath(n));
+      expect(svg.style.getPropertyValue('--w4a-face-fill')).toBe(faceColours(n).fill);
+      expect(svg.style.getPropertyValue('--w4a-face-stroke')).toBe(faceColours(n).stroke);
+    });
   });
 
   it('emits the tapped level, and null when the selected face is tapped', async () => {

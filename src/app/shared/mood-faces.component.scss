@@ -29,16 +29,16 @@ svg {
   height: 50px;
 }
 .head {
-  fill: var(--w4a-mood-face-fill);
-  stroke: var(--w4a-mood-face-stroke);
+  fill: var(--w4a-face-fill);
+  stroke: var(--w4a-face-stroke);
   stroke-width: 2;
 }
 .feature {
-  fill: var(--w4a-mood-face-stroke);
+  fill: var(--w4a-face-stroke);
 }
 .mouth {
   fill: none;
-  stroke: var(--w4a-mood-face-stroke);
+  stroke: var(--w4a-face-stroke);
   stroke-width: 2;
   stroke-linecap: round;
 }

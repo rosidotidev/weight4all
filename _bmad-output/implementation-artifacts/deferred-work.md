@@ -95,3 +95,6 @@
 - source_spec: `spec-history-value-columns-align.md`
   summary: Today's "Last entries" list (`recent-entries.component.scss`) uses the same flex row as History did, so its values may not line up across rows either.
   evidence: Same layout pattern seen while fixing History; not checked in the browser.
+- source_spec: `spec-gentler-mood-faces-with-colour-scale.md`
+  summary: The mockups (`mock-01-today.svg`, `mock-03-history.svg`, tablet and desktop Today) still show the old yellow faces with deep mouths; DESIGN.md is now the reference for mood faces.
+  evidence: Review finding; the faces changed deliberately on 2026-10-23 (gentle mouths, periwinkle-to-gold scale) and the SVG mockups were not redrawn.

@@ -2,13 +2,15 @@ import { ChangeDetectionStrategy, Component, ElementRef, computed, inject, input
 import { LayoutService } from '../core/state/layout.service';
 import { formatNumber } from '../domain/number';
 import { I18n } from './i18n';
-import { CENTER, mouthPath } from './mood-face.component';
+import { CENTER, FaceColours, faceColours, mouthPath } from './mood-face.component';
 
 interface Face {
   readonly n: number;
   readonly label: string;
-  /** The mouth: a quadratic curve from a deep frown (1) to a wide smile (10). */
+  /** The mouth: a gentle quadratic curve from a light frown (1) to a light smile (10). */
   readonly mouth: string;
+  /** The level's fill and stroke, shared with the row face. */
+  readonly colours: FaceColours;
 }
 
 const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -39,7 +41,7 @@ export class MoodFacesComponent {
     const t = this.i18n.t();
     return LEVELS.map((n) => {
       const text = formatNumber(n, 0, locale);
-      return { n, label: t.moodFace({ n: text }), mouth: mouthPath(n) };
+      return { n, label: t.moodFace({ n: text }), mouth: mouthPath(n), colours: faceColours(n) };
     });
   });
 

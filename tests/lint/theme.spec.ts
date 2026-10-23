@@ -1,6 +1,8 @@
 import { compile } from 'sass';
+import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { ACCENTS } from '../../src/app/domain/accent';
+import { faceColours } from '../../src/app/shared/mood-face.component';
 
 const ROOT = process.cwd();
 
@@ -96,6 +98,45 @@ describe('theme tokens', () => {
   it('keeps chart tokens only on :root', () => {
     for (const m of css.matchAll(/([^{}]+)\{([^{}]*)\}/g))
       if (/--w4a-chart-/.test(m[2])) expect(m[1].trim()).toBe(':root');
+  });
+
+  describe('mood face scale', () => {
+    const levels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const fill = (n: number) => root[`--w4a-mood-${n}-fill`];
+    const stroke = (n: number) => root[`--w4a-mood-${n}-stroke`];
+
+    it('defines a distinct fill and a stroke per level, on :root only', () => {
+      for (const n of levels) {
+        expect(fill(n)).toMatch(/^#[0-9a-f]{6}$/);
+        expect(stroke(n)).toMatch(/^#[0-9a-f]{6}$/);
+      }
+      expect(new Set(levels.map(fill)).size).toBe(10);
+      for (const m of css.matchAll(/([^{}]+)\{([^{}]*)\}/g))
+        if (/--w4a-mood-/.test(m[2])) expect(m[1].trim()).toBe(':root');
+      expect(root['--w4a-mood-face-fill']).toBeUndefined();
+      expect(root['--w4a-mood-face-stroke']).toBeUndefined();
+    });
+
+    it('defines every token that faceColours(n) refers to', () => {
+      const name = (value: string) => /^var\((--[\w-]+)\)$/.exec(value)![1];
+      for (const n of levels) {
+        const { fill: f, stroke: s } = faceColours(n);
+        expect(root[name(f)]).toBeDefined();
+        expect(root[name(s)]).toBeDefined();
+      }
+    });
+
+    it('leaves no use of the old single-colour tokens under src/', () => {
+      const files = readdirSync(join(ROOT, 'src'), { recursive: true, withFileTypes: true }).filter((e) => e.isFile());
+      const hits = files
+        .map((e) => join(e.parentPath, e.name))
+        .filter((p) => readFileSync(p, 'utf8').includes('--w4a-mood-face-'));
+      expect(hits).toEqual([]);
+    });
+
+    it.each(levels)('level %i: outline and features are at least 3:1 on the fill', (n) => {
+      expect(contrast(stroke(n), fill(n))).toBeGreaterThanOrEqual(3);
+    });
   });
 
   it('defines shape, spacing, banner and touch tokens', () => {
