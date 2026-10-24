@@ -113,9 +113,19 @@ export class HappyEffectComponent {
     const locale = this.i18n.locale();
     const logged = t.effectLogged({ value: formatNumber(this.value(), PRIMARY.decimals, locale) });
     if (effect.kind === 'welcome') {
-      return { loss: false, confetti: false, delta: null, comparison: '', message: null, logged };
+      return {
+        loss: false,
+        confetti: false,
+        delta: null,
+        comparison: '',
+        message: null,
+        warning: null,
+        jump: false,
+        logged,
+      };
     }
     const loss = effect.kind === 'loss';
+    const jump = effect.kind === 'gain' && effect.jump;
     const sign = loss ? '−' : effect.kind === 'gain' ? '+' : '';
     const delta = `${sign}${formatNumber(Math.abs(effect.delta), PRIMARY.decimals, locale)} ${PRIMARY.unit}`;
     const comparison = effect.yesterday
@@ -127,6 +137,8 @@ export class HappyEffectComponent {
       delta,
       comparison,
       message: loss ? t.effectLoss : t.effectGain,
+      warning: jump ? t.effectJumpWarning : null,
+      jump,
       logged,
     };
   });

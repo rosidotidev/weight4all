@@ -33,6 +33,10 @@ export const strings = {
     en: (p: { value: string }) => `${p.value} kg logged for today.`,
     it: (p: { value: string }) => `${p.value} kg registrati per oggi.`,
   },
+  effectJumpWarning: {
+    en: 'Your weight went up more than usual. Pay attention to what you eat.',
+    it: 'Il tuo peso è salito più del solito. Fai attenzione a cosa mangi.',
+  },
   effectDone: { en: 'Done', it: 'Fatto' },
   effectDismiss: { en: 'Dismiss', it: 'Chiudi' },
   datepickerCalendar: { en: 'Calendar', it: 'Calendario' },

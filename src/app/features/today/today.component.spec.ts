@@ -243,6 +243,20 @@ describe('TodayComponent', () => {
       expect(text(el, '.vs')).not.toContain('yesterday');
     });
 
+    it('shows the weight jump warning for a rise of more than 1%', async () => {
+      entries.set(Object.fromEntries([entry(ago(1), 70)]));
+      const { el } = await saveWeight('70.8');
+      expect(text(el, '.warning')).toBe(
+        'Your weight went up more than usual. Pay attention to what you eat.',
+      );
+    });
+
+    it('shows no weight jump warning for a rise of exactly 1%', async () => {
+      entries.set(Object.fromEntries([entry(ago(1), 70)]));
+      const { el } = await saveWeight('70.7');
+      expect(el.querySelector('.warning')).toBeNull();
+    });
+
     it('is calm for a gain', async () => {
       entries.set(Object.fromEntries([entry(ago(1), 72.6)]));
       const { el } = await saveWeight('72.8');

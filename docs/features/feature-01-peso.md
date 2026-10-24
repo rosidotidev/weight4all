@@ -54,6 +54,16 @@ Optional after each build: `/bmad-code-review`.
 
 ---
 
+## Change requests (after the epic)
+
+**CR-2 — Weight jump warning** (in review, not yet committed): when a saved weight is more than 1% above the most recent earlier Entry, the save still succeeds and a warning (not an error) tells the user to pay attention to what they eat, in Italian and English.
+
+- **Today:** the Happy card for a gain shows an amber face in place of the check and a solid amber pill with the warning. The face and the pill appear once and stay; with reduced motion they appear without animation.
+- **Past Days (History):** the edit dialog closes, then a snackbar shows the same warning, with a dismiss action.
+- **No warning** when there is no earlier Entry, when the change is exactly 1% or less, or when the weight went down. A decrease keeps its current Happy card.
+
+Build with `/bmad-build CR-2` (text in [../cr-set-1.md](../cr-set-1.md)).
+
 ## Done when
 
 - Weight is saved, edited, deleted and persists after reload; one Entry per day, covered by tests.
