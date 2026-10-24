@@ -54,6 +54,10 @@ Verdict is `accepted`, `accepted-with-open-items` or `rejected`. Carry open item
 
 ---
 
+## Change requests (after the epic)
+
+**CR-1 — Logout and navigation icon** (implemented, commit `9c88b93`): the logout action (exit icon) is always at the top right of every logged-in screen. The top-left element shows the icon of the active tab, the same symbol as the bottom navigation, shown slightly larger. Tabs and the layout per screen size are unchanged. Build with `/bmad-build CR-1` (text in [../cr-set-1.md](../cr-set-1.md)).
+
 ## Done when
 
 - `npm run check` passes and is documented in `AGENTS.md`.
