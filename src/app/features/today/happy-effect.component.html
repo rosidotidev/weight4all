@@ -2,6 +2,7 @@
   class="card"
   [class.loss]="view().loss"
   [class.gain]="!view().loss"
+  [class.jump]="view().jump"
   aria-labelledby="w4a-effect-title"
 >
   @if (view().confetti) {
@@ -17,16 +18,26 @@
       }
     </div>
   }
-  @if (view().loss) {
-    <svg class="icon" viewBox="0 0 60 60" aria-hidden="true" focusable="false">
-      <path class="star" d="M30 4l8 17 19 3-14 13 4 19-17-10-17 10 4-19-14-13 19-3z" />
-    </svg>
-  } @else {
-    <svg class="icon" viewBox="0 0 60 60" aria-hidden="true" focusable="false">
-      <circle class="disc" cx="30" cy="30" r="30" />
-      <path class="tick" d="M15 32l11 11 20-23" />
-    </svg>
-  }
+  <div class="icon-wrap">
+    @if (view().loss) {
+      <svg class="icon" viewBox="0 0 60 60" aria-hidden="true" focusable="false">
+        <path class="star" d="M30 4l8 17 19 3-14 13 4 19-17-10-17 10 4-19-14-13 19-3z" />
+      </svg>
+    } @else if (view().jump) {
+      <svg class="icon face" viewBox="0 0 60 60" aria-hidden="true" focusable="false">
+        <circle class="face-disc" cx="30" cy="30" r="30" />
+        <path class="brow" d="M14 20l12 6M46 20l-12 6" />
+        <circle class="eye" cx="22" cy="34" r="3.5" />
+        <circle class="eye" cx="38" cy="34" r="3.5" />
+        <path class="mouth" d="M20 45h20" />
+      </svg>
+    } @else {
+      <svg class="icon" viewBox="0 0 60 60" aria-hidden="true" focusable="false">
+        <circle class="disc" cx="30" cy="30" r="30" />
+        <path class="tick" d="M15 32l11 11 20-23" />
+      </svg>
+    }
+  </div>
   <p class="saved secondary" id="w4a-effect-title">{{ t().saved }}</p>
   @if (view().delta !== null) {
     <p class="delta">{{ view().delta }}</p>
@@ -49,6 +60,9 @@
   }
   @if (view().message !== null) {
     <p class="message">{{ view().message }}</p>
+  }
+  @if (view().warning !== null) {
+    <p class="warning">{{ view().warning }}</p>
   }
   <p class="logged secondary">{{ view().logged }}</p>
 </section>

@@ -1,5 +1,12 @@
 import { A11yModule } from '@angular/cdk/a11y';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EnvironmentInjector,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
@@ -43,6 +50,8 @@ export class HistoryDayComponent {
   private readonly router = inject(Router);
   private readonly layout = inject(LayoutService);
   private readonly announcer = inject(LiveAnnouncer);
+  // The root injector outlives this dialog, so the snackbar still opens after it has closed.
+  private readonly environment = inject(EnvironmentInjector);
   protected readonly wide = computed(() => this.layout.windowClass() !== 'compact');
 
   /** Already validated by the route guard. */
@@ -67,15 +76,38 @@ export class HistoryDayComponent {
     return this.store.entries()[this.day()] ? t.entryEditTitle({ date }) : t.entryAddTitle({ date });
   });
 
-  /** Only a confirmed save of today's Entry earns the Happy effect; a past Day just closes. */
+  /**
+   * Only a confirmed save of today's Entry earns the Happy effect. A past Day closes at once; when
+   * it is a jump (CR-2) the warning follows as a snackbar after the dialog has closed.
+   */
   protected onConfirmed(entry: Entry): void {
     this.announcer.say(this.t().announceSaved);
     const value = entry.values[PRIMARY.key];
-    if (value === undefined || entry.day !== this.clock.today()) {
+    if (value === undefined) {
       this.close();
       return;
     }
-    this.effect.set({ effect: happyEffect(entry.day, value, this.store.entries()), value });
+    const effect = happyEffect(entry.day, value, this.store.entries());
+    if (entry.day !== this.clock.today()) {
+      if (effect.kind === 'gain' && effect.jump) this.closeWithWarning();
+      else this.close();
+      return;
+    }
+    this.effect.set({ effect, value });
+  }
+
+  /** Closes the dialog at once, then loads the snackbar on demand (as the entry form does) and shows it. */
+  private closeWithWarning(): void {
+    const message = this.t().effectJumpWarning;
+    const dismiss = this.t().snackbarDismiss;
+    this.close();
+    void import('@angular/material/snack-bar')
+      .then(({ MatSnackBar }) =>
+        this.environment.get(MatSnackBar).open(message, dismiss, { duration: 6000 }),
+      )
+      .catch(() => {
+        // The save already succeeded; without the chunk the warning is simply not shown.
+      });
   }
 
   /** Cancel, Esc or the scrim: forget what was typed for the Day and go back. */

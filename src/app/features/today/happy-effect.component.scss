@@ -35,6 +35,36 @@
   width: 60px;
   height: 60px;
 }
+/* Jump: an angry face in the amber of the missing-entry banner, popping in once, then still. */
+.face-disc {
+  fill: var(--w4a-banner-dot);
+}
+.face .brow,
+.face .mouth {
+  fill: none;
+  stroke: var(--w4a-on-banner-container);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.face .eye {
+  fill: var(--w4a-on-banner-container);
+}
+.face {
+  animation: face-pop 420ms cubic-bezier(0.34, 1.56, 0.64, 1) 120ms both;
+}
+@keyframes face-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  to {
+    transform: scale(1);
+  }
+}
 .star {
   --tone: var(--w4a-confetti-gold);
   fill: var(--tone);
@@ -109,6 +139,35 @@
 .gain .message {
   font-size: 16px;
 }
+.warning {
+  margin: 12px 0 0;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 22px;
+}
+/* Jump: the warning sits in a solid amber pill, bolder than the calm line; it slides up once. */
+.card.jump .warning {
+  display: inline-block;
+  box-sizing: border-box;
+  max-width: 100%;
+  padding: 8px 16px;
+  font-weight: 700;
+  color: var(--w4a-on-banner-container);
+  background: var(--w4a-banner-dot);
+  border-radius: var(--w4a-rounded-full);
+  text-wrap: balance;
+  animation: pill-rise 480ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes pill-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .wave + .logged {
   margin-block-start: 28px;
 }
@@ -182,6 +241,10 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .piece {
+    animation: none;
+  }
+  .face,
+  .card.jump .warning {
     animation: none;
   }
 }

@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { of } from 'rxjs';
 import { EntryResult, EntryStatus, EntryStore } from '../../core/data/entry.store';
 import { SessionScope } from '../../core/data/session-scope';
@@ -151,6 +152,73 @@ describe('HistoryDayComponent', () => {
     expect(navigate).toHaveBeenCalledWith(['/history']);
     expect(fixture.nativeElement.querySelector('w4a-happy-effect')).toBeNull();
     expect(TestBed.inject(DraftStore).get('2026-10-14')).toEqual({});
+  });
+
+  describe('weight jump on a past Day (CR-2)', () => {
+    const withEarlier = () =>
+      entries.update((all) => ({
+        ...all,
+        '2026-10-12': { day: '2026-10-12', values: { weight: 70 } },
+      }));
+
+    it('a past Day saved as a jump closes and then shows the warning snackbar', async () => {
+      withEarlier();
+      const fixture = setup('2026-10-14');
+      const open = vi
+        .spyOn(TestBed.inject(MatSnackBar), 'open')
+        .mockReturnValue(undefined as never);
+      await type(fixture, '70.8');
+      await submit(fixture);
+      expect(save).toHaveBeenCalledWith({ day: '2026-10-14', values: { weight: 70.8 } });
+      expect(navigate).toHaveBeenCalledWith(['/history']);
+      await vi.waitFor(() => expect(open).toHaveBeenCalledTimes(1));
+      expect(open).toHaveBeenCalledWith(
+        'Your weight went up more than usual. Pay attention to what you eat.',
+        'Dismiss',
+        { duration: 6000 },
+      );
+      expect(fixture.nativeElement.querySelector('w4a-happy-effect')).toBeNull();
+    });
+
+    it('a past Day saved at exactly 1% up shows no snackbar', async () => {
+      withEarlier();
+      const fixture = setup('2026-10-14');
+      const open = vi.spyOn(TestBed.inject(MatSnackBar), 'open');
+      await type(fixture, '70.7');
+      await submit(fixture);
+      expect(save).toHaveBeenCalledWith({ day: '2026-10-14', values: { weight: 70.7 } });
+      expect(navigate).toHaveBeenCalledWith(['/history']);
+      await new Promise((resolve) => setTimeout(resolve));
+      expect(open).not.toHaveBeenCalled();
+    });
+
+    it('shows the warning snackbar in Italian when the Language is Italian', async () => {
+      language.set('it');
+      withEarlier();
+      const fixture = setup('2026-10-14');
+      const open = vi
+        .spyOn(TestBed.inject(MatSnackBar), 'open')
+        .mockReturnValue(undefined as never);
+      await type(fixture, '70.8');
+      await submit(fixture);
+      await vi.waitFor(() => expect(open).toHaveBeenCalledTimes(1));
+      expect(open).toHaveBeenCalledWith(
+        'Il tuo peso è salito più del solito. Fai attenzione a cosa mangi.',
+        'Chiudi',
+        { duration: 6000 },
+      );
+    });
+
+    it('a past Day saved lower than the earlier Entry shows no snackbar', async () => {
+      withEarlier();
+      const fixture = setup('2026-10-14');
+      const open = vi.spyOn(TestBed.inject(MatSnackBar), 'open');
+      await type(fixture, '69.0');
+      await submit(fixture);
+      expect(navigate).toHaveBeenCalledWith(['/history']);
+      await new Promise((resolve) => setTimeout(resolve));
+      expect(open).not.toHaveBeenCalled();
+    });
   });
 
   it("saving today's Entry shows the Happy effect, and Done returns to History", async () => {

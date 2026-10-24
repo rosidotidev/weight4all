@@ -6,12 +6,22 @@ import { Language } from '../../domain/language';
 import { CONFETTI_MS, HappyEffectComponent } from './happy-effect.component';
 
 const loss: HappyEffect = { kind: 'loss', delta: -0.3, since: '2026-10-19', yesterday: true };
-const gain: HappyEffect = { kind: 'gain', delta: 0.2, since: '2026-10-19', yesterday: true };
+const gain: HappyEffect = {
+  kind: 'gain',
+  delta: 0.2,
+  since: '2026-10-19',
+  yesterday: true,
+  jump: false,
+};
+const jumpGain: HappyEffect = { ...gain, delta: 0.8, jump: true };
 const same: HappyEffect = { kind: 'same', delta: 0, since: '2026-10-19', yesterday: true };
 const welcome: HappyEffect = { kind: 'welcome' };
 
+// Compiled styles carry an emulated-encapsulation attribute on every selector; drop it for matching.
 const componentStyles = () =>
-  (HappyEffectComponent as unknown as { ɵcmp: { styles: string[] } }).ɵcmp.styles.join('');
+  (HappyEffectComponent as unknown as { ɵcmp: { styles: string[] } }).ɵcmp.styles
+    .join('')
+    .replace(/\[_ngcontent-%COMP%\]/g, '');
 
 describe('HappyEffectComponent', () => {
   let language: ReturnType<typeof signal<Language>>;
@@ -131,6 +141,76 @@ describe('HappyEffectComponent', () => {
       yesterday: false,
     });
     expect(text(el, '.vs')).toBe('vs 14 Oct');
+  });
+
+  it('shows the warning line under the gain message on a jump', async () => {
+    const { el } = await setup(jumpGain, 70.8);
+    expect(el.querySelector('.card')!.classList.contains('gain')).toBe(true);
+    expect(text(el, '.message')).toBe('Bodies fluctuate. Thanks for logging today.');
+    expect(text(el, '.warning')).toBe(
+      'Your weight went up more than usual. Pay attention to what you eat.',
+    );
+  });
+
+  it('gives a jump the angry face in place of the check and the warning in a solid pill', async () => {
+    const { el } = await setup(jumpGain, 70.8);
+    expect(el.querySelector('.card')!.classList.contains('jump')).toBe(true);
+    expect(el.querySelector('.icon-wrap .face')).not.toBeNull();
+    expect(el.querySelector('.face .brow')).not.toBeNull();
+    expect(el.querySelectorAll('.face .eye')).toHaveLength(2);
+    expect(el.querySelector('.face .mouth')).not.toBeNull();
+    expect(el.querySelector('.tick')).toBeNull();
+    expect(el.querySelector('.halo')).toBeNull();
+    expect(el.querySelector('.confetti')).toBeNull();
+    expect(text(el, '.warning')).toBe(
+      'Your weight went up more than usual. Pay attention to what you eat.',
+    );
+  });
+
+  it('gives a calm gain no jump class, no face and no pill', async () => {
+    const { el } = await setup(gain);
+    expect(el.querySelector('.card')!.classList.contains('jump')).toBe(false);
+    expect(el.querySelector('.face')).toBeNull();
+    expect(el.querySelector('.tick')).not.toBeNull();
+  });
+
+  it('colours the face and the pill with the amber tokens only, and never with red', () => {
+    const styles = componentStyles();
+    expect(styles).toMatch(/\.face-disc\s*\{\s*fill: var\(--(?:%NS%)?w4a-banner-dot\)/);
+    expect(styles).toMatch(/background: var\(--(?:%NS%)?w4a-banner-dot\)/);
+    expect(styles).toMatch(/color: var\(--(?:%NS%)?w4a-on-banner-container\)/);
+    expect(styles).not.toMatch(/halo|\bred\b/i);
+  });
+
+  it('plays the jump motion once, with no looping animation', () => {
+    const styles = componentStyles();
+    expect(styles).not.toContain('infinite');
+    expect(styles).toMatch(/\.face\s*\{\s*animation: [^;]*face-pop [^;]*both;/);
+    expect(styles).toMatch(/\.card\.jump\s+\.warning\s*\{[^}]*animation: [^;]*pill-rise [^;]*both;/);
+  });
+
+  it('turns off the face pop and the pill slide under reduced motion', () => {
+    const styles = componentStyles();
+    const block = styles.slice(styles.indexOf('@media (prefers-reduced-motion: reduce)'));
+    expect(block).toMatch(/\.face,\s*\.card\.jump\s+\.warning\s*\{\s*animation: none/);
+  });
+
+  it.each([
+    ['a gain under 1%', gain],
+    ['no change', same],
+    ['a loss', loss],
+    ['a welcome', welcome],
+  ] as const)('shows no warning for %s', async (_name, effect) => {
+    const { el } = await setup(effect);
+    expect(el.querySelector('.warning')).toBeNull();
+  });
+
+  it('shows the warning in Italian', async () => {
+    language.set('it');
+    const { el } = await setup(jumpGain, 70.8);
+    expect(text(el, '.warning')).toBe(
+      'Il tuo peso è salito più del solito. Fai attenzione a cosa mangi.',
+    );
   });
 
   it('welcomes a first Entry in place of delta and comparison, on a calm card', async () => {

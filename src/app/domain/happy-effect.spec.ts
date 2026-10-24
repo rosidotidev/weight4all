@@ -22,6 +22,38 @@ describe('happyEffect', () => {
       delta: 0.2,
       since: '2026-10-19',
       yesterday: true,
+      jump: false,
+    });
+  });
+
+  describe('weight jump (CR-2)', () => {
+    it('is not a jump at exactly 1% up', () => {
+      const entries = byDay(entry('2026-10-19', 70));
+      expect(happyEffect('2026-10-20', 70.7, entries)).toMatchObject({ kind: 'gain', jump: false });
+    });
+
+    it('is a jump just above 1% up', () => {
+      const entries = byDay(entry('2026-10-19', 70));
+      expect(happyEffect('2026-10-20', 70.8, entries)).toMatchObject({ kind: 'gain', jump: true });
+    });
+
+    it('is not a jump for a small rise', () => {
+      const entries = byDay(entry('2026-10-19', 70));
+      expect(happyEffect('2026-10-20', 70.1, entries)).toMatchObject({ kind: 'gain', jump: false });
+    });
+
+    it('is never a jump for a decrease', () => {
+      const entries = byDay(entry('2026-10-19', 70.8));
+      expect(happyEffect('2026-10-20', 70, entries)).toEqual({
+        kind: 'loss',
+        delta: -0.8,
+        since: '2026-10-19',
+        yesterday: true,
+      });
+    });
+
+    it('is welcome, with no jump, when there is no earlier Entry', () => {
+      expect(happyEffect('2026-10-20', 70.8, {})).toEqual({ kind: 'welcome' });
     });
   });
 
