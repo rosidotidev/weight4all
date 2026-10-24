@@ -29,6 +29,14 @@
   background: var(--w4a-surface);
 }
 
+.app-bar-icon {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  fill: currentColor;
+  color: var(--w4a-primary);
+}
+
 .app-bar-title {
   margin: 0;
   font-size: var(--w4a-type-app-bar-title-size);
@@ -39,6 +47,48 @@
   margin-inline-start: auto;
   font-size: var(--w4a-type-body-size);
   color: var(--w4a-on-surface-variant);
+}
+
+.app-bar-exit {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--w4a-touch-target);
+  min-height: var(--w4a-touch-target);
+  padding: 0;
+  border: 0;
+  border-radius: var(--w4a-rounded-full);
+  background: transparent;
+  color: var(--w4a-primary);
+  cursor: pointer;
+
+  &.app-bar-exit-pushed {
+    margin-inline-start: auto;
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.38;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--w4a-primary);
+    outline-offset: 2px;
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+  }
+}
+
+.app-bar-error {
+  margin: 0 var(--w4a-margin-compact);
+  font-size: var(--w4a-type-caption-size);
+  font-weight: 700;
+  color: var(--w4a-on-surface);
 }
 
 .brand {

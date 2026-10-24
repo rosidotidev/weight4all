@@ -141,7 +141,7 @@ Behavioral. Visual specs live in `DESIGN.md.Components`.
 | Statistics card | Report | Average, Min, Max, Change per Dimension from Real entries only; Change is last minus first Real entry in the Range. |
 | Accent swatches | Settings | Single select among six; applies at once; persists per Account. |
 | Language segmented button | Settings | English or Italiano; applies at once, no reload, no loss of unsaved input. Segment labels stay "English" and "Italiano" in both Languages `[ASSUMPTION]`. |
-| Log out | Settings | Returns to Login; no Entry data reachable afterwards. |
+| Log out | Settings; exit icon at the top right of the app bar on every signed-in screen | Returns to Login (replacing the history entry); no Entry data reachable afterwards. A failure keeps the user signed in and shows the error under the app bar; the button is disabled while the logout is pending. No confirmation dialog. |
 
 ## State Patterns
 

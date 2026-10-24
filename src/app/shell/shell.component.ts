@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
+import { AuthService } from '../core/data/auth.service';
 import { ClockService } from '../core/state/clock.service';
 import { LayoutService } from '../core/state/layout.service';
 import { formatDay } from '../domain/day';
@@ -53,6 +54,9 @@ export class ShellComponent {
   protected readonly windowClass = inject(LayoutService).windowClass;
   protected readonly tabs = TABS;
   private readonly router = inject(Router);
+  private readonly auth = inject(AuthService);
+  protected readonly pending = signal(false);
+  protected readonly failed = signal(false);
   private readonly url = toSignal(
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
@@ -61,18 +65,43 @@ export class ShellComponent {
     { initialValue: this.router.url },
   );
 
+  constructor() {
+    // A failed logout message belongs to the screen it happened on.
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => this.failed.set(false));
+  }
+
+  /** The Tab the URL is on; Today when none matches. Its icon leads the app bar on every window class. */
+  protected readonly activeTab = computed(() => {
+    const url = this.url();
+    return TABS.find((candidate) => url === candidate.path || url.startsWith(`${candidate.path}/`)) ?? TABS[0];
+  });
+
   /** The app bar names the screen; Today carries the app name (DESIGN.md, App bar). */
   protected readonly title = computed(() => {
-    const url = this.url();
-    const tab = TABS.find((candidate) => url === candidate.path || url.startsWith(`${candidate.path}/`));
-    return !tab || tab.path === '/today' ? this.t().appName : this.t()[tab.label];
+    const tab = this.activeTab();
+    return tab.path === '/today' ? this.t().appName : this.t()[tab.label];
   });
 
   /** Expanded app bar: the Tab name at the left, today's date at the right (desktop mockup). */
-  protected readonly tabTitle = computed(() => {
-    const url = this.url();
-    const tab = TABS.find((candidate) => url === candidate.path || url.startsWith(`${candidate.path}/`));
-    return this.t()[(tab ?? TABS[0]).label];
-  });
+  protected readonly tabTitle = computed(() => this.t()[this.activeTab().label]);
   protected readonly date = computed(() => formatDay(this.clock.today(), this.i18n.locale()));
+
+  /** Exit icon in the app bar: the same logout as Settings > Account, without a confirmation. */
+  protected async logout(): Promise<void> {
+    if (this.pending()) return;
+    this.pending.set(true);
+    this.failed.set(false);
+    const result = await this.auth.logout();
+    if (result.ok) {
+      const navigated = await this.router.navigateByUrl('/login', { replaceUrl: true }).catch(() => false);
+      if (navigated) return;
+    }
+    this.pending.set(false);
+    this.failed.set(true);
+  }
 }

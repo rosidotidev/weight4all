@@ -1,7 +1,8 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
+import { AuthService, Session } from '../core/data/auth.service';
 import { PreferencesStore } from '../core/data/preferences.store';
 import { ClockService } from '../core/state/clock.service';
 import { LayoutService } from '../core/state/layout.service';
@@ -13,11 +14,14 @@ import { ShellComponent } from './shell.component';
 describe('ShellComponent', () => {
   const windowClass = signal<WindowClass>('compact');
   const language = signal<'en' | 'it'>('en');
+  const logout = vi.fn();
 
   beforeEach(() => {
     localStorage.clear();
     windowClass.set('compact');
     language.set('en');
+    logout.mockReset();
+    logout.mockResolvedValue({ ok: true });
     TestBed.configureTestingModule({
       providers: [
         provideRouter([
@@ -32,9 +36,18 @@ describe('ShellComponent', () => {
               { path: 'settings', component: TodayComponent },
             ],
           },
+          { path: 'login', component: TodayComponent },
         ]),
         { provide: LayoutService, useValue: { windowClass } },
         { provide: PreferencesStore, useValue: { language } },
+        {
+          provide: AuthService,
+          useValue: {
+            session: signal<Session>({ status: 'signedIn', uid: 'u1' }),
+            email: signal<string | null>('a@example.com'),
+            logout,
+          },
+        },
       ],
     });
   });
@@ -132,13 +145,123 @@ describe('ShellComponent', () => {
       expect(bar().querySelector('.app-bar-date')!.textContent?.trim()).toBe(formatDay(today, 'it-IT'));
     });
 
-    it.each(['compact', 'medium'] as const)('keeps the current app bar on %s', async (cls) => {
+    it.each(['compact', 'medium'] as const)('keeps the app bar icon in place of the logo on %s', async (cls) => {
       windowClass.set(cls);
       const { el, nav } = await setup();
-      expect(el.querySelector('header .logo')).not.toBeNull();
+      expect(el.querySelector('header .app-bar-icon')).not.toBeNull();
+      expect(el.querySelector('header .logo')).toBeNull();
       expect(el.querySelector('header h1')!.textContent?.trim()).toBe('Weight4All');
       expect(el.querySelector('.app-bar-date')).toBeNull();
       expect(nav().querySelector('.brand')).toBeNull();
+    });
+  });
+
+  describe('app bar icon and exit', () => {
+    const tabs = [
+      ['/today', 'Today'],
+      ['/history/2026-10-19', 'History'],
+      ['/report', 'Report'],
+      ['/settings', 'Settings'],
+    ] as const;
+
+    function iconPath(root: Element): string | null {
+      return root.querySelector('.app-bar-icon path')?.getAttribute('d') ?? null;
+    }
+
+    function exit(el: HTMLElement): HTMLButtonElement {
+      return el.querySelector<HTMLButtonElement>('header .app-bar-exit')!;
+    }
+
+    it.each(tabs)('shows the bottom-nav icon of the active Tab on %s', async (url) => {
+      const { el, nav } = await setup(url);
+      const active = nav().querySelector('a[aria-current="page"] svg path')!;
+      expect(iconPath(el.querySelector('header')!)).toBe(active.getAttribute('d'));
+    });
+
+    it.each(['compact', 'medium', 'expanded'] as const)('places the icon before the title on %s', async (cls) => {
+      windowClass.set(cls);
+      const { el } = await setup('/report');
+      const bar = el.querySelector('header')!;
+      expect(bar.firstElementChild?.classList.contains('app-bar-icon')).toBe(true);
+      expect(bar.querySelector('.app-bar-icon')!.getAttribute('aria-hidden')).toBe('true');
+    });
+
+    const cases = tabs.flatMap(([url]) =>
+      (['compact', 'medium', 'expanded'] as const).map((cls) => [url, cls] as const),
+    );
+
+    it.each(cases)('shows the exit button on %s at %s', async (url, cls) => {
+      windowClass.set(cls);
+      const { el } = await setup(url);
+      const button = exit(el);
+      expect(button.getAttribute('aria-label')).toBe('Log out');
+      expect(button.querySelector('svg')?.getAttribute('aria-hidden')).toBe('true');
+    });
+
+    it('logs out once and navigates to /login with replace', async () => {
+      const { harness, el } = await setup('/today');
+      const router = TestBed.inject(Router);
+      const navigate = vi.spyOn(router, 'navigateByUrl');
+      exit(el).click();
+      await harness.fixture.whenStable();
+      expect(logout).toHaveBeenCalledTimes(1);
+      expect(navigate).toHaveBeenCalledWith('/login', { replaceUrl: true });
+      expect(router.url).toBe('/login');
+    });
+
+    it('unlocks the exit button and shows the failure when the navigation does not complete', async () => {
+      const { harness, el } = await setup('/today');
+      vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(false);
+      exit(el).click();
+      await harness.fixture.whenStable();
+      harness.detectChanges();
+      expect(exit(el).disabled).toBe(false);
+      expect(el.querySelector('.app-bar-error')!.textContent?.trim()).not.toBe('');
+    });
+
+    it('clears the failure once the user goes to another Tab', async () => {
+      logout.mockResolvedValue({ ok: false, code: 'network' });
+      const { harness, el } = await setup('/today');
+      exit(el).click();
+      await harness.fixture.whenStable();
+      harness.detectChanges();
+      expect(el.querySelector('.app-bar-error')!.textContent?.trim()).not.toBe('');
+      await harness.navigateByUrl('/settings');
+      harness.detectChanges();
+      expect(el.querySelector('.app-bar-error')!.textContent?.trim()).toBe('');
+    });
+
+    it('shows the failure under the app bar and keeps the session', async () => {
+      logout.mockResolvedValue({ ok: false, code: 'network' });
+      const { harness, el } = await setup('/today');
+      exit(el).click();
+      await harness.fixture.whenStable();
+      harness.detectChanges();
+      expect(TestBed.inject(Router).url).toBe('/today');
+      expect(exit(el).disabled).toBe(false);
+      const message = el.querySelector('.app-bar-error')!;
+      expect(message.getAttribute('aria-live')).toBe('polite');
+      expect(message.textContent?.trim()).toBe(
+        'Something went wrong on our side. Please try again in a moment.',
+      );
+    });
+
+    it('ignores a second tap while the logout is pending', async () => {
+      logout.mockReturnValue(new Promise(() => undefined));
+      const { harness, el } = await setup('/today');
+      exit(el).click();
+      exit(el).click();
+      await harness.fixture.whenStable();
+      harness.detectChanges();
+      expect(logout).toHaveBeenCalledTimes(1);
+      expect(exit(el).disabled).toBe(true);
+    });
+
+    it('labels the exit button Esci in Italian', async () => {
+      const { harness, el } = await setup('/today');
+      language.set('it');
+      harness.detectChanges();
+      expect(exit(el).getAttribute('aria-label')).toBe('Esci');
     });
   });
 });
